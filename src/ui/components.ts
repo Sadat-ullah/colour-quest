@@ -237,17 +237,43 @@ export function drawButton(ctx: CanvasRenderingContext2D, opts: ButtonOptions): 
     const iconSize = Math.min(w * 0.55, faceHeight * 0.55, fontSize * 1.4);
     drawIcon(ctx, icon, x + w / 2, centerY, iconSize, finalTextColor);
   } else if (text) {
-    // Text only: Auto-fit font size to ensure it never exceeds button boundaries
-    let curFontSize = fontSize;
-    ctx.font = getFont(curFontSize, 'bold');
-    while (ctx.measureText(text).width > w - 32 && curFontSize > 14) {
-      curFontSize -= 1;
+    // If text contains an emoji at the end (e.g. 'Level Select 🗺️'):
+    // In WebKit/Safari, ctx.textAlign = 'center' has a known bug with emoji variation selectors
+    // where Safari's CoreText miscalculates the center and renders the text shifted to the right.
+    // By splitting the string and positioning with textAlign = 'left' using measured width,
+    // the text and icon are guaranteed to be 100% pixel-perfect centered across all browsers.
+    const emojiMatch = text.match(/^(.*?)(\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}]+)$/u);
+    if (emojiMatch && emojiMatch[1].trim().length > 0) {
+      const mainText = emojiMatch[1].trim();
+      const emoji = emojiMatch[2].trim();
+      let curFontSize = fontSize;
       ctx.font = getFont(curFontSize, 'bold');
+      let textMetrics = ctx.measureText(mainText);
+      const emojiW = Math.round(curFontSize * 1.15);
+      const gap = 8;
+      while (textMetrics.width + gap + emojiW > w - 24 && curFontSize > 14) {
+        curFontSize -= 1;
+        ctx.font = getFont(curFontSize, 'bold');
+        textMetrics = ctx.measureText(mainText);
+      }
+      const totalW = textMetrics.width + gap + emojiW;
+      const startX = x + (w - totalW) / 2;
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(mainText, startX, centerY + 1);
+      ctx.fillText(emoji, startX + textMetrics.width + gap, centerY + 1);
+    } else {
+      let curFontSize = fontSize;
+      ctx.font = getFont(curFontSize, 'bold');
+      while (ctx.measureText(text).width > w - 32 && curFontSize > 14) {
+        curFontSize -= 1;
+        ctx.font = getFont(curFontSize, 'bold');
+      }
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x + w / 2, centerY + 1);
     }
-    // Explicitly guarantee centered canvas alignment
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x + w / 2, centerY + 1);
   }
 
   // Optional Badge (e.g. level count, notification)

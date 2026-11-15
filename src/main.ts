@@ -126,13 +126,20 @@ function bootstrap(): void {
   // 9. Start with Title Screen
   sceneManager.switchTo('title');
 
-  // 10. Register Service Worker for PWA offline play
-  if ('serviceWorker' in navigator && import.meta.env.PROD) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.warn('[SW] Registration failed:', err);
-      });
+  // 10. Clean up stale service workers to ensure fresh asset delivery
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister().catch(() => {});
+      }
     });
+    if (typeof caches !== 'undefined') {
+      caches.keys().then((keys) => {
+        for (const key of keys) {
+          caches.delete(key).catch(() => {});
+        }
+      });
+    }
   }
 
   console.log('[ColourQuest] Game initialized successfully. Ready to play!');
