@@ -314,10 +314,10 @@ export class ResultsModal implements Scene {
     this.renderBanner(ctx, dialogX, dialogY, dialogW, isPortrait);
 
     // 3D Golden Stars in Arched Layout (left and right tucked behind center star)
-    this.renderStars(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop);
+    this.renderStars(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop, innerH);
 
-    // 3D Heading Text ("100% Match!") & Two-Line Subtext
-    this.renderAccuracy(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop);
+    // 3D Heading Text ("100% Match!") & Two-Line Subtext filling the remaining inner panel
+    this.renderAccuracy(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop, innerH, innerW);
 
     // Dashed Divider & 3D Glossy Action Buttons
     this.renderActionButtons(ctx, dialogX, dialogY, dialogW, dialogH, isPortrait, dividerY);
@@ -482,20 +482,21 @@ export class ResultsModal implements Scene {
     dy: number,
     dw: number,
     isPortrait: boolean,
-    innerTop: number
+    innerTop: number,
+    innerH: number
   ): void {
-    const starAreaY = innerTop + 58;
+    const starAreaY = innerTop + Math.round(innerH * 0.22);
     const centerX = dx + dw / 2;
-    const sideR = isPortrait ? 34 : 33;
-    const centerR = Math.round(sideR * 1.38); // ~47px
+    const sideR = isPortrait ? 40 : 36;
+    const centerR = Math.round(sideR * 1.38); // ~55px
 
     // Symmetrical arched star placement matching image:
     // Left star (-14 deg), Right star (+14 deg), Center star (0 deg, in front!)
-    const sideSpacing = isPortrait ? 66 : 64;
+    const sideSpacing = isPortrait ? 78 : 72;
     const starConfigs = [
-      { delay: 300, earned: this.result.stars >= 1, x: centerX - sideSpacing, y: starAreaY + 14, r: sideR, rot: -14 * Math.PI / 180, idx: 0 },
-      { delay: 900, earned: this.result.stars >= 3, x: centerX + sideSpacing, y: starAreaY + 14, r: sideR, rot: 14 * Math.PI / 180, idx: 2 },
-      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 8, r: centerR, rot: 0, idx: 1 },
+      { delay: 300, earned: this.result.stars >= 1, x: centerX - sideSpacing, y: starAreaY + 16, r: sideR, rot: -14 * Math.PI / 180, idx: 0 },
+      { delay: 900, earned: this.result.stars >= 3, x: centerX + sideSpacing, y: starAreaY + 16, r: sideR, rot: 14 * Math.PI / 180, idx: 2 },
+      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 10, r: centerR, rot: 0, idx: 1 },
     ];
 
     for (let i = 0; i < 3; i++) {
@@ -539,10 +540,10 @@ export class ResultsModal implements Scene {
     dy: number,
     dw: number,
     isPortrait: boolean,
-    innerTop: number
+    innerTop: number,
+    innerH: number,
+    innerW: number
   ): void {
-    const starAreaY = innerTop + 58;
-    const startY = starAreaY + (isPortrait ? 66 : 62);
     const centerX = dx + dw / 2;
     const pct = Math.round(this.result.accuracy * 100);
 
@@ -550,40 +551,46 @@ export class ResultsModal implements Scene {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // 1. 3D Heading Text ('100% Match!'): Bubbly 3D green text with thick dark green 3D extrusion
-    ctx.font = getFont(isPortrait ? 44 : 42, 'extraBold');
+    // 1. 3D Heading Text ('100% Match!'): Bubbly 3D green text filling the inner container width
+    const headingY = innerTop + Math.round(innerH * 0.49);
+    const headingSize = isPortrait
+      ? Math.min(56, Math.floor(innerW / 7.2))
+      : Math.min(50, Math.floor(innerW / 7.5));
+    ctx.font = getFont(headingSize, 'extraBold');
     const matchText = `${pct}% Match!`;
 
     // 3D bottom extrusion shadow
     ctx.fillStyle = '#0F5132';
-    for (let offset = 1; offset <= 5; offset++) {
-      ctx.fillText(matchText, centerX, startY + offset);
+    for (let offset = 1; offset <= 6; offset++) {
+      ctx.fillText(matchText, centerX, headingY + offset);
     }
 
     // Thick dark green outline (#1B4532)
     ctx.strokeStyle = '#1B4532';
-    ctx.lineWidth = 7;
+    ctx.lineWidth = 8;
     ctx.lineJoin = 'round';
-    ctx.strokeText(matchText, centerX, startY);
+    ctx.strokeText(matchText, centerX, headingY);
 
     // Bright green 3D face gradient
-    const greenGrad = ctx.createLinearGradient(centerX, startY - 20, centerX, startY + 20);
+    const greenGrad = ctx.createLinearGradient(centerX, headingY - 26, centerX, headingY + 26);
     greenGrad.addColorStop(0, '#55EFC4');
     greenGrad.addColorStop(0.35, '#2ECC71');
     greenGrad.addColorStop(1, '#27AE60');
     ctx.fillStyle = greenGrad;
-    ctx.fillText(matchText, centerX, startY);
+    ctx.fillText(matchText, centerX, headingY);
 
-    // 2. Subtitle detail ('3 of 3 shapes matched!') bold and centered directly below heading
-    ctx.font = getFont(isPortrait ? 20 : 19, 'extraBold');
+    // 2. Subtitle detail ('3 of 3 shapes matched!') bold and prominent directly below heading
+    const subtitleY = innerTop + Math.round(innerH * 0.65);
+    const subtitleSize = isPortrait ? 24 : 22;
+    ctx.font = getFont(subtitleSize, 'extraBold');
     ctx.fillStyle = '#1B4532';
     const detailText =
       this.result.totalRegions > 0
         ? `${this.result.correctRegions} of ${this.result.totalRegions} shapes matched!`
         : `Level ${this.levelId} Completed!`;
-    ctx.fillText(detailText, centerX, startY + 36);
+    ctx.fillText(detailText, centerX, subtitleY);
 
-    // 3. Subtext split across two centered lines
+    // 3. Subtext split across two centered lines filling down toward the bottom of the beige box
     const starsEarned = this.result.stars;
     let line1: string;
     let line2: string;
@@ -596,11 +603,13 @@ export class ResultsModal implements Scene {
       line2 = 'Try again to earn more stars!';
     }
 
-    ctx.font = getFont(isPortrait ? 16 : 15, 'bold');
+    const subtextSize = isPortrait ? 21 : 19;
+    ctx.font = getFont(subtextSize, 'bold');
     ctx.fillStyle = '#2C2C2E';
-    const textBaseY = startY + 68;
-    ctx.fillText(line1, centerX, textBaseY);
-    ctx.fillText(line2, centerX, textBaseY + 22);
+    const line1Y = innerTop + Math.round(innerH * 0.79);
+    const line2Y = innerTop + Math.round(innerH * 0.88);
+    ctx.fillText(line1, centerX, line1Y);
+    ctx.fillText(line2, centerX, line2Y);
 
     ctx.restore();
   }
