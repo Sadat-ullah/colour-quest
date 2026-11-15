@@ -665,7 +665,6 @@ export class GameplayScene implements Scene {
     // Full-Space Tight Grid: Color blocks expand to fill the entire interior width and available height
     this.swatchRects = [];
     const colors = level.palette;
-    const pulseScale = 1 + Math.sin(this.pulseTimer * 8) * 0.05;
 
     const innerPad = 12;
     const gridX = x + innerPad;
@@ -694,7 +693,7 @@ export class GameplayScene implements Scene {
             h: swatchH,
           });
 
-          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
         }
       } else {
         // 2 rows tight grid (e.g. 2 rows of 4 for 8-colour levels)
@@ -716,7 +715,7 @@ export class GameplayScene implements Scene {
             h: swatchH,
           });
 
-          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
         }
       }
     } else {
@@ -740,7 +739,7 @@ export class GameplayScene implements Scene {
           h: swatchH,
         });
 
-        this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+        this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
       }
     }
   }
@@ -752,38 +751,51 @@ export class GameplayScene implements Scene {
     sy: number,
     sw: number,
     sh: number,
-    hasSelection: boolean,
-    pulseScale: number
+    hasSelection: boolean
   ): void {
     const hintedColor = coloringEngine.getHintedColor();
     const isHinted = hintedColor !== null && hintedColor.toLowerCase() === color.toLowerCase();
 
     ctx.save();
 
-    // Pulse swatches when container is selected and ready to be coloured
-    if (hasSelection) {
-      ctx.translate(sx + sw / 2, sy + sh / 2);
-      ctx.scale(pulseScale, pulseScale);
-      ctx.translate(-(sx + sw / 2), -(sy + sh / 2));
-    }
-
-    // Step 2 Hint Flow: Pulsating golden highlight when matching hint
+    // Clean, stable highlight when container is selected (zero continuous motion/scaling)
     if (isHinted) {
-      const auraExpand = 6 + Math.sin(this.pulseTimer * 10) * 3;
+      // Clean golden highlight halo for hinted color
+      ctx.save();
+      ctx.shadowColor = 'rgba(242, 201, 76, 0.6)';
+      ctx.shadowBlur = 14;
       this.drawRoundedRect(
         ctx,
-        sx - auraExpand,
-        sy - auraExpand,
-        sw + auraExpand * 2,
-        sh + auraExpand * 2,
+        sx - 4,
+        sy - 4,
+        sw + 8,
+        sh + 8,
         18,
-        'rgba(242, 201, 76, 0.5)',
+        'rgba(242, 201, 76, 0.35)',
         '#F2C94C',
         3.5
       );
+      ctx.restore();
+    } else if (hasSelection) {
+      // Clean Spruce Velvet highlight halo indicating color swatches are active and ready to tap
+      ctx.save();
+      ctx.shadowColor = 'rgba(27, 69, 50, 0.35)';
+      ctx.shadowBlur = 10;
+      this.drawRoundedRect(
+        ctx,
+        sx - 3,
+        sy - 3,
+        sw + 6,
+        sh + 6,
+        17,
+        'rgba(27, 69, 50, 0.12)',
+        COLORS.spruceVelvet,
+        2.5
+      );
+      ctx.restore();
     }
 
-    // 3D shadow
+    // 3D bottom bevel/shadow
     this.drawRoundedRect(ctx, sx, sy + 4, sw, sh, 14, COLORS.clottedCreamDark);
 
     // Rounded rectangle swatch face occupying 100% of space
@@ -974,7 +986,7 @@ export class GameplayScene implements Scene {
     w: number,
     h: number,
     r: number,
-    fill: string,
+    fill?: string,
     stroke?: string,
     strokeW = 2
   ): void {
@@ -991,8 +1003,10 @@ export class GameplayScene implements Scene {
     ctx.arcTo(x, y, x + r, y, r);
     ctx.closePath();
 
-    ctx.fillStyle = fill;
-    ctx.fill();
+    if (fill) {
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
 
     if (stroke && strokeW > 0) {
       ctx.strokeStyle = stroke;
