@@ -22,6 +22,7 @@ import {
 import { eventBus } from '../shared/eventBus';
 import { audioManager } from '../audio/audioManager';
 import { saveManager } from '../game/saveManager';
+import { getLevel } from '../game/levelsData';
 import { sceneManager, type Scene } from '../core/sceneManager';
 import {
   DESIGN_WIDTH,
@@ -634,8 +635,9 @@ export class LevelSelectScene implements Scene {
   }
 
   private getCategoryForLevel(levelId: number): LevelCategory {
+    const lvl = getLevel(levelId);
+    if (lvl) return lvl.category;
     if (levelId <= CATEGORY_RANGES.tutorial.end) return 'tutorial';
-    if (levelId <= CATEGORY_RANGES.basic_shapes.end) return 'basic_shapes';
     if (levelId <= CATEGORY_RANGES.simple_objects.end) return 'simple_objects';
     if (levelId <= CATEGORY_RANGES.animals.end) return 'animals';
     if (levelId <= CATEGORY_RANGES.nature.end) return 'nature';

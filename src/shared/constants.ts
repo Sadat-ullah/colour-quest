@@ -36,11 +36,10 @@ export const SAVE_VERSION = 1;
 
 // ── Category ranges ──
 export const CATEGORY_RANGES = {
-  tutorial:       { start: 1,  end: 5 },
-  basic_shapes:   { start: 6,  end: 15 },
-  simple_objects: { start: 16, end: 30 },
-  animals:        { start: 31, end: 50 },
-  nature:         { start: 51, end: 70 },
-  scenes:         { start: 71, end: 85 },
-  master:         { start: 86, end: 100 },
+  tutorial:       { start: 1,  end: 10 },
+  simple_objects: { start: 11, end: 25 },
+  animals:        { start: 26, end: 45 },
+  nature:         { start: 46, end: 65 },
+  scenes:         { start: 66, end: 80 },
+  master:         { start: 81, end: 100 },
 } as const;

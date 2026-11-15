@@ -120,26 +120,22 @@ describe('100 Levels Verification Suite', () => {
     expect(lvl1).toBeDefined();
     expect(lvl1?.id).toBe(1);
     expect(lvl1?.category).toBe('tutorial');
-    expect(lvl1?.name.toLowerCase()).toContain('circle');
+    expect(lvl1?.name).toBe('Red Ball');
     expect(lvl1?.regions.length).toBeGreaterThanOrEqual(1);
 
     const circle = lvl1?.regions[0];
     expect(circle?.shape).toBe('circle');
   });
 
-  it('verifies Level 51 is the 7-layer Rainbow', () => {
+  it('verifies Level 51 is Ringed Planet', () => {
     const lvl51 = getLevel(51);
     expect(lvl51).toBeDefined();
     expect(lvl51?.id).toBe(51);
     expect(lvl51?.category).toBe('nature');
-    expect(lvl51?.name.toLowerCase()).toContain('rainbow');
+    expect(lvl51?.name).toBe('Ringed Planet');
 
-    // Exactly 7 layers
-    expect(lvl51?.regions).toHaveLength(7);
-    for (const r of lvl51!.regions) {
-      expect(r.shape).toBe('arc');
-    }
-    expect(lvl51?.palette.length).toBeGreaterThanOrEqual(7);
+    expect(lvl51?.regions.length).toBeGreaterThanOrEqual(5);
+    expect(lvl51?.palette.length).toBeGreaterThanOrEqual(5);
   });
 
   it('verifies category distribution matches CATEGORY_RANGES', () => {
@@ -154,10 +150,7 @@ describe('100 Levels Verification Suite', () => {
 
   it('correctly retrieves levels by category', () => {
     const tutorials = getLevelsByCategory('tutorial');
-    expect(tutorials.length).toBe(5);
-
-    const basicShapes = getLevelsByCategory('basic_shapes');
-    expect(basicShapes.length).toBe(10);
+    expect(tutorials.length).toBe(10);
 
     const simpleObjects = getLevelsByCategory('simple_objects');
     expect(simpleObjects.length).toBe(15);
@@ -172,6 +165,6 @@ describe('100 Levels Verification Suite', () => {
     expect(scenes.length).toBe(15);
 
     const master = getLevelsByCategory('master');
-    expect(master.length).toBe(15);
+    expect(master.length).toBe(20);
   });
 });
