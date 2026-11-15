@@ -46,6 +46,7 @@ export class GameplayScene implements Scene {
   private pulseTimer = 0;
   private completionTimer = 0;
   private isCompleting = false;
+  private activeFillAnims = new Map<string, { timer: number; duration: number; color: string }>();
 
   // Gentle feedback toast
   private toastMessage: string | null = null;
@@ -61,6 +62,7 @@ export class GameplayScene implements Scene {
     this.completionTimer = 0;
     this.toastMessage = null;
     this.toastTimer = 0;
+    this.activeFillAnims.clear();
 
     const levelId = (params?.levelId as number) || saveManager.getProgress().currentLevel || 1;
     if (this.onGetLevel) {
@@ -76,6 +78,7 @@ export class GameplayScene implements Scene {
     this.isCompleting = false;
     this.toastMessage = null;
     this.toastTimer = 0;
+    this.activeFillAnims.clear();
   }
 
   public showToast(msg: string, durationMs: number = 2200): void {
@@ -85,6 +88,14 @@ export class GameplayScene implements Scene {
 
   public update(dt: number): void {
     this.pulseTimer += dt;
+
+    // Update active fill impact animations
+    for (const [regionId, anim] of this.activeFillAnims.entries()) {
+      anim.timer += dt;
+      if (anim.timer >= anim.duration) {
+        this.activeFillAnims.delete(regionId);
+      }
+    }
 
     if (this.toastTimer > 0) {
       this.toastTimer -= dt;
@@ -507,10 +518,31 @@ export class GameplayScene implements Scene {
     const selectedRegionId = coloringEngine.getSelectedRegionId();
     const filledColors = coloringEngine.getFilledColors();
 
+    const pulseFactor = (Math.sin(this.pulseTimer * 0.008) + 1) / 2;
+    const dynamicGlowBlur = 12 + pulseFactor * 14;      // oscillates 12px to 26px
+    const dynamicStrokeWidth = 4.5 + pulseFactor * 2.0; // oscillates 4.5px to 6.5px
+
     // Render all blank template layers, dynamically scaled/centered to 80%-85%
     for (const region of level.regions) {
       const isSelected = selectedRegionId === region.id;
       const filledColor = filledColors.get(region.id) || '#FFFFFF';
+
+      let pulseScale = isSelected ? 1 + pulseFactor * 0.03 : 1.0;
+      let glowBlur = dynamicGlowBlur;
+      let strokeWidth = isSelected ? dynamicStrokeWidth : 3;
+      let isGlow = isSelected;
+      let isHighlighted = isSelected;
+
+      // Fill Impact Animation (scale-pop 1.0 -> 1.10 -> 1.0 and glow flash over 250ms)
+      const fillAnim = this.activeFillAnims.get(region.id);
+      if (fillAnim) {
+        const progress = Math.min(1, fillAnim.timer / fillAnim.duration);
+        const popScale = 1 + Math.sin(progress * Math.PI) * 0.10;
+        pulseScale = Math.max(pulseScale, popScale);
+        const flashIntensity = Math.sin(progress * Math.PI);
+        glowBlur = Math.max(glowBlur, 16 + flashIntensity * 20);
+        isGlow = true;
+      }
 
       ShapeRenderer.drawRegion(ctx, region, {
         offsetX,
@@ -518,10 +550,12 @@ export class GameplayScene implements Scene {
         scale,
         fillColor: filledColor,
         strokeColor: isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
-        strokeWidth: isSelected ? 5 : 3,
-        isHighlighted: isSelected,
-        highlightColor: COLORS.sunnyYellow,
-        glow: isSelected,
+        strokeWidth,
+        isHighlighted,
+        highlightColor: COLORS.spruceVelvet,
+        glow: isGlow,
+        glowBlur,
+        pulseScale,
       });
     }
   }
@@ -622,9 +656,10 @@ export class GameplayScene implements Scene {
     ctx.font = getFont(isPortrait ? 15 : 17, 'extraBold');
     ctx.fillStyle = COLORS.spruceVelvet;
 
-    const labelH = 34;
+    const labelTopPad = isPortrait ? 18 : 24;
+    const labelH = isPortrait ? 38 : 52;
     const promptText = hasSelection ? '👇 TAP A COLOUR TO PAINT!' : 'TAP A SHAPE FIRST';
-    ctx.fillText(promptText, x + w / 2, y + 18);
+    ctx.fillText(promptText, x + w / 2, y + labelTopPad);
     ctx.restore();
 
     // Full-Space Tight Grid: Color blocks expand to fill the entire interior width and available height
@@ -634,9 +669,9 @@ export class GameplayScene implements Scene {
 
     const innerPad = 12;
     const gridX = x + innerPad;
-    const gridY = y + labelH;
+    const gridY = y + labelH + 8;
     const availW = w - innerPad * 2;
-    const availH = h - labelH - innerPad;
+    const availH = h - (labelH + 8) - innerPad;
 
     const gap = 10;
 
@@ -876,6 +911,23 @@ export class GameplayScene implements Scene {
         if (res.filled && res.regionId) {
           this.onPlaySound?.('fill');
           this.onSpawnSparkles?.(x, y, swatch.color);
+
+          // R2: Trigger transient scale-pop (1.0 -> 1.10 -> 1.0) and glow flash on that container region over ~250ms
+          this.activeFillAnims.set(res.regionId, { timer: 0, duration: 250, color: swatch.color });
+
+          // Also spawn sparkles at region's center
+          const currentLevel = coloringEngine.getLevel();
+          const filledRegion = currentLevel?.regions.find((r) => r.id === res.regionId);
+          if (filledRegion) {
+            const bbox = ShapeRenderer.calculateBoundingBox([filledRegion]);
+            const rcx = bbox.minX + bbox.width / 2;
+            const rcy = bbox.minY + bbox.height / 2;
+            const { offsetX, offsetY, scale } = this.templateTransform;
+            const centerScreenX = offsetX + rcx * scale;
+            const centerScreenY = offsetY + rcy * scale;
+            this.onSpawnSparkles?.(centerScreenX, centerScreenY, swatch.color);
+          }
+
           this.checkCompletion();
         }
         return;

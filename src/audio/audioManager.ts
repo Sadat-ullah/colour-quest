@@ -20,6 +20,7 @@ import {
   playMismatch,
   playClear,
   playNextLevel,
+  playLevelTransition,
   stopCelebration,
 } from './soundEffects';
 import { unlockAudio, isAudioUnlocked, initMobileUnlock, getAudioContext } from './mobileUnlock';
@@ -224,6 +225,10 @@ export class AudioManager {
     soundEffects.playNextLevel(vol);
   }
 
+  public playLevelTransition(vol?: number): void {
+    soundEffects.playLevelTransition(vol);
+  }
+
   public stopCelebration(): void {
     soundEffects.stopCelebration();
   }
@@ -234,6 +239,11 @@ export class AudioManager {
   public playSound(sound: string, ...args: unknown[]): void {
     const key = sound.toLowerCase().trim();
     switch (key) {
+      case 'level_transition':
+      case 'leveltransition':
+      case 'transition':
+        this.playLevelTransition(typeof args[0] === 'number' ? args[0] : undefined);
+        break;
       case 'nextlevel':
       case 'next_level':
       case 'next':
@@ -320,6 +330,7 @@ export {
   playMismatch,
   playClear,
   playNextLevel,
+  playLevelTransition,
   stopCelebration,
   unlockAudio,
   isAudioUnlocked,

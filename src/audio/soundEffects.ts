@@ -803,6 +803,56 @@ export class SoundEffects {
       };
     });
   }
+
+  /**
+   * playLevelTransition: uplifting 3-note ascending marimba/harp chime (C5 -> E5 -> G5)
+   * Warm, rounded, zero clicking, child-friendly level entry fanfare (~220ms)
+   */
+  public playLevelTransition(volMultiplier: number = 1.0): void {
+    this.stopCelebration();
+    const ready = this.prepareContext();
+    if (!ready) return;
+    const { ctx, master } = ready;
+    const now = ctx.currentTime;
+    const vol = Math.max(0, Math.min(1, volMultiplier));
+
+    const notes = [
+      { freq: 523.25, delay: 0.000, dur: 0.16, gain: 0.65 }, // C5
+      { freq: 659.25, delay: 0.055, dur: 0.16, gain: 0.65 }, // E5
+      { freq: 783.99, delay: 0.110, dur: 0.22, gain: 0.75 }, // G5
+    ];
+
+    notes.forEach(({ freq, delay, dur, gain: weight }) => {
+      const t = now + delay;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, t);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2800, t);
+      filter.Q.setValueAtTime(1.2, t);
+
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.linearRampToValueAtTime(weight * vol, t + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      gain.gain.setValueAtTime(0, t + dur + 0.001);
+
+      osc.connect(gain);
+      gain.connect(filter);
+      filter.connect(master);
+
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+      osc.onended = () => {
+        osc.disconnect();
+        gain.disconnect();
+        filter.disconnect();
+      };
+    });
+  }
 }
 
 export const soundEffects = new SoundEffects();
@@ -817,4 +867,5 @@ export const playLevelComplete = (stars?: number, vol?: number): void => soundEf
 export const playMismatch = (vol?: number): void => soundEffects.playMismatch(vol);
 export const playClear = (vol?: number): void => soundEffects.playClear(vol);
 export const playNextLevel = (vol?: number): void => soundEffects.playNextLevel(vol);
+export const playLevelTransition = (vol?: number): void => soundEffects.playLevelTransition(vol);
 export const stopCelebration = (): void => soundEffects.stopCelebration();

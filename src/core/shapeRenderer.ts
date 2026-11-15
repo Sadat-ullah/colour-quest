@@ -14,6 +14,8 @@ export interface RenderOptions {
   isHighlighted?: boolean;
   highlightColor?: string;
   glow?: boolean;
+  glowBlur?: number;
+  pulseScale?: number;
 }
 
 export class ShapeRenderer {
@@ -218,20 +220,31 @@ export class ShapeRenderer {
       strokeColor = '#1B4532',
       strokeWidth = 3,
       isHighlighted = false,
-      highlightColor = '#FFD000',
+      highlightColor = '#1B4532',
       glow = false,
+      glowBlur = 16,
+      pulseScale = 1.0,
     } = options;
 
     ctx.save();
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
 
+    if (pulseScale !== 1.0) {
+      const bbox = ShapeRenderer.calculateBoundingBox([region]);
+      const cx = bbox.minX + bbox.width / 2;
+      const cy = bbox.minY + bbox.height / 2;
+      ctx.translate(cx, cy);
+      ctx.scale(pulseScale, pulseScale);
+      ctx.translate(-cx, -cy);
+    }
+
     const path = ShapeRenderer.createPath(region);
 
     // Glow effect when highlighted
     if (glow || isHighlighted) {
       ctx.shadowColor = highlightColor;
-      ctx.shadowBlur = 16;
+      ctx.shadowBlur = glowBlur;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
     }
@@ -246,7 +259,7 @@ export class ShapeRenderer {
     // Stroke
     if (strokeWidth > 0) {
       ctx.strokeStyle = isHighlighted ? highlightColor : strokeColor;
-      ctx.lineWidth = isHighlighted ? strokeWidth + 2 : strokeWidth;
+      ctx.lineWidth = strokeWidth;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.stroke(path);

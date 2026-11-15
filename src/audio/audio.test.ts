@@ -1,7 +1,18 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { audioManager, AudioManager } from './audioManager';
-import { soundEffects, playTap, playSelect, playFill, playCorrect, playStar, playLevelComplete, playMismatch, playClear } from './soundEffects';
+import {
+  soundEffects,
+  playTap,
+  playSelect,
+  playFill,
+  playCorrect,
+  playStar,
+  playLevelComplete,
+  playMismatch,
+  playClear,
+  playLevelTransition,
+} from './soundEffects';
 import { musicSynth, MusicSynth } from './musicSynth';
 import { getAudioContext, isAudioUnlocked, unlockAudio, initMobileUnlock, _resetUnlockForTesting } from './mobileUnlock';
 import { eventBus } from '../shared/eventBus';
@@ -185,6 +196,14 @@ describe('Audio Subsystem (Agent A5)', () => {
       expect(() => audioManager.playNextLevel()).not.toThrow();
     });
 
+    it('plays level transition 3-note ascending chime without error', () => {
+      expect(() => soundEffects.playLevelComplete(3)).not.toThrow();
+      expect(() => playLevelTransition(0.9)).not.toThrow();
+      expect(() => audioManager.playLevelTransition()).not.toThrow();
+      expect(() => audioManager.playSound('level_transition')).not.toThrow();
+      expect(() => audioManager.playSound('transition')).not.toThrow();
+    });
+
     it('manages volume and mute state correctly', () => {
       soundEffects.setVolume(0.5);
       expect(soundEffects.getVolume()).toBe(0.5);
@@ -235,6 +254,7 @@ describe('Audio Subsystem (Agent A5)', () => {
       const fanfareSpy = vi.spyOn(soundEffects, 'playLevelComplete');
       const mismatchSpy = vi.spyOn(soundEffects, 'playMismatch');
       const clearSpy = vi.spyOn(soundEffects, 'playClear');
+      const transitionSpy = vi.spyOn(soundEffects, 'playLevelTransition');
 
       audioManager.playTap();
       expect(tapSpy).toHaveBeenCalled();
@@ -278,6 +298,9 @@ describe('Audio Subsystem (Agent A5)', () => {
 
       audioManager.playSound('clear');
       expect(clearSpy).toHaveBeenCalledTimes(2);
+
+      audioManager.playSound('level_transition');
+      expect(transitionSpy).toHaveBeenCalled();
     });
 
     it('coordinates background music', () => {

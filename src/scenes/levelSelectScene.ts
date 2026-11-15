@@ -20,6 +20,7 @@ import {
   type ButtonOptions,
 } from '../ui/components';
 import { eventBus } from '../shared/eventBus';
+import { audioManager } from '../audio/audioManager';
 import { saveManager } from '../game/saveManager';
 import { sceneManager, type Scene } from '../core/sceneManager';
 import {
@@ -810,8 +811,9 @@ export class LevelSelectScene implements Scene {
 
     // Start Level
     eventBus.emit('audio:unlock', {});
+    audioManager.playSound('level_transition');
     saveManager.setCurrentLevel(card.levelId);
-    eventBus.emit('level:start', { levelId: card.levelId });
+    eventBus.emit('level:start', { levelId: card.levelId, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: card.levelId });
   }
 

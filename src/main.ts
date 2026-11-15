@@ -66,8 +66,8 @@ function bootstrap(): void {
   };
 
   // 6. Connect global eventBus listeners
-  eventBus.on('level:start', ({ levelId }) => {
-    if (!resultsModal.isOpen()) {
+  eventBus.on('level:start', ({ levelId, silentAudio }) => {
+    if (!silentAudio && !resultsModal.isOpen()) {
       audioManager.playSound('tap');
     }
     sceneManager.switchTo('gameplay', { levelId });

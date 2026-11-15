@@ -119,7 +119,7 @@ export interface GameEvents {
   'region:filled': { regionId: string; color: string; correct: boolean };
   'color:selected': { color: string };
   'level:complete': { levelId: number; result: ScoringResult };
-  'level:start': { levelId: number };
+  'level:start': { levelId: number; silentAudio?: boolean };
   'scene:change': { from: SceneName; to: SceneName };
   'audio:unlock': {};
   'settings:change': { settings: PlayerSettings };

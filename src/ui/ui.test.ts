@@ -11,6 +11,7 @@ import {
 import {
   drawRoundedRect,
   drawButton,
+  drawGlossyGreenButton,
   drawColorSwatch,
   drawStar,
   drawProgressBar,
@@ -19,6 +20,9 @@ import {
   drawSparkle,
   isPointInButton,
 } from './components';
+import { ShapeRenderer } from '../core/shapeRenderer';
+import { GameplayScene } from '../scenes/gameplayScene';
+import { getLevel } from '../game/levelsData';
 import { TitleScene } from '../scenes/titleScene';
 import { LevelSelectScene } from '../scenes/levelSelectScene';
 import { ResultsModal } from '../scenes/resultsModal';
@@ -151,6 +155,60 @@ describe('UI Drawing Components (/src/ui/components.ts)', () => {
         isDisabled: true,
       })
     ).not.toThrow();
+  });
+
+  it('drawButton horizontally centers text using measuredText width', () => {
+    // When width = 200, measured text width = 100, x = 50:
+    // textStartX should be 50 + (200 - 100) / 2 = 100
+    drawButton(ctx, {
+      x: 50,
+      y: 50,
+      w: 200,
+      h: 64,
+      text: 'Level Select 🗺️',
+    });
+
+    expect(ctx.textAlign).toBe('left');
+    expect(ctx.fillText).toHaveBeenCalledWith('Level Select 🗺️', 100, expect.any(Number));
+  });
+
+  it('drawGlossyGreenButton applies earlier dark green Spruce Velvet gradient', () => {
+    const mockGrad = { addColorStop: vi.fn() };
+    (ctx.createLinearGradient as any).mockReturnValue(mockGrad);
+
+    drawGlossyGreenButton(ctx, {
+      x: 20,
+      y: 20,
+      w: 120,
+      h: 50,
+      text: 'Go Green',
+    });
+
+    expect(mockGrad.addColorStop).toHaveBeenCalledWith(0, COLORS.spruceVelvetLight);
+    expect(mockGrad.addColorStop).toHaveBeenCalledWith(0.3, '#21533C');
+    expect(mockGrad.addColorStop).toHaveBeenCalledWith(0.7, COLORS.spruceVelvet);
+    expect(mockGrad.addColorStop).toHaveBeenCalledWith(1, COLORS.spruceVelvetShadow);
+  });
+
+  it('ShapeRenderer.drawRegion uses dark green highlightColor and supports glowBlur and pulseScale', () => {
+    const region = {
+      shape: 'circle' as const,
+      id: 'test-region',
+      targetColor: '#FF0000',
+      cx: 100,
+      cy: 100,
+      r: 30,
+    };
+
+    ShapeRenderer.drawRegion(ctx, region, {
+      isHighlighted: true,
+      glowBlur: 24,
+      pulseScale: 1.05,
+    });
+
+    expect(ctx.shadowColor).toBe(COLORS.spruceVelvet);
+    expect(ctx.translate).toHaveBeenCalledWith(100, 100);
+    expect(ctx.scale).toHaveBeenCalledWith(1.05, 1.05);
   });
 
   it('isPointInButton correctly detects hits within bounding box', () => {
@@ -319,7 +377,7 @@ describe('Level Select Screen (/src/scenes/levelSelectScene.ts)', () => {
 
     if (card1) {
       scene.handleTap(card1.x + card1.w / 2, card1.y + card1.h / 2);
-      expect(startSpy).toHaveBeenCalledWith({ levelId: 1 });
+      expect(startSpy).toHaveBeenCalledWith({ levelId: 1, silentAudio: true });
       expect(switchSpy).toHaveBeenCalledWith('gameplay', { levelId: 1 });
     }
   });
@@ -437,5 +495,35 @@ describe('Results Modal (/src/scenes/resultsModal.ts)', () => {
 
     expect(switchSpy).toHaveBeenCalledWith('levelSelect');
     expect(modal.isOpen()).toBe(false);
+  });
+});
+
+describe('Gameplay Scene Layout & Swatches (/src/scenes/gameplayScene.ts)', () => {
+  let scene: GameplayScene;
+  let ctx: CanvasRenderingContext2D;
+
+  beforeEach(() => {
+    scene = new GameplayScene();
+    ctx = createMockContext();
+    scene.onGetLevel = (id: number) => getLevel(id);
+    scene.enter({ levelId: 1 });
+  });
+
+  it('in landscape mode positions prompt label and swatches with generous clearance', () => {
+    scene.render(ctx, 1280, 720);
+
+    const swatches = scene['swatchRects'];
+    expect(swatches.length).toBeGreaterThan(0);
+
+    const paletteArea = scene['paletteArea'];
+    // In landscape: labelH = 52, margin = 8, so swatches start at paletteArea.y + 60
+    expect(swatches[0].y).toBeGreaterThanOrEqual(paletteArea.y + 60);
+
+    // Prompt header text should be drawn at paletteArea.y + 24 (generous top border clearance)
+    expect(ctx.fillText).toHaveBeenCalledWith(
+      expect.stringContaining('TAP A SHAPE FIRST'),
+      expect.any(Number),
+      paletteArea.y + 24
+    );
   });
 });

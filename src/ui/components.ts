@@ -237,8 +237,12 @@ export function drawButton(ctx: CanvasRenderingContext2D, opts: ButtonOptions): 
     const iconSize = Math.min(w * 0.55, faceHeight * 0.55, fontSize * 1.4);
     drawIcon(ctx, icon, x + w / 2, centerY, iconSize, finalTextColor);
   } else if (text) {
-    // Text only
-    ctx.fillText(text, x + w / 2, centerY + 1);
+    // Text only (explicitly centered using measured width for robust cross-browser and emoji alignment)
+    const textMetrics = ctx.measureText(text);
+    const textStartX = x + (w - textMetrics.width) / 2;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, textStartX, centerY + 1);
   }
 
   // Optional Badge (e.g. level count, notification)
@@ -1060,15 +1064,15 @@ export function drawGlossyGreenButton(
   const shiftY = isPressed && !isDisabled ? shadowDepth - 2 : 0;
   const faceH = h - shadowDepth;
 
-  // 1. Bottom 3D Lip (Spruce Velvet Deep Lip)
-  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, '#0F5132', strokeColor, 3);
+  // 1. Bottom 3D Lip (Spruce Velvet Deep Shadow Lip)
+  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, COLORS.spruceVelvetShadow, strokeColor, 3);
 
-  // 2. Main Face Linear Gradient
+  // 2. Main Face Linear Gradient (Spruce Velvet Dark Green)
   const grad = ctx.createLinearGradient(x, y + shiftY, x, y + shiftY + faceH);
-  grad.addColorStop(0, '#38E094');
-  grad.addColorStop(0.2, '#22C55E');
-  grad.addColorStop(0.7, '#16A34A');
-  grad.addColorStop(1, '#15803D');
+  grad.addColorStop(0, COLORS.spruceVelvetLight);
+  grad.addColorStop(0.3, '#21533C');
+  grad.addColorStop(0.7, COLORS.spruceVelvet);
+  grad.addColorStop(1, COLORS.spruceVelvetShadow);
 
   drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, grad as unknown as string, strokeColor, 3);
 
