@@ -886,12 +886,12 @@ export function drawTicketCard(
   h: number,
   r: number = 28,
   fillColor: string = '#FAF5EC',
-  strokeColor: string = '#D0C2A8',
-  strokeWidth: number = 4,
+  strokeColor: string = '#1B4532',
+  strokeWidth: number = 3.5,
   notchY?: number,
-  notchRadius: number = 16
+  notchRadius: number = 18
 ): void {
-  const path = createTicketPath(x, y, w, h, r, 16, notchY, notchRadius);
+  const path = createTicketPath(x, y, w, h, r, 28, notchY, notchRadius);
   ctx.save();
 
   // Fill
@@ -905,24 +905,6 @@ export function drawTicketCard(
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.stroke(path);
-  }
-
-  // Inner subtle contour frame (inset by 8px)
-  if (strokeColor && strokeWidth > 0 && w > 80 && h > 100) {
-    const innerPad = 10;
-    const innerPath = createTicketPath(
-      x + innerPad,
-      y + innerPad,
-      w - innerPad * 2,
-      h - innerPad * 2,
-      Math.max(12, r - innerPad),
-      14,
-      notchY !== undefined ? notchY : undefined,
-      Math.max(8, notchRadius - 3)
-    );
-    ctx.strokeStyle = 'rgba(208, 194, 168, 0.45)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke(innerPath);
   }
 
   ctx.restore();

@@ -251,11 +251,11 @@ export class ResultsModal implements Scene {
     // Elastic overshoot bounce
     const scale = this.easeOutBack(entryProgress);
 
-    const dialogW = isPortrait ? Math.round(width * 0.89) : Math.min(width - 80, 580);
-    const dialogH = isPortrait ? Math.round(height * 0.66) : Math.min(height - 80, 540);
+    const dialogW = isPortrait ? Math.min(width - 48, 420) : 440;
+    const dialogH = isPortrait ? Math.min(height - 80, 680) : Math.min(height - 60, 640);
     const dialogX = (width - dialogW) / 2;
     const dialogY = (height - dialogH) / 2;
-    const dividerY = isPortrait ? (dialogY + dialogH - 180) : (dialogY + dialogH - 164);
+    const dividerY = dialogY + dialogH - 188;
 
     ctx.save();
     ctx.translate(width / 2, height / 2);
@@ -277,7 +277,7 @@ export class ResultsModal implements Scene {
       18
     );
 
-    // Ticket Card Face in Warm Clotted Cream (#FAF5EC) with biscuit outline (#D0C2A8)
+    // Ticket Card Face in Warm Clotted Cream (#FAF5EC) with rich dark outline (#1B4532) matching reference image
     drawTicketCard(
       ctx,
       dialogX,
@@ -286,22 +286,40 @@ export class ResultsModal implements Scene {
       dialogH,
       28,
       '#FAF5EC',
-      '#D0C2A8',
+      '#1B4532',
       3.5,
       dividerY,
       18
     );
 
+    // Inner rounded panel framing the stars and score results (as shown in reference image)
+    const innerPadX = 16;
+    const innerTop = dialogY + 36;
+    const innerBottom = dividerY - 14;
+    const innerW = dialogW - innerPadX * 2;
+    const innerH = innerBottom - innerTop;
+    drawRoundedRect(
+      ctx,
+      dialogX + innerPadX,
+      innerTop,
+      innerW,
+      innerH,
+      20,
+      '#F5EEDB', // soft warm beige panel matching reference image
+      '#D8C6A5', // clean subtle border
+      1.8
+    );
+
     // Header: Top Curved Red Ribbon Banner ("Splendid! 🎉")
     this.renderBanner(ctx, dialogX, dialogY, dialogW, isPortrait);
 
-    // 3D Golden Stars in Arched Layout
-    this.renderStars(ctx, dialogX, dialogY, dialogW, isPortrait);
+    // 3D Golden Stars in Arched Layout (left and right tucked behind center star)
+    this.renderStars(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop);
 
     // 3D Heading Text ("100% Match!") & Two-Line Subtext
-    this.renderAccuracy(ctx, dialogX, dialogY, dialogW, isPortrait);
+    this.renderAccuracy(ctx, dialogX, dialogY, dialogW, isPortrait, innerTop);
 
-    // Dashed Divider & 3D Glossy Bubble Action Buttons
+    // Dashed Divider & 3D Glossy Action Buttons
     this.renderActionButtons(ctx, dialogX, dialogY, dialogW, dialogH, isPortrait, dividerY);
 
     ctx.restore();
@@ -333,65 +351,128 @@ export class ResultsModal implements Scene {
     isPortrait: boolean
   ): void {
     // Top Curved Red Ribbon / Banner overlapping the top border of the card
-    const ribbonW = Math.min(dw - 40, isPortrait ? 310 : 360);
-    const ribbonH = 64;
+    const ribbonW = Math.min(dw - 36, isPortrait ? 300 : 330);
+    const ribbonH = 60;
     const rx = dx + (dw - ribbonW) / 2;
-    const ry = dy - ribbonH / 2;
-    const tailW = 22;
+    const ry = dy - 26;
+    const tailW = 26;
+    const tailH = 46;
+    const archH = 10; // gentle upward arc
 
     ctx.save();
 
-    // 1. Folded Ribbon Tails in dark crimson
-    ctx.fillStyle = '#660708';
-    // Left tail
+    // 1. Folded Ribbon Tails in crimson with fish-tail notch
+    // Left Tail
     ctx.beginPath();
-    ctx.moveTo(rx - 4, ry + 16);
-    ctx.lineTo(rx - tailW - 8, ry + 24);
-    ctx.lineTo(rx - 4, ry + ribbonH + 8);
+    ctx.moveTo(rx + 6, ry + 16);
+    ctx.lineTo(rx - tailW, ry + 10);
+    ctx.lineTo(rx - tailW + 10, ry + 10 + tailH / 2); // fish-tail notch
+    ctx.lineTo(rx - tailW, ry + 10 + tailH);
+    ctx.lineTo(rx + 6, ry + 10 + tailH - 4);
     ctx.closePath();
+    ctx.fillStyle = '#E63946';
+    ctx.fill();
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Left dark fold shadow
+    ctx.beginPath();
+    ctx.moveTo(rx, ry + 14);
+    ctx.lineTo(rx + 8, ry + 16);
+    ctx.lineTo(rx, ry + ribbonH + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#6A040F';
     ctx.fill();
 
-    // Right tail
+    // Right Tail
     ctx.beginPath();
-    ctx.moveTo(rx + ribbonW + 4, ry + 16);
-    ctx.lineTo(rx + ribbonW + tailW + 8, ry + 24);
-    ctx.lineTo(rx + ribbonW + 4, ry + ribbonH + 8);
+    ctx.moveTo(rx + ribbonW - 6, ry + 16);
+    ctx.lineTo(rx + ribbonW + tailW, ry + 10);
+    ctx.lineTo(rx + ribbonW + tailW - 10, ry + 10 + tailH / 2); // fish-tail notch
+    ctx.lineTo(rx + ribbonW + tailW, ry + 10 + tailH);
+    ctx.lineTo(rx + ribbonW - 6, ry + 10 + tailH - 4);
     ctx.closePath();
+    ctx.fillStyle = '#E63946';
+    ctx.fill();
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Right dark fold shadow
+    ctx.beginPath();
+    ctx.moveTo(rx + ribbonW, ry + 14);
+    ctx.lineTo(rx + ribbonW - 8, ry + 16);
+    ctx.lineTo(rx + ribbonW, ry + ribbonH + 4);
+    ctx.closePath();
+    ctx.fillStyle = '#6A040F';
     ctx.fill();
 
     // 2. Main curved red banner body with 3D bottom bevel
-    drawRoundedRect(ctx, rx, ry + 6, ribbonW, ribbonH, 20, '#A4161A', '#1B4532', 3.5);
+    const buildBannerPath = () => {
+      ctx.beginPath();
+      ctx.moveTo(rx, ry + archH + 6);
+      ctx.quadraticCurveTo(rx + 4, ry + archH, rx + 16, ry + archH - 3);
+      ctx.quadraticCurveTo(rx + ribbonW / 2, ry - archH, rx + ribbonW - 16, ry + archH - 3);
+      ctx.quadraticCurveTo(rx + ribbonW - 4, ry + archH, rx + ribbonW, ry + archH + 6);
+      ctx.lineTo(rx + ribbonW, ry + ribbonH + 2);
+      ctx.quadraticCurveTo(rx + ribbonW - 16, ry + ribbonH - 3, rx + ribbonW / 2, ry + ribbonH - archH);
+      ctx.quadraticCurveTo(rx + 16, ry + ribbonH - 3, rx, ry + ribbonH + 2);
+      ctx.closePath();
+    };
+
+    // Bottom 3D bevel shadow
+    ctx.save();
+    ctx.translate(0, 5);
+    ctx.fillStyle = '#A4161A';
+    buildBannerPath();
+    ctx.fill();
+    ctx.restore();
 
     // Vibrant red gradient face
     const redGrad = ctx.createLinearGradient(rx, ry, rx, ry + ribbonH);
-    redGrad.addColorStop(0, '#FF4D6D');
+    redGrad.addColorStop(0, '#FF5964');
     redGrad.addColorStop(0.3, '#E63946');
     redGrad.addColorStop(1, '#C9184A');
 
-    drawRoundedRect(ctx, rx, ry, ribbonW, ribbonH, 20, redGrad as unknown as string, '#1B4532', 3.5);
+    ctx.fillStyle = redGrad;
+    buildBannerPath();
+    ctx.fill();
 
-    // Gloss highlight on ribbon top
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 3.5;
+    ctx.lineJoin = 'round';
+    buildBannerPath();
+    ctx.stroke();
+
+    // Top Specular Gloss Highlight
+    ctx.save();
+    buildBannerPath();
+    ctx.clip();
     ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
     ctx.beginPath();
     if (typeof ctx.ellipse === 'function') {
-      ctx.ellipse(rx + ribbonW / 2, ry + 12, ribbonW * 0.42, 7, 0, 0, Math.PI * 2);
+      ctx.ellipse(rx + ribbonW / 2, ry + 10, ribbonW * 0.42, 8, 0, 0, Math.PI * 2);
     } else {
-      ctx.arc(rx + ribbonW / 2, ry + 12, 10, 0, Math.PI * 2);
+      ctx.arc(rx + ribbonW / 2, ry + 10, 10, 0, Math.PI * 2);
     }
     ctx.fill();
+    ctx.restore();
 
     // Banner Text: 'Splendid! 🎉'
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = getFont(isPortrait ? 28 : 32, 'extraBold');
+    ctx.font = getFont(isPortrait ? 28 : 30, 'extraBold');
 
     // Text drop shadow
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2 + 2);
+    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2 + 1);
 
     // Text white face
-    ctx.fillStyle = '#FAF5EC';
-    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2 - 1);
     ctx.restore();
   }
 
@@ -400,19 +481,21 @@ export class ResultsModal implements Scene {
     dx: number,
     dy: number,
     dw: number,
-    isPortrait: boolean
+    isPortrait: boolean,
+    innerTop: number
   ): void {
-    const starAreaY = dy + (isPortrait ? 96 : 94);
-    const starSpacing = isPortrait ? 96 : 95;
+    const starAreaY = innerTop + 58;
     const centerX = dx + dw / 2;
-    const sideR = isPortrait ? 38 : 36;
-    const centerR = Math.round(sideR * 1.25); // ~25% larger center star!
+    const sideR = isPortrait ? 34 : 33;
+    const centerR = Math.round(sideR * 1.38); // ~47px
 
-    // Arched layout: center star positioned slightly higher (-10px) than left and right side stars (+14px)
+    // Symmetrical arched star placement matching image:
+    // Left star (-14 deg), Right star (+14 deg), Center star (0 deg, in front!)
+    const sideSpacing = isPortrait ? 66 : 64;
     const starConfigs = [
-      { delay: 300, earned: this.result.stars >= 1, x: centerX - starSpacing, y: starAreaY + 14, r: sideR },
-      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 10, r: centerR },
-      { delay: 900, earned: this.result.stars >= 3, x: centerX + starSpacing, y: starAreaY + 14, r: sideR },
+      { delay: 300, earned: this.result.stars >= 1, x: centerX - sideSpacing, y: starAreaY + 14, r: sideR, rot: -14 * Math.PI / 180, idx: 0 },
+      { delay: 900, earned: this.result.stars >= 3, x: centerX + sideSpacing, y: starAreaY + 14, r: sideR, rot: 14 * Math.PI / 180, idx: 2 },
+      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 8, r: centerR, rot: 0, idx: 1 },
     ];
 
     for (let i = 0; i < 3; i++) {
@@ -431,8 +514,8 @@ export class ResultsModal implements Scene {
           hasGlow = true;
 
           // Spawn burst once when popped
-          if (!this.starPopped[i]) {
-            this.starPopped[i] = true;
+          if (!this.starPopped[cfg.idx]) {
+            this.starPopped[cfg.idx] = true;
             this.spawnStarBurst(cfg.x, cfg.y);
           }
         } else {
@@ -444,6 +527,7 @@ export class ResultsModal implements Scene {
 
       ctx.translate(cfg.x, cfg.y);
       ctx.scale(starScale, starScale);
+      ctx.rotate(cfg.rot);
       draw3DGoldenStar(ctx, 0, 0, cfg.r, isFilled, hasGlow);
       ctx.restore();
     }
@@ -454,9 +538,11 @@ export class ResultsModal implements Scene {
     dx: number,
     dy: number,
     dw: number,
-    isPortrait: boolean
+    isPortrait: boolean,
+    innerTop: number
   ): void {
-    const startY = dy + (isPortrait ? 228 : 208);
+    const starAreaY = innerTop + 58;
+    const startY = starAreaY + (isPortrait ? 66 : 62);
     const centerX = dx + dw / 2;
     const pct = Math.round(this.result.accuracy * 100);
 
@@ -464,38 +550,40 @@ export class ResultsModal implements Scene {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // 1. 3D Heading Text ('100% Match!'): Bubbly 3D-style bright green font with thick dark green outline
-    ctx.font = getFont(isPortrait ? 46 : 44, 'extraBold');
+    // 1. 3D Heading Text ('100% Match!'): Bubbly 3D green text with thick dark green 3D extrusion
+    ctx.font = getFont(isPortrait ? 44 : 42, 'extraBold');
     const matchText = `${pct}% Match!`;
 
-    // Subtle bottom extrusion shadow
-    ctx.fillStyle = '#0D281E';
-    ctx.fillText(matchText, centerX, startY + 5);
+    // 3D bottom extrusion shadow
+    ctx.fillStyle = '#0F5132';
+    for (let offset = 1; offset <= 5; offset++) {
+      ctx.fillText(matchText, centerX, startY + offset);
+    }
 
     // Thick dark green outline (#1B4532)
     ctx.strokeStyle = '#1B4532';
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 7;
     ctx.lineJoin = 'round';
     ctx.strokeText(matchText, centerX, startY);
 
     // Bright green 3D face gradient
-    const greenGrad = ctx.createLinearGradient(centerX, startY - 24, centerX, startY + 24);
+    const greenGrad = ctx.createLinearGradient(centerX, startY - 20, centerX, startY + 20);
     greenGrad.addColorStop(0, '#55EFC4');
-    greenGrad.addColorStop(0.4, '#2ECC71');
+    greenGrad.addColorStop(0.35, '#2ECC71');
     greenGrad.addColorStop(1, '#27AE60');
     ctx.fillStyle = greenGrad;
     ctx.fillText(matchText, centerX, startY);
 
     // 2. Subtitle detail ('3 of 3 shapes matched!') bold and centered directly below heading
-    ctx.font = getFont(isPortrait ? 21 : 20, 'bold');
-    ctx.fillStyle = COLORS.spruceVelvet;
+    ctx.font = getFont(isPortrait ? 20 : 19, 'extraBold');
+    ctx.fillStyle = '#1B4532';
     const detailText =
       this.result.totalRegions > 0
         ? `${this.result.correctRegions} of ${this.result.totalRegions} shapes matched!`
         : `Level ${this.levelId} Completed!`;
-    ctx.fillText(detailText, centerX, startY + 42);
+    ctx.fillText(detailText, centerX, startY + 36);
 
-    // 3. Subtext with 18px top padding, split across two centered lines
+    // 3. Subtext split across two centered lines
     const starsEarned = this.result.stars;
     let line1: string;
     let line2: string;
@@ -508,11 +596,11 @@ export class ResultsModal implements Scene {
       line2 = 'Try again to earn more stars!';
     }
 
-    ctx.font = getFont(isPortrait ? 18 : 17, 'bold');
-    ctx.fillStyle = COLORS.spruceVelvet;
-    const textBaseY = startY + 42 + 28; // padded down
+    ctx.font = getFont(isPortrait ? 16 : 15, 'bold');
+    ctx.fillStyle = '#2C2C2E';
+    const textBaseY = startY + 68;
     ctx.fillText(line1, centerX, textBaseY);
-    ctx.fillText(line2, centerX, textBaseY + 24);
+    ctx.fillText(line2, centerX, textBaseY + 22);
 
     ctx.restore();
   }
@@ -534,19 +622,18 @@ export class ResultsModal implements Scene {
       ctx.setLineDash([10, 8]);
     }
     ctx.strokeStyle = '#D0C2A8';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(dx + 20, dividerY);
-    ctx.lineTo(dx + dw - 20, dividerY);
+    ctx.moveTo(dx + 18, dividerY);
+    ctx.lineTo(dx + dw - 18, dividerY);
     ctx.stroke();
     ctx.restore();
 
-    // 2. 3D Glossy Buttons matching reference image
-    // Wide full-width Next Level Button directly below dashed line
+    // 2. Next Level Button: Wide full-width pill button directly below dashed line
     const nextBtnW = dw - 48;
-    const nextBtnH = isPortrait ? 68 : 60;
+    const nextBtnH = isPortrait ? 60 : 56;
     const nextBtnX = dx + 24;
-    const nextBtnY = dividerY + 14;
+    const nextBtnY = dividerY + 16;
 
     this.nextBtnRect = {
       x: nextBtnX,
@@ -562,8 +649,8 @@ export class ResultsModal implements Scene {
         w: this.nextBtnRect.w,
         h: this.nextBtnRect.h,
         text: 'Next Level ➔',
-        fontSize: isPortrait ? 26 : 24,
-        radius: 22,
+        fontSize: isPortrait ? 25 : 23,
+        radius: Math.round(nextBtnH / 2),
         isPressed: this.pressedBtnId === 'next',
       });
     }
@@ -571,7 +658,7 @@ export class ResultsModal implements Scene {
     // Side-by-side Replay & Levels buttons below Next Level
     const subRowY = nextBtnY + nextBtnH + 12;
     const subBtnW = (dw - 48 - 14) / 2;
-    const subBtnH = isPortrait ? 62 : 54;
+    const subBtnH = isPortrait ? 54 : 50;
 
     this.replayBtnRect = {
       x: dx + 24,
@@ -585,8 +672,8 @@ export class ResultsModal implements Scene {
       y: this.replayBtnRect.y,
       w: this.replayBtnRect.w,
       h: this.replayBtnRect.h,
-      fontSize: isPortrait ? 22 : 20,
-      radius: 20,
+      fontSize: isPortrait ? 21 : 19,
+      radius: Math.round(subBtnH / 2),
       isPressed: this.pressedBtnId === 'replay',
     });
 
@@ -602,8 +689,8 @@ export class ResultsModal implements Scene {
       y: this.levelSelectBtnRect.y,
       w: this.levelSelectBtnRect.w,
       h: this.levelSelectBtnRect.h,
-      fontSize: isPortrait ? 22 : 20,
-      radius: 20,
+      fontSize: isPortrait ? 21 : 19,
+      radius: Math.round(subBtnH / 2),
       isPressed: this.pressedBtnId === 'levelSelect',
     });
   }
