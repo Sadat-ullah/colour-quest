@@ -733,75 +733,66 @@ export class SoundEffects {
   }
 
   /**
-   * playNextLevel: bright, clean, rewarding 2-note upward chime (C5 -> G5)
-   * soft sine + triangle harmonic blend with fast 10ms attack, smooth 180ms decay,
-   * and 2400Hz low-pass filter with zero harshness.
+   * Shared helper: one soft, glassy "bell/pluck" note.
+   * Fundamental + two quiet, faster-decaying overtones, smooth attack,
+   * exponential decay to near silence (no clicks), gentle lowpass.
    */
-  /**
-   * playNextLevel: warm, soothing wooden marimba chime (D4: 293.7Hz -> A4: 440.0Hz)
-   * 100% pure sine + acoustic lowpass at 1100Hz, soft 15ms rounded attack, zero harshness
-   */
-  public playNextLevel(volMultiplier: number = 1.0): void {
-    this.stopCelebration();
-    const ready = this.prepareContext();
-    if (!ready) return;
-    const { ctx, master } = ready;
-    const now = ctx.currentTime;
-    const vol = Math.max(0, Math.min(1, volMultiplier));
-
-    // Warm, soothing 2-note acoustic marimba chime
-    const notes = [
-      { freq: 293.66, delay: 0.000, dur: 0.18, gain: 0.50 }, // D4 (warm, rich fundamental)
-      { freq: 440.00, delay: 0.080, dur: 0.22, gain: 0.55 }, // A4 (gentle harmonic fourth)
+  private playBellNote(
+    ctx: AudioContext,
+    dest: AudioNode,
+    freq: number,
+    startTime: number,
+    dur: number,
+    peak: number
+  ): void {
+    const partials = [
+      { ratio: 1, amp: 1.0, decay: 1.0 },
+      { ratio: 2, amp: 0.22, decay: 0.6 },
+      { ratio: 3, amp: 0.07, decay: 0.35 },
     ];
 
-    notes.forEach(({ freq, delay, dur, gain: weight }) => {
-      const t = now + delay;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(3800, startTime);
+    filter.Q.setValueAtTime(0.5, startTime);
+    filter.connect(dest);
 
+    const oscs: OscillatorNode[] = [];
+    const gains: GainNode[] = [];
+
+    partials.forEach(({ ratio, amp, decay }) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
+      const d = dur * decay;
 
-      // Pure smooth sine wave (no triangle buzzing or harsh overtones)
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, t);
+      osc.frequency.setValueAtTime(freq * ratio, startTime);
 
-      // Warm wooden acoustic lowpass filter locked at 1100Hz
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(1100, t);
-      filter.Q.setValueAtTime(0.7, t);
-
-      // Soft 15ms rounded attack, smooth natural decay
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.linearRampToValueAtTime(weight * vol, t + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-      gain.gain.setValueAtTime(0, t + dur + 0.001);
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.linearRampToValueAtTime(peak * amp, startTime + 0.008); // soft attack
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + d);    // smooth tail
 
       osc.connect(gain);
       gain.connect(filter);
-      filter.connect(master);
+      osc.start(startTime);
+      osc.stop(startTime + d + 0.03);
 
-      osc.start(t);
-      osc.stop(t + dur + 0.02);
+      oscs.push(osc);
+      gains.push(gain);
+    });
 
-      osc.onended = () => {
-        osc.disconnect();
-        gain.disconnect();
+    if (oscs[0]) {
+      oscs[0].onended = () => {
+        oscs.forEach(o => o.disconnect());
+        gains.forEach(g => g.disconnect());
         filter.disconnect();
       };
-    });
+    }
   }
 
   /**
-   * playLevelTransition: alias for warm marimba level transition sound
-   */
-  public playLevelTransition(volMultiplier: number = 1.0): void {
-    this.playNextLevel(volMultiplier);
-  }
-
-  /**
-   * playLetsPlay: gentle, satisfying warm bubble "bloop" (260Hz -> 392Hz pitch sweep)
-   * Pure rounded sine tone with 1200Hz lowpass filter, 10ms soft attack, zero harshness
+   * playLetsPlay: bright, friendly two-note "pop-up" (C5 -> G5)
+   * Short, soft bell tones, an open perfect fifth = clean and happy.
    */
   public playLetsPlay(volMultiplier: number = 1.0): void {
     this.stopCelebration();
@@ -811,54 +802,32 @@ export class SoundEffects {
     const now = ctx.currentTime;
     const vol = Math.max(0, Math.min(1, volMultiplier));
 
-    // Warm fundamental pitch-sweeping sine bubble
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
+    this.playBellNote(ctx, master, 523.25, now,         0.28, 0.30 * vol); // C5
+    this.playBellNote(ctx, master, 783.99, now + 0.075, 0.40, 0.34 * vol); // G5
+  }
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(260, now);
-    osc.frequency.exponentialRampToValueAtTime(392, now + 0.050);
+  /**
+   * playNextLevel: gentle rising major arpeggio (E5 -> G5 -> C6)
+   * Reads as "success / moving on" without being loud or harsh.
+   */
+  public playNextLevel(volMultiplier: number = 1.0): void {
+    this.stopCelebration();
+    const ready = this.prepareContext();
+    if (!ready) return;
+    const { ctx, master } = ready;
+    const now = ctx.currentTime;
+    const vol = Math.max(0, Math.min(1, volMultiplier));
 
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1200, now);
-    filter.Q.setValueAtTime(0.7, now);
+    this.playBellNote(ctx, master, 659.25,  now,         0.30, 0.28 * vol); // E5
+    this.playBellNote(ctx, master, 783.99,  now + 0.075, 0.30, 0.30 * vol); // G5
+    this.playBellNote(ctx, master, 1046.50, now + 0.150, 0.55, 0.34 * vol); // C6
+  }
 
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.linearRampToValueAtTime(0.55 * vol, now + 0.010);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.130);
-    gain.gain.setValueAtTime(0, now + 0.131);
-
-    // Subtle soft second harmonic for depth
-    const harmOsc = ctx.createOscillator();
-    const harmGain = ctx.createGain();
-    harmOsc.type = 'sine';
-    harmOsc.frequency.setValueAtTime(520, now);
-    harmOsc.frequency.exponentialRampToValueAtTime(784, now + 0.050);
-
-    harmGain.gain.setValueAtTime(0.0001, now);
-    harmGain.gain.linearRampToValueAtTime(0.18 * vol, now + 0.010);
-    harmGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.090);
-    harmGain.gain.setValueAtTime(0, now + 0.091);
-
-    osc.connect(gain);
-    harmOsc.connect(harmGain);
-    gain.connect(filter);
-    harmGain.connect(filter);
-    filter.connect(master);
-
-    osc.start(now);
-    harmOsc.start(now);
-    osc.stop(now + 0.15);
-    harmOsc.stop(now + 0.15);
-
-    osc.onended = () => {
-      osc.disconnect();
-      harmOsc.disconnect();
-      gain.disconnect();
-      harmGain.disconnect();
-      filter.disconnect();
-    };
+  /**
+   * playLevelTransition: alias for warm bell level transition sound
+   */
+  public playLevelTransition(volMultiplier: number = 1.0): void {
+    this.playNextLevel(volMultiplier);
   }
 }
 
