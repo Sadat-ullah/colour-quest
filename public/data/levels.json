@@ -1,0 +1,8354 @@
+[
+  {
+    "id": 1,
+    "name": "Ruby Circle",
+    "category": "tutorial",
+    "difficulty": 1,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 130,
+        "targetColor": "#FF3B30",
+        "label": "Ruby Circle"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#34C759",
+      "#007AFF"
+    ],
+    "background": "#F8F9FA"
+  },
+  {
+    "id": 2,
+    "name": "Ocean Square",
+    "category": "tutorial",
+    "difficulty": 1,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 135,
+        "y": 135,
+        "w": 230,
+        "h": 230,
+        "radius": 24,
+        "targetColor": "#007AFF",
+        "label": "Sapphire Square"
+      }
+    ],
+    "palette": [
+      "#007AFF",
+      "#FF9500",
+      "#FFCC00"
+    ],
+    "background": "#F8F9FA"
+  },
+  {
+    "id": 3,
+    "name": "Golden Triangle",
+    "category": "tutorial",
+    "difficulty": 1,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          110.0,
+          390.0,
+          390.0,
+          110.0,
+          390.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Golden Triangle"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#AF52DE",
+      "#34C759"
+    ],
+    "background": "#F8F9FA"
+  },
+  {
+    "id": 4,
+    "name": "Sun & Moon",
+    "category": "tutorial",
+    "difficulty": 1,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 170,
+        "cy": 250,
+        "r": 80,
+        "targetColor": "#FF9500",
+        "label": "Sun Disc"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 330,
+        "cy": 250,
+        "r": 80,
+        "targetColor": "#5856D6",
+        "label": "Moon Disc"
+      }
+    ],
+    "palette": [
+      "#FF9500",
+      "#5856D6",
+      "#34C759"
+    ],
+    "background": "#F0F4F8"
+  },
+  {
+    "id": 5,
+    "name": "Sweet Heart",
+    "category": "tutorial",
+    "difficulty": 1,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 230,
+        "size": 200,
+        "targetColor": "#FF2D55",
+        "label": "Pink Heart"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 220,
+        "innerR": 190,
+        "targetColor": "#FFCC00",
+        "label": "Golden Ring"
+      }
+    ],
+    "palette": [
+      "#FF2D55",
+      "#FFCC00",
+      "#007AFF"
+    ],
+    "background": "#FFF0F5"
+  },
+  {
+    "id": 6,
+    "name": "Shining Star",
+    "category": "basic_shapes",
+    "difficulty": 2,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 5,
+        "outerR": 160,
+        "innerR": 80,
+        "targetColor": "#FFCC00",
+        "label": "Star Core"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 45,
+        "targetColor": "#FF9500",
+        "label": "Center Disc"
+      },
+      {
+        "id": "r3",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 220,
+        "innerR": 195,
+        "targetColor": "#5856D6",
+        "label": "Cosmic Ring"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#5856D6",
+      "#34C759"
+    ],
+    "background": "#1A1A2E"
+  },
+  {
+    "id": 7,
+    "name": "Twin Hearts",
+    "category": "basic_shapes",
+    "difficulty": 2,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "heart",
+        "cx": 180,
+        "cy": 235,
+        "size": 130,
+        "targetColor": "#FF2D55",
+        "label": "Left Heart"
+      },
+      {
+        "id": "r2",
+        "shape": "heart",
+        "cx": 320,
+        "cy": 235,
+        "size": 130,
+        "targetColor": "#AF52DE",
+        "label": "Right Heart"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 370,
+        "points": 4,
+        "outerR": 40,
+        "innerR": 18,
+        "targetColor": "#FFCC00",
+        "label": "Sparkle Star"
+      }
+    ],
+    "palette": [
+      "#FF2D55",
+      "#AF52DE",
+      "#FFCC00",
+      "#007AFF"
+    ],
+    "background": "#FFF5F7"
+  },
+  {
+    "id": 8,
+    "name": "Four-Leaf Clover",
+    "category": "basic_shapes",
+    "difficulty": 2,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 165,
+        "rx": 55,
+        "ry": 75,
+        "targetColor": "#34C759",
+        "label": "Top Petal"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 335,
+        "rx": 55,
+        "ry": 75,
+        "targetColor": "#34C759",
+        "label": "Bottom Petal"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 165,
+        "cy": 250,
+        "rx": 75,
+        "ry": 55,
+        "targetColor": "#30D158",
+        "label": "Left Petal"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 335,
+        "cy": 250,
+        "rx": 75,
+        "ry": 55,
+        "targetColor": "#30D158",
+        "label": "Right Petal"
+      }
+    ],
+    "palette": [
+      "#34C759",
+      "#30D158",
+      "#FFCC00",
+      "#FF9500"
+    ],
+    "background": "#F2FBF4"
+  },
+  {
+    "id": 9,
+    "name": "Daisy Blossom",
+    "category": "basic_shapes",
+    "difficulty": 2,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 250,
+        "rx": 45,
+        "ry": 175,
+        "targetColor": "#FFFFFF",
+        "label": "Vertical Petals"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 250,
+        "rx": 175,
+        "ry": 45,
+        "targetColor": "#FFFFFF",
+        "label": "Horizontal Petals"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 55,
+        "targetColor": "#FFCC00",
+        "label": "Daisy Center"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 240,
+        "y": 350,
+        "w": 20,
+        "h": 100,
+        "targetColor": "#34C759",
+        "label": "Daisy Stem"
+      }
+    ],
+    "palette": [
+      "#FFFFFF",
+      "#FFCC00",
+      "#34C759",
+      "#5AC8FA"
+    ],
+    "background": "#E8F4FD"
+  },
+  {
+    "id": 10,
+    "name": "Brilliant Diamond",
+    "category": "basic_shapes",
+    "difficulty": 2,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          150.0,
+          160.0,
+          350.0,
+          160.0,
+          410.0,
+          230.0,
+          90.0,
+          230.0
+        ],
+        "targetColor": "#5AC8FA",
+        "label": "Diamond Crown"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          90.0,
+          230.0,
+          250.0,
+          390.0,
+          250.0,
+          230.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Pavilion Left"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          410.0,
+          230.0,
+          250.0,
+          390.0,
+          250.0,
+          230.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Pavilion Right"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          190.0,
+          160.0,
+          310.0,
+          160.0,
+          340.0,
+          230.0,
+          160.0,
+          230.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Center Table"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#007AFF",
+      "#FFFFFF",
+      "#FFCC00"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 11,
+    "name": "Bullseye Target",
+    "category": "basic_shapes",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 40,
+        "targetColor": "#FF3B30",
+        "label": "Center Bullseye"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 90,
+        "innerR": 45,
+        "targetColor": "#FFFFFF",
+        "label": "Inner White Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 145,
+        "innerR": 95,
+        "targetColor": "#FF3B30",
+        "label": "Middle Red Ring"
+      },
+      {
+        "id": "r4",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 200,
+        "innerR": 150,
+        "targetColor": "#007AFF",
+        "label": "Outer Blue Ring"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFFFFF",
+      "#007AFF",
+      "#FFCC00"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 12,
+    "name": "Magic Hexagon",
+    "category": "basic_shapes",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          430.0,
+          250.0,
+          340.0,
+          405.9,
+          160.0,
+          405.9,
+          70.0,
+          250.0,
+          160.0,
+          94.1,
+          340.0,
+          94.1
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Outer Hexagon"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          349.6,
+          307.5,
+          250.0,
+          365.0,
+          150.4,
+          307.5,
+          150.4,
+          192.5,
+          250.0,
+          135.0,
+          349.6,
+          192.5
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Inner Hexagon"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 6,
+        "outerR": 60,
+        "innerR": 28,
+        "targetColor": "#FFCC00",
+        "label": "Center Crystal"
+      }
+    ],
+    "palette": [
+      "#AF52DE",
+      "#FF2D55",
+      "#FFCC00",
+      "#30D158"
+    ],
+    "background": "#2E1065"
+  },
+  {
+    "id": 13,
+    "name": "Crescent Moon & Star",
+    "category": "basic_shapes",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ring",
+        "cx": 230,
+        "cy": 250,
+        "outerR": 175,
+        "innerR": 130,
+        "targetColor": "#FFCC00",
+        "label": "Crescent Moon"
+      },
+      {
+        "id": "r2",
+        "shape": "star",
+        "cx": 320,
+        "cy": 210,
+        "points": 5,
+        "outerR": 55,
+        "innerR": 25,
+        "targetColor": "#5AC8FA",
+        "label": "Bright Star"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 310,
+        "cy": 310,
+        "points": 4,
+        "outerR": 35,
+        "innerR": 16,
+        "targetColor": "#AF52DE",
+        "label": "Little Star"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#5AC8FA",
+      "#AF52DE",
+      "#FF2D55"
+    ],
+    "background": "#090D16"
+  },
+  {
+    "id": 14,
+    "name": "Colorful Pinwheel",
+    "category": "basic_shapes",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          250.0,
+          370.0,
+          150.0,
+          290.0,
+          130.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Red Blade"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          250.0,
+          350.0,
+          370.0,
+          370.0,
+          290.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Yellow Blade"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          250.0,
+          130.0,
+          350.0,
+          210.0,
+          370.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Green Blade"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          250.0,
+          150.0,
+          130.0,
+          130.0,
+          210.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Blue Blade"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFCC00",
+      "#34C759",
+      "#007AFF"
+    ],
+    "background": "#F1F5F9"
+  },
+  {
+    "id": 15,
+    "name": "Royal Crown",
+    "category": "basic_shapes",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          130.0,
+          330.0,
+          370.0,
+          330.0,
+          370.0,
+          200.0,
+          310.0,
+          260.0,
+          250.0,
+          170.0,
+          190.0,
+          260.0,
+          130.0,
+          200.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Crown Peaks"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 130,
+        "y": 330,
+        "w": 240,
+        "h": 40,
+        "radius": 8,
+        "targetColor": "#FF9500",
+        "label": "Crown Band"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 280,
+        "r": 24,
+        "targetColor": "#FF3B30",
+        "label": "Center Ruby"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 190,
+        "cy": 295,
+        "r": 16,
+        "targetColor": "#007AFF",
+        "label": "Left Sapphire"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#FF3B30",
+      "#007AFF"
+    ],
+    "background": "#1E1B4B"
+  },
+  {
+    "id": 16,
+    "name": "Golden Sun",
+    "category": "simple_objects",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 95,
+        "targetColor": "#FFCC00",
+        "label": "Sun Center"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 150,
+        "innerR": 115,
+        "targetColor": "#FF9500",
+        "label": "Sun Halo"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 8,
+        "outerR": 210,
+        "innerR": 160,
+        "targetColor": "#FFB300",
+        "label": "Solar Rays"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 35,
+        "targetColor": "#FF3B30",
+        "label": "Sun Core"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#FFB300",
+      "#FF3B30",
+      "#5AC8FA"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 17,
+    "name": "Cozy Cottage",
+    "category": "simple_objects",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          230.0,
+          250.0,
+          120.0,
+          380.0,
+          230.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Red Roof"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 140,
+        "y": 230,
+        "w": 220,
+        "h": 160,
+        "targetColor": "#FFCC00",
+        "label": "House Wall"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 225,
+        "y": 290,
+        "w": 50,
+        "h": 100,
+        "radius": 8,
+        "targetColor": "#8D6E63",
+        "label": "Wooden Door"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 160,
+        "y": 260,
+        "w": 45,
+        "h": 45,
+        "radius": 4,
+        "targetColor": "#5AC8FA",
+        "label": "Glass Window"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFCC00",
+      "#8D6E63",
+      "#5AC8FA",
+      "#34C759"
+    ],
+    "background": "#F0FDF4"
+  },
+  {
+    "id": 18,
+    "name": "Little Sailboat",
+    "category": "simple_objects",
+    "difficulty": 3,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          330.0,
+          390.0,
+          330.0,
+          340.0,
+          400.0,
+          160.0,
+          400.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Boat Hull"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 245,
+        "y": 140,
+        "w": 10,
+        "h": 190,
+        "targetColor": "#2C2C2E",
+        "label": "Boat Mast"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          150.0,
+          370.0,
+          310.0,
+          260.0,
+          310.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Main Sail"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          170.0,
+          140.0,
+          310.0,
+          240.0,
+          310.0
+        ],
+        "targetColor": "#5AC8FA",
+        "label": "Jib Sail"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#2C2C2E",
+      "#FFFFFF",
+      "#5AC8FA",
+      "#FF9500"
+    ],
+    "background": "#BAE6FD"
+  },
+  {
+    "id": 19,
+    "name": "Little Red Car",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 120,
+        "y": 270,
+        "w": 260,
+        "h": 80,
+        "radius": 16,
+        "targetColor": "#FF3B30",
+        "label": "Car Chassis"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 170,
+        "y": 200,
+        "w": 160,
+        "h": 75,
+        "radius": 12,
+        "targetColor": "#FF3B30",
+        "label": "Car Cabin"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 185,
+        "y": 210,
+        "w": 130,
+        "h": 55,
+        "radius": 8,
+        "targetColor": "#5AC8FA",
+        "label": "Car Window"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 180,
+        "cy": 350,
+        "r": 32,
+        "targetColor": "#2C2C2E",
+        "label": "Front Wheel"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 320,
+        "cy": 350,
+        "r": 32,
+        "targetColor": "#2C2C2E",
+        "label": "Rear Wheel"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#5AC8FA",
+      "#2C2C2E",
+      "#FFCC00",
+      "#34C759"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 20,
+    "name": "Mighty Oak Tree",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 225,
+        "y": 280,
+        "w": 50,
+        "h": 140,
+        "targetColor": "#8D6E63",
+        "label": "Tree Trunk"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 240,
+        "rx": 140,
+        "ry": 80,
+        "targetColor": "#1B5E20",
+        "label": "Lower Canopy"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 185,
+        "rx": 110,
+        "ry": 75,
+        "targetColor": "#34C759",
+        "label": "Mid Canopy"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 130,
+        "r": 60,
+        "targetColor": "#30D158",
+        "label": "Top Foliage"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#1B5E20",
+      "#34C759",
+      "#30D158",
+      "#FF3B30"
+    ],
+    "background": "#EFF6FF"
+  },
+  {
+    "id": 21,
+    "name": "Rainy Umbrella",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 260,
+        "r": 140,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#AF52DE",
+        "label": "Umbrella Canopy"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 246,
+        "y": 260,
+        "w": 8,
+        "h": 110,
+        "targetColor": "#2C2C2E",
+        "label": "Umbrella Shaft"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 160,
+        "cy": 390,
+        "r": 14,
+        "targetColor": "#5AC8FA",
+        "label": "Raindrop 1"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 420,
+        "r": 14,
+        "targetColor": "#5AC8FA",
+        "label": "Raindrop 2"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 340,
+        "cy": 380,
+        "r": 14,
+        "targetColor": "#5AC8FA",
+        "label": "Raindrop 3"
+      }
+    ],
+    "palette": [
+      "#AF52DE",
+      "#2C2C2E",
+      "#5AC8FA",
+      "#FFCC00",
+      "#FF2D55"
+    ],
+    "background": "#F1F5F9"
+  },
+  {
+    "id": 22,
+    "name": "Retro Rocket",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 215,
+        "y": 170,
+        "w": 70,
+        "h": 160,
+        "radius": 20,
+        "targetColor": "#FFFFFF",
+        "label": "Rocket Fuselage"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          215.0,
+          170.0,
+          250.0,
+          90.0,
+          285.0,
+          170.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Nose Cone"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          215.0,
+          280.0,
+          160.0,
+          340.0,
+          215.0,
+          330.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Left Fin"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          285.0,
+          280.0,
+          340.0,
+          340.0,
+          285.0,
+          330.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Right Fin"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          230.0,
+          330.0,
+          250.0,
+          400.0,
+          270.0,
+          330.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Rocket Flame"
+      }
+    ],
+    "palette": [
+      "#FFFFFF",
+      "#FF3B30",
+      "#007AFF",
+      "#FF9500",
+      "#FFCC00"
+    ],
+    "background": "#0B132B"
+  },
+  {
+    "id": 23,
+    "name": "Grandfather Clock",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 160,
+        "y": 110,
+        "w": 180,
+        "h": 300,
+        "radius": 14,
+        "targetColor": "#8D6E63",
+        "label": "Clock Cabinet"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 190,
+        "r": 60,
+        "targetColor": "#FFFFFF",
+        "label": "Clock Face"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 246,
+        "y": 255,
+        "w": 8,
+        "h": 85,
+        "targetColor": "#FFB300",
+        "label": "Pendulum Rod"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 355,
+        "r": 24,
+        "targetColor": "#FFCC00",
+        "label": "Pendulum Bob"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#FFFFFF",
+      "#FFB300",
+      "#FFCC00",
+      "#34C759"
+    ],
+    "background": "#FEF3C7"
+  },
+  {
+    "id": 24,
+    "name": "Delicious Ice Cream",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          260.0,
+          320.0,
+          260.0,
+          250.0,
+          420.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Waffle Cone"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 240,
+        "r": 65,
+        "targetColor": "#FF2D55",
+        "label": "Strawberry Scoop"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 165,
+        "r": 55,
+        "targetColor": "#FFF59D",
+        "label": "Vanilla Scoop"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 95,
+        "r": 22,
+        "targetColor": "#FF3B30",
+        "label": "Cherry on Top"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#FF2D55",
+      "#FFF59D",
+      "#FF3B30",
+      "#5AC8FA"
+    ],
+    "background": "#FFF1F2"
+  },
+  {
+    "id": 25,
+    "name": "Steaming Coffee Mug",
+    "category": "simple_objects",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 160,
+        "y": 210,
+        "w": 140,
+        "h": 150,
+        "radius": 16,
+        "targetColor": "#5AC8FA",
+        "label": "Ceramic Mug"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 310,
+        "cy": 285,
+        "outerR": 45,
+        "innerR": 28,
+        "targetColor": "#5AC8FA",
+        "label": "Mug Handle"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 230,
+        "cy": 220,
+        "rx": 60,
+        "ry": 20,
+        "targetColor": "#5D4037",
+        "label": "Hot Coffee"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          220.0,
+          190.0,
+          240.0,
+          150.0,
+          220.0,
+          120.0,
+          230.0,
+          120.0,
+          250.0,
+          150.0,
+          230.0,
+          190.0
+        ],
+        "targetColor": "#E5E5EA",
+        "label": "Steam Wisp"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#5D4037",
+      "#E5E5EA",
+      "#FF9500",
+      "#FFCC00"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 26,
+    "name": "Hot Air Balloon",
+    "category": "simple_objects",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 190,
+        "rx": 110,
+        "ry": 130,
+        "targetColor": "#FF3B30",
+        "label": "Balloon Body"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 190,
+        "rx": 60,
+        "ry": 125,
+        "targetColor": "#FFCC00",
+        "label": "Center Stripe"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 225,
+        "y": 360,
+        "w": 50,
+        "h": 40,
+        "radius": 6,
+        "targetColor": "#8D6E63",
+        "label": "Passenger Basket"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 240,
+        "y": 320,
+        "w": 20,
+        "h": 40,
+        "targetColor": "#2C2C2E",
+        "label": "Burner Ropes"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFCC00",
+      "#8D6E63",
+      "#2C2C2E",
+      "#007AFF"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 27,
+    "name": "Traffic Light",
+    "category": "simple_objects",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 180,
+        "y": 110,
+        "w": 140,
+        "h": 280,
+        "radius": 20,
+        "targetColor": "#2C2C2E",
+        "label": "Signal Box"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 165,
+        "r": 34,
+        "targetColor": "#FF3B30",
+        "label": "Red Light"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 34,
+        "targetColor": "#FFB300",
+        "label": "Amber Light"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 335,
+        "r": 34,
+        "targetColor": "#34C759",
+        "label": "Green Light"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#FF3B30",
+      "#FFB300",
+      "#34C759",
+      "#007AFF"
+    ],
+    "background": "#F1F5F9"
+  },
+  {
+    "id": 28,
+    "name": "Flying Diamond Kite",
+    "category": "simple_objects",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          90.0,
+          340.0,
+          210.0,
+          250.0,
+          210.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Kite Top Right"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          90.0,
+          160.0,
+          210.0,
+          250.0,
+          210.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Kite Top Left"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          160.0,
+          210.0,
+          250.0,
+          360.0,
+          250.0,
+          210.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Kite Bottom Left"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          340.0,
+          210.0,
+          250.0,
+          360.0,
+          250.0,
+          210.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Kite Bottom Right"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          380.0,
+          235.0,
+          410.0,
+          265.0,
+          410.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Tail Ribbon Bow"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFCC00",
+      "#007AFF",
+      "#34C759",
+      "#FF2D55"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 29,
+    "name": "Glow Lightbulb",
+    "category": "simple_objects",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 200,
+        "r": 85,
+        "targetColor": "#FFCC00",
+        "label": "Glass Bulb"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          200.0,
+          250.0,
+          300.0,
+          250.0,
+          280.0,
+          310.0,
+          220.0,
+          310.0
+        ],
+        "targetColor": "#FFF59D",
+        "label": "Bulb Neck"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 220,
+        "y": 310,
+        "w": 60,
+        "h": 45,
+        "radius": 6,
+        "targetColor": "#8E8E93",
+        "label": "Screw Base"
+      },
+      {
+        "id": "r4",
+        "shape": "star",
+        "cx": 250,
+        "cy": 200,
+        "points": 4,
+        "outerR": 35,
+        "innerR": 15,
+        "targetColor": "#FF9500",
+        "label": "Tungsten Filament"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FFF59D",
+      "#8E8E93",
+      "#FF9500",
+      "#007AFF"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 30,
+    "name": "Birthday Cake",
+    "category": "simple_objects",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 130,
+        "y": 280,
+        "w": 240,
+        "h": 90,
+        "radius": 12,
+        "targetColor": "#FF2D55",
+        "label": "Bottom Tier"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 165,
+        "y": 200,
+        "w": 170,
+        "h": 80,
+        "radius": 10,
+        "targetColor": "#FFFFFF",
+        "label": "Top Tier"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 243,
+        "y": 140,
+        "w": 14,
+        "h": 60,
+        "targetColor": "#5AC8FA",
+        "label": "Candle"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          95.0,
+          262.0,
+          135.0,
+          238.0,
+          135.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Candle Flame"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 195,
+        "rx": 80,
+        "ry": 14,
+        "targetColor": "#FF3B30",
+        "label": "Frosting Swirl"
+      }
+    ],
+    "palette": [
+      "#FF2D55",
+      "#FFFFFF",
+      "#5AC8FA",
+      "#FFCC00",
+      "#FF3B30"
+    ],
+    "background": "#FDF2F8"
+  },
+  {
+    "id": 31,
+    "name": "Playful Kitten",
+    "category": "animals",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 260,
+        "r": 95,
+        "targetColor": "#FFB300",
+        "label": "Cat Face"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          165.0,
+          205.0,
+          140.0,
+          120.0,
+          215.0,
+          175.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Left Ear"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          285.0,
+          175.0,
+          360.0,
+          120.0,
+          335.0,
+          205.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Right Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 290,
+        "rx": 48,
+        "ry": 30,
+        "targetColor": "#FFFFFF",
+        "label": "Muzzle"
+      },
+      {
+        "id": "r5",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 275,
+        "size": 22,
+        "targetColor": "#FF2D55",
+        "label": "Nose Heart"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 215,
+        "cy": 240,
+        "r": 14,
+        "targetColor": "#2C2C2E",
+        "label": "Left Eye"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#FFFFFF",
+      "#FF2D55",
+      "#2C2C2E",
+      "#34C759"
+    ],
+    "background": "#FFFBEB"
+  },
+  {
+    "id": 32,
+    "name": "Happy Puppy",
+    "category": "animals",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 170,
+        "y": 170,
+        "w": 160,
+        "h": 150,
+        "radius": 30,
+        "targetColor": "#8D6E63",
+        "label": "Puppy Face"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          170.0,
+          180.0,
+          120.0,
+          280.0,
+          160.0,
+          270.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Left Floppy Ear"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          330.0,
+          180.0,
+          380.0,
+          280.0,
+          340.0,
+          270.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Right Floppy Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 265,
+        "rx": 45,
+        "ry": 32,
+        "targetColor": "#F5DEB3",
+        "label": "Puppy Snout"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 255,
+        "r": 18,
+        "targetColor": "#2C2C2E",
+        "label": "Puppy Nose"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#5D4037",
+      "#F5DEB3",
+      "#2C2C2E",
+      "#FF3B30"
+    ],
+    "background": "#FEF3C7"
+  },
+  {
+    "id": 33,
+    "name": "Tropical Goldfish",
+    "category": "animals",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 240,
+        "cy": 250,
+        "rx": 110,
+        "ry": 75,
+        "targetColor": "#FF9500",
+        "label": "Fish Body"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          330.0,
+          250.0,
+          420.0,
+          170.0,
+          400.0,
+          250.0,
+          420.0,
+          330.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Tail Fin"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          200.0,
+          175.0,
+          260.0,
+          120.0,
+          280.0,
+          175.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Dorsal Fin"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 220,
+        "cy": 280,
+        "rx": 35,
+        "ry": 18,
+        "targetColor": "#FFCC00",
+        "label": "Pectoral Fin"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 175,
+        "cy": 235,
+        "r": 12,
+        "targetColor": "#2C2C2E",
+        "label": "Fish Eye"
+      }
+    ],
+    "palette": [
+      "#FF9500",
+      "#FFCC00",
+      "#FFB300",
+      "#2C2C2E",
+      "#5AC8FA"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 34,
+    "name": "Fluttering Butterfly",
+    "category": "animals",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 255,
+        "rx": 14,
+        "ry": 90,
+        "targetColor": "#2C2C2E",
+        "label": "Butterfly Body"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          210.0,
+          110.0,
+          120.0,
+          130.0,
+          250.0,
+          250.0,
+          250.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Top Left Wing"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          210.0,
+          390.0,
+          120.0,
+          370.0,
+          250.0,
+          250.0,
+          250.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Top Right Wing"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 180,
+        "cy": 310,
+        "rx": 50,
+        "ry": 40,
+        "targetColor": "#AF52DE",
+        "label": "Bottom Left Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 320,
+        "cy": 310,
+        "rx": 50,
+        "ry": 40,
+        "targetColor": "#AF52DE",
+        "label": "Bottom Right Wing"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 155,
+        "r": 18,
+        "targetColor": "#FFCC00",
+        "label": "Butterfly Head"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#FF2D55",
+      "#AF52DE",
+      "#FFCC00",
+      "#30D158"
+    ],
+    "background": "#FDF2F8"
+  },
+  {
+    "id": 35,
+    "name": "Wise Little Owl",
+    "category": "animals",
+    "difficulty": 4,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 260,
+        "rx": 95,
+        "ry": 120,
+        "targetColor": "#8D6E63",
+        "label": "Owl Body"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 280,
+        "rx": 60,
+        "ry": 80,
+        "targetColor": "#F5DEB3",
+        "label": "Owl Belly"
+      },
+      {
+        "id": "r3",
+        "shape": "arc",
+        "cx": 175,
+        "cy": 270,
+        "r": 65,
+        "startAngle": 1.57,
+        "endAngle": 4.71,
+        "targetColor": "#5D4037",
+        "label": "Left Wing"
+      },
+      {
+        "id": "r4",
+        "shape": "arc",
+        "cx": 325,
+        "cy": 270,
+        "r": 65,
+        "startAngle": 4.71,
+        "endAngle": 1.57,
+        "targetColor": "#5D4037",
+        "label": "Right Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 215,
+        "cy": 200,
+        "r": 28,
+        "targetColor": "#FFCC00",
+        "label": "Left Big Eye"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 285,
+        "cy": 200,
+        "r": 28,
+        "targetColor": "#FFCC00",
+        "label": "Right Big Eye"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          225.0,
+          260.0,
+          225.0,
+          250.0,
+          250.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Owl Beak"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#F5DEB3",
+      "#5D4037",
+      "#FFCC00",
+      "#FF9500",
+      "#5AC8FA"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 36,
+    "name": "Gentle Sea Turtle",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 260,
+        "rx": 105,
+        "ry": 80,
+        "targetColor": "#1B5E20",
+        "label": "Turtle Shell"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          295.0,
+          260.0,
+          272.5,
+          299.0,
+          227.5,
+          299.0,
+          205.0,
+          260.0,
+          227.5,
+          221.0,
+          272.5,
+          221.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Center Scute"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 160,
+        "cy": 210,
+        "rx": 45,
+        "ry": 22,
+        "targetColor": "#30D158",
+        "label": "Front Left Flipper"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 340,
+        "cy": 210,
+        "rx": 45,
+        "ry": 22,
+        "targetColor": "#30D158",
+        "label": "Front Right Flipper"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 160,
+        "r": 30,
+        "targetColor": "#34C759",
+        "label": "Turtle Head"
+      }
+    ],
+    "palette": [
+      "#1B5E20",
+      "#34C759",
+      "#30D158",
+      "#F5DEB3",
+      "#007AFF"
+    ],
+    "background": "#E0F7FA"
+  },
+  {
+    "id": 37,
+    "name": "Leaping Frog",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 270,
+        "rx": 105,
+        "ry": 85,
+        "targetColor": "#34C759",
+        "label": "Frog Body"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 285,
+        "rx": 65,
+        "ry": 55,
+        "targetColor": "#AEEA00",
+        "label": "Frog Belly"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 190,
+        "cy": 185,
+        "r": 34,
+        "targetColor": "#30D158",
+        "label": "Left Eye Socket"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 310,
+        "cy": 185,
+        "r": 34,
+        "targetColor": "#30D158",
+        "label": "Right Eye Socket"
+      },
+      {
+        "id": "r5",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 280,
+        "r": 50,
+        "startAngle": 0.2,
+        "endAngle": 2.94,
+        "targetColor": "#1B5E20",
+        "label": "Smiling Mouth"
+      }
+    ],
+    "palette": [
+      "#34C759",
+      "#AEEA00",
+      "#30D158",
+      "#1B5E20",
+      "#FFCC00"
+    ],
+    "background": "#ECFDF5"
+  },
+  {
+    "id": 38,
+    "name": "Chirping Songbird",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 230,
+        "cy": 270,
+        "r": 80,
+        "targetColor": "#5AC8FA",
+        "label": "Bird Body"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 210,
+        "cy": 275,
+        "rx": 48,
+        "ry": 30,
+        "targetColor": "#007AFF",
+        "label": "Folded Wing"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 290,
+        "cy": 205,
+        "r": 45,
+        "targetColor": "#5AC8FA",
+        "label": "Bird Head"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          330.0,
+          200.0,
+          380.0,
+          215.0,
+          330.0,
+          225.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Sharp Beak"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          155.0,
+          285.0,
+          105.0,
+          315.0,
+          145.0,
+          325.0
+        ],
+        "targetColor": "#2979FF",
+        "label": "Tail Feathers"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 305,
+        "cy": 195,
+        "r": 8,
+        "targetColor": "#2C2C2E",
+        "label": "Bird Eye"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#007AFF",
+      "#FFB300",
+      "#2979FF",
+      "#2C2C2E",
+      "#FFFFFF"
+    ],
+    "background": "#F0F9FF"
+  },
+  {
+    "id": 39,
+    "name": "Spotted Ladybug",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 215,
+        "cy": 260,
+        "rx": 55,
+        "ry": 85,
+        "targetColor": "#FF3B30",
+        "label": "Left Wing Casing"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 285,
+        "cy": 260,
+        "rx": 55,
+        "ry": 85,
+        "targetColor": "#FF3B30",
+        "label": "Right Wing Casing"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 170,
+        "r": 42,
+        "targetColor": "#2C2C2E",
+        "label": "Ladybug Head"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 195,
+        "cy": 235,
+        "r": 14,
+        "targetColor": "#1C1C1E",
+        "label": "Spot 1"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 305,
+        "cy": 235,
+        "r": 14,
+        "targetColor": "#1C1C1E",
+        "label": "Spot 2"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 310,
+        "r": 16,
+        "targetColor": "#1C1C1E",
+        "label": "Center Spot"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#2C2C2E",
+      "#1C1C1E",
+      "#FFFFFF",
+      "#34C759"
+    ],
+    "background": "#FEF2F2"
+  },
+  {
+    "id": 40,
+    "name": "Emperor Penguin",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 260,
+        "rx": 85,
+        "ry": 125,
+        "targetColor": "#1A237E",
+        "label": "Penguin Tuxedo"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 275,
+        "rx": 52,
+        "ry": 95,
+        "targetColor": "#FFFFFF",
+        "label": "White Belly"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 160,
+        "cy": 270,
+        "rx": 20,
+        "ry": 65,
+        "targetColor": "#1A237E",
+        "label": "Left Flipper"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 340,
+        "cy": 270,
+        "rx": 20,
+        "ry": 65,
+        "targetColor": "#1A237E",
+        "label": "Right Flipper"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          185.0,
+          260.0,
+          185.0,
+          250.0,
+          210.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Penguin Beak"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 210,
+        "y": 380,
+        "w": 80,
+        "h": 20,
+        "radius": 6,
+        "targetColor": "#FF9500",
+        "label": "Webbed Feet"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#FFFFFF",
+      "#FFB300",
+      "#FF9500",
+      "#5AC8FA"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 41,
+    "name": "Friendly Lion",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 12,
+        "outerR": 160,
+        "innerR": 115,
+        "targetColor": "#FFB300",
+        "label": "Lion Mane"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 85,
+        "targetColor": "#FFCC00",
+        "label": "Lion Face"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 280,
+        "rx": 45,
+        "ry": 30,
+        "targetColor": "#F5DEB3",
+        "label": "Muzzle"
+      },
+      {
+        "id": "r4",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 265,
+        "size": 22,
+        "targetColor": "#8D6E63",
+        "label": "Nose"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 175,
+        "cy": 175,
+        "r": 25,
+        "targetColor": "#FFCC00",
+        "label": "Left Ear"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 325,
+        "cy": 175,
+        "r": 25,
+        "targetColor": "#FFCC00",
+        "label": "Right Ear"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#FFCC00",
+      "#F5DEB3",
+      "#8D6E63",
+      "#FF9500"
+    ],
+    "background": "#FFFBEB"
+  },
+  {
+    "id": 42,
+    "name": "Giant Panda",
+    "category": "animals",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 100,
+        "targetColor": "#FFFFFF",
+        "label": "Panda Face"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 205,
+        "cy": 235,
+        "rx": 28,
+        "ry": 20,
+        "targetColor": "#2C2C2E",
+        "label": "Left Eye Patch"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 295,
+        "cy": 235,
+        "rx": 28,
+        "ry": 20,
+        "targetColor": "#2C2C2E",
+        "label": "Right Eye Patch"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 165,
+        "cy": 165,
+        "r": 32,
+        "targetColor": "#2C2C2E",
+        "label": "Left Black Ear"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 335,
+        "cy": 165,
+        "r": 32,
+        "targetColor": "#2C2C2E",
+        "label": "Right Black Ear"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          238.0,
+          275.0,
+          262.0,
+          275.0,
+          250.0,
+          290.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Nose"
+      }
+    ],
+    "palette": [
+      "#FFFFFF",
+      "#2C2C2E",
+      "#34C759",
+      "#FF2D55",
+      "#30D158"
+    ],
+    "background": "#F0FDF4"
+  },
+  {
+    "id": 43,
+    "name": "Baby Elephant",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 280,
+        "cy": 290,
+        "rx": 105,
+        "ry": 85,
+        "targetColor": "#8E8E93",
+        "label": "Elephant Body"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 200,
+        "cy": 230,
+        "r": 70,
+        "targetColor": "#8E8E93",
+        "label": "Elephant Head"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 210,
+        "y": 175,
+        "w": 75,
+        "h": 95,
+        "radius": 35,
+        "targetColor": "#E5E5EA",
+        "label": "Big Floppy Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          160.0,
+          250.0,
+          140.0,
+          340.0,
+          175.0,
+          360.0,
+          175.0,
+          340.0,
+          165.0,
+          280.0
+        ],
+        "targetColor": "#8E8E93",
+        "label": "Curled Trunk"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 180,
+        "cy": 215,
+        "r": 10,
+        "targetColor": "#2C2C2E",
+        "label": "Elephant Eye"
+      }
+    ],
+    "palette": [
+      "#8E8E93",
+      "#E5E5EA",
+      "#2C2C2E",
+      "#FF2D55",
+      "#5AC8FA"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 44,
+    "name": "Clever Fox",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          340.0,
+          140.0,
+          190.0,
+          360.0,
+          190.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Fox Face"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          150.0,
+          190.0,
+          130.0,
+          95.0,
+          200.0,
+          165.0
+        ],
+        "targetColor": "#E65100",
+        "label": "Left Pointed Ear"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          350.0,
+          190.0,
+          370.0,
+          95.0,
+          300.0,
+          165.0
+        ],
+        "targetColor": "#E65100",
+        "label": "Right Pointed Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          340.0,
+          140.0,
+          190.0,
+          200.0,
+          240.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Left White Cheek"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          340.0,
+          360.0,
+          190.0,
+          300.0,
+          240.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Right White Cheek"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 335,
+        "r": 14,
+        "targetColor": "#2C2C2E",
+        "label": "Black Nose"
+      }
+    ],
+    "palette": [
+      "#FF9500",
+      "#E65100",
+      "#FFFFFF",
+      "#2C2C2E",
+      "#F5DEB3"
+    ],
+    "background": "#FFF7ED"
+  },
+  {
+    "id": 45,
+    "name": "Fluffy Bunny",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 275,
+        "r": 85,
+        "targetColor": "#FFFFFF",
+        "label": "Bunny Head"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 180,
+        "y": 90,
+        "w": 42,
+        "h": 130,
+        "radius": 21,
+        "targetColor": "#FFFFFF",
+        "label": "Left Long Ear"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 278,
+        "y": 90,
+        "w": 42,
+        "h": 130,
+        "radius": 21,
+        "targetColor": "#FFFFFF",
+        "label": "Right Long Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 190,
+        "y": 110,
+        "w": 22,
+        "h": 95,
+        "radius": 11,
+        "targetColor": "#FF2D55",
+        "label": "Left Inner Ear"
+      },
+      {
+        "id": "r5",
+        "shape": "roundRect",
+        "x": 288,
+        "y": 110,
+        "w": 22,
+        "h": 95,
+        "radius": 11,
+        "targetColor": "#FF2D55",
+        "label": "Right Inner Ear"
+      },
+      {
+        "id": "r6",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 280,
+        "size": 20,
+        "targetColor": "#FF2D55",
+        "label": "Bunny Nose"
+      }
+    ],
+    "palette": [
+      "#FFFFFF",
+      "#FF2D55",
+      "#F5DEB3",
+      "#5AC8FA",
+      "#FFCC00"
+    ],
+    "background": "#FAF5FF"
+  },
+  {
+    "id": 46,
+    "name": "Buzzing Bee",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 240,
+        "cy": 255,
+        "rx": 95,
+        "ry": 75,
+        "targetColor": "#FFCC00",
+        "label": "Bee Yellow Body"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 205,
+        "y": 185,
+        "w": 28,
+        "h": 140,
+        "targetColor": "#2C2C2E",
+        "label": "Black Stripe 1"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 260,
+        "y": 185,
+        "w": 28,
+        "h": 140,
+        "targetColor": "#2C2C2E",
+        "label": "Black Stripe 2"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 215,
+        "cy": 160,
+        "rx": 38,
+        "ry": 65,
+        "targetColor": "#5AC8FA",
+        "label": "Left Translucent Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 275,
+        "cy": 160,
+        "rx": 38,
+        "ry": 65,
+        "targetColor": "#5AC8FA",
+        "label": "Right Translucent Wing"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          330.0,
+          250.0,
+          365.0,
+          255.0,
+          330.0,
+          260.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Stinger"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#2C2C2E",
+      "#5AC8FA",
+      "#FFB300",
+      "#30D158"
+    ],
+    "background": "#FEFCE8"
+  },
+  {
+    "id": 47,
+    "name": "Colorful Toucan",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 220,
+        "cy": 280,
+        "rx": 80,
+        "ry": 110,
+        "targetColor": "#2C2C2E",
+        "label": "Toucan Body"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 220,
+        "cy": 190,
+        "r": 55,
+        "targetColor": "#2C2C2E",
+        "label": "Toucan Head"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          160.0,
+          390.0,
+          190.0,
+          260.0,
+          225.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Upper Beak"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          200.0,
+          370.0,
+          225.0,
+          260.0,
+          235.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Lower Beak"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 235,
+        "cy": 175,
+        "r": 14,
+        "targetColor": "#5AC8FA",
+        "label": "Eye Ring"
+      },
+      {
+        "id": "r6",
+        "shape": "ellipse",
+        "cx": 190,
+        "cy": 290,
+        "rx": 35,
+        "ry": 60,
+        "targetColor": "#FF3B30",
+        "label": "Wing Accent"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#FFB300",
+      "#FF9500",
+      "#5AC8FA",
+      "#FF3B30",
+      "#34C759"
+    ],
+    "background": "#F0FDF4"
+  },
+  {
+    "id": 48,
+    "name": "Cozy Brown Bear",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 95,
+        "targetColor": "#8D6E63",
+        "label": "Bear Face"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 280,
+        "rx": 50,
+        "ry": 34,
+        "targetColor": "#F5DEB3",
+        "label": "Bear Snout"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 170,
+        "cy": 170,
+        "r": 30,
+        "targetColor": "#8D6E63",
+        "label": "Left Ear"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 330,
+        "cy": 170,
+        "r": 30,
+        "targetColor": "#8D6E63",
+        "label": "Right Ear"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          238.0,
+          270.0,
+          262.0,
+          270.0,
+          250.0,
+          285.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Bear Nose"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#F5DEB3",
+      "#2C2C2E",
+      "#5D4037",
+      "#FFB300"
+    ],
+    "background": "#FFFBEB"
+  },
+  {
+    "id": 49,
+    "name": "Swimming Duck",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 220,
+        "cy": 275,
+        "rx": 85,
+        "ry": 60,
+        "targetColor": "#FFCC00",
+        "label": "Duck Body"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 290,
+        "cy": 210,
+        "r": 42,
+        "targetColor": "#FFCC00",
+        "label": "Duck Head"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          325.0,
+          210.0,
+          380.0,
+          225.0,
+          325.0,
+          235.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Duck Bill"
+      },
+      {
+        "id": "r4",
+        "shape": "arc",
+        "cx": 205,
+        "cy": 270,
+        "r": 42,
+        "startAngle": 0.4,
+        "endAngle": 2.7,
+        "targetColor": "#FFB300",
+        "label": "Duck Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "roundRect",
+        "x": 100,
+        "y": 340,
+        "w": 290,
+        "h": 25,
+        "radius": 8,
+        "targetColor": "#5AC8FA",
+        "label": "Water Ripple"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#FFB300",
+      "#5AC8FA",
+      "#34C759"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 50,
+    "name": "Gentle Blue Whale",
+    "category": "animals",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 240,
+        "cy": 260,
+        "rx": 130,
+        "ry": 75,
+        "targetColor": "#007AFF",
+        "label": "Whale Body"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 235,
+        "cy": 285,
+        "rx": 95,
+        "ry": 35,
+        "targetColor": "#5AC8FA",
+        "label": "Underbelly"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          250.0,
+          60.0,
+          200.0,
+          75.0,
+          260.0,
+          60.0,
+          310.0
+        ],
+        "targetColor": "#2979FF",
+        "label": "Tail Flukes"
+      },
+      {
+        "id": "r4",
+        "shape": "arc",
+        "cx": 270,
+        "cy": 180,
+        "r": 45,
+        "startAngle": 3.1416,
+        "endAngle": 4.71,
+        "targetColor": "#5AC8FA",
+        "label": "Water Spout Left"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 330,
+        "cy": 250,
+        "r": 8,
+        "targetColor": "#2C2C2E",
+        "label": "Whale Eye"
+      }
+    ],
+    "palette": [
+      "#007AFF",
+      "#5AC8FA",
+      "#2979FF",
+      "#2C2C2E",
+      "#FFFFFF"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 51,
+    "name": "Seven-Color Rainbow",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 210,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#FF3B30",
+        "label": "Red Rainbow Layer"
+      },
+      {
+        "id": "r2",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 185,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#FF9500",
+        "label": "Orange Rainbow Layer"
+      },
+      {
+        "id": "r3",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 160,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#FFCC00",
+        "label": "Yellow Rainbow Layer"
+      },
+      {
+        "id": "r4",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 135,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#34C759",
+        "label": "Green Rainbow Layer"
+      },
+      {
+        "id": "r5",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 110,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#007AFF",
+        "label": "Blue Rainbow Layer"
+      },
+      {
+        "id": "r6",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 85,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#5856D6",
+        "label": "Indigo Rainbow Layer"
+      },
+      {
+        "id": "r7",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 330,
+        "r": 60,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#AF52DE",
+        "label": "Violet Rainbow Layer"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FF9500",
+      "#FFCC00",
+      "#34C759",
+      "#007AFF",
+      "#5856D6",
+      "#AF52DE"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 52,
+    "name": "Golden Sunset",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 60,
+        "w": 420,
+        "h": 220,
+        "targetColor": "#FF9500",
+        "label": "Sunset Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 200,
+        "r": 65,
+        "targetColor": "#FFCC00",
+        "label": "Sun Disc"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          280.0,
+          180.0,
+          160.0,
+          320.0,
+          280.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Distant Mountain"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          200.0,
+          280.0,
+          340.0,
+          180.0,
+          460.0,
+          280.0
+        ],
+        "targetColor": "#5856D6",
+        "label": "Fore Mountain"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 40,
+        "y": 280,
+        "w": 420,
+        "h": 160,
+        "targetColor": "#1A237E",
+        "label": "Ocean Water"
+      }
+    ],
+    "palette": [
+      "#FF9500",
+      "#FFCC00",
+      "#AF52DE",
+      "#5856D6",
+      "#1A237E",
+      "#FF6F59"
+    ],
+    "background": "#1E1B4B"
+  },
+  {
+    "id": 53,
+    "name": "Blooming Sunflower",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 180,
+        "r": 50,
+        "targetColor": "#5D4037",
+        "label": "Seed Disc"
+      },
+      {
+        "id": "r2",
+        "shape": "star",
+        "cx": 250,
+        "cy": 180,
+        "points": 16,
+        "outerR": 120,
+        "innerR": 75,
+        "targetColor": "#FFCC00",
+        "label": "Sunflower Petals"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 242,
+        "y": 255,
+        "w": 16,
+        "h": 150,
+        "targetColor": "#1B5E20",
+        "label": "Sturdy Stem"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 190,
+        "cy": 310,
+        "rx": 50,
+        "ry": 22,
+        "targetColor": "#34C759",
+        "label": "Left Leaf"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 310,
+        "cy": 340,
+        "rx": 50,
+        "ry": 22,
+        "targetColor": "#34C759",
+        "label": "Right Leaf"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 80,
+        "y": 400,
+        "w": 340,
+        "h": 40,
+        "radius": 10,
+        "targetColor": "#8D6E63",
+        "label": "Garden Soil"
+      }
+    ],
+    "palette": [
+      "#5D4037",
+      "#FFCC00",
+      "#1B5E20",
+      "#34C759",
+      "#8D6E63",
+      "#5AC8FA"
+    ],
+    "background": "#BAE6FD"
+  },
+  {
+    "id": 54,
+    "name": "Snowy Mountain Peaks",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 240,
+        "targetColor": "#5AC8FA",
+        "label": "Clear Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          60.0,
+          340.0,
+          220.0,
+          140.0,
+          360.0,
+          340.0
+        ],
+        "targetColor": "#8E8E93",
+        "label": "Major Peak"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          190.0,
+          220.0,
+          140.0,
+          260.0,
+          190.0,
+          220.0,
+          205.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Snow Cap Main"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          230.0,
+          340.0,
+          350.0,
+          170.0,
+          460.0,
+          340.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Secondary Peak"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          315.0,
+          215.0,
+          350.0,
+          170.0,
+          385.0,
+          215.0,
+          350.0,
+          228.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Snow Cap Second"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 340,
+        "w": 420,
+        "h": 100,
+        "targetColor": "#1B5E20",
+        "label": "Pine Valley"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#8E8E93",
+      "#FFFFFF",
+      "#2C2C2E",
+      "#1B5E20",
+      "#007AFF"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 55,
+    "name": "Tropical Island",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 270,
+        "w": 420,
+        "h": 170,
+        "targetColor": "#007AFF",
+        "label": "Azure Ocean"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 340,
+        "rx": 160,
+        "ry": 50,
+        "targetColor": "#F5DEB3",
+        "label": "Sandy Island"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          220.0,
+          340.0,
+          240.0,
+          340.0,
+          280.0,
+          190.0,
+          265.0,
+          190.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Curved Palm Trunk"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          270.0,
+          190.0,
+          380.0,
+          150.0,
+          340.0,
+          210.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Palm Frond East"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          270.0,
+          190.0,
+          160.0,
+          160.0,
+          210.0,
+          220.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Palm Frond West"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 120,
+        "cy": 120,
+        "r": 45,
+        "targetColor": "#FFCC00",
+        "label": "Tropical Sun"
+      }
+    ],
+    "palette": [
+      "#007AFF",
+      "#F5DEB3",
+      "#8D6E63",
+      "#34C759",
+      "#FFCC00",
+      "#5AC8FA"
+    ],
+    "background": "#E0F2FE"
+  },
+  {
+    "id": 56,
+    "name": "Rushing Waterfall",
+    "category": "nature",
+    "difficulty": 5,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 70,
+        "y": 80,
+        "w": 140,
+        "h": 320,
+        "targetColor": "#2C2C2E",
+        "label": "Left Cliff Face"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 290,
+        "y": 80,
+        "w": 140,
+        "h": 320,
+        "targetColor": "#2C2C2E",
+        "label": "Right Cliff Face"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 210,
+        "y": 80,
+        "w": 80,
+        "h": 250,
+        "targetColor": "#5AC8FA",
+        "label": "Waterfall Torrent"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 340,
+        "rx": 150,
+        "ry": 45,
+        "targetColor": "#007AFF",
+        "label": "Splash Pool"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 330,
+        "rx": 75,
+        "ry": 20,
+        "targetColor": "#FFFFFF",
+        "label": "Frothing Mist"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#5AC8FA",
+      "#007AFF",
+      "#FFFFFF",
+      "#1B5E20",
+      "#30D158"
+    ],
+    "background": "#042F2E"
+  },
+  {
+    "id": 57,
+    "name": "Autumn Forest",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 240,
+        "targetColor": "#5AC8FA",
+        "label": "Autumn Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 160,
+        "cy": 220,
+        "rx": 75,
+        "ry": 85,
+        "targetColor": "#E65100",
+        "label": "Orange Tree Canopy"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 190,
+        "rx": 85,
+        "ry": 95,
+        "targetColor": "#FF3B30",
+        "label": "Crimson Maple Canopy"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 340,
+        "cy": 220,
+        "rx": 75,
+        "ry": 85,
+        "targetColor": "#FFCC00",
+        "label": "Golden Birch Canopy"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 242,
+        "y": 280,
+        "w": 16,
+        "h": 90,
+        "targetColor": "#5D4037",
+        "label": "Central Trunk"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 360,
+        "w": 420,
+        "h": 80,
+        "targetColor": "#FFB300",
+        "label": "Fallen Leaves Carpet"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#E65100",
+      "#FF3B30",
+      "#FFCC00",
+      "#5D4037",
+      "#FFB300"
+    ],
+    "background": "#FEF3C7"
+  },
+  {
+    "id": 58,
+    "name": "Desert Saguaro",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 250,
+        "targetColor": "#5AC8FA",
+        "label": "Desert Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          300.0,
+          200.0,
+          270.0,
+          340.0,
+          310.0,
+          460.0,
+          290.0,
+          460.0,
+          440.0,
+          40.0,
+          440.0
+        ],
+        "targetColor": "#F5DEB3",
+        "label": "Sand Dunes"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 235,
+        "y": 140,
+        "w": 30,
+        "h": 210,
+        "radius": 14,
+        "targetColor": "#1B5E20",
+        "label": "Cactus Main Stem"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          185.0,
+          190.0,
+          235.0,
+          190.0,
+          235.0,
+          215.0,
+          205.0,
+          215.0,
+          205.0,
+          250.0,
+          185.0,
+          250.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Left Cactus Arm"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          265.0,
+          220.0,
+          315.0,
+          220.0,
+          315.0,
+          170.0,
+          295.0,
+          170.0,
+          295.0,
+          200.0,
+          265.0,
+          200.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Right Cactus Arm"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 380,
+        "cy": 110,
+        "r": 40,
+        "targetColor": "#FF9500",
+        "label": "Blazing Sun"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#F5DEB3",
+      "#1B5E20",
+      "#34C759",
+      "#FF9500",
+      "#FFCC00"
+    ],
+    "background": "#FFFBEB"
+  },
+  {
+    "id": 59,
+    "name": "Starry Midnight",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 300,
+        "targetColor": "#1A237E",
+        "label": "Night Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 160,
+        "cy": 160,
+        "outerR": 65,
+        "innerR": 45,
+        "targetColor": "#FFCC00",
+        "label": "Crescent Moon"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 320,
+        "cy": 120,
+        "points": 5,
+        "outerR": 30,
+        "innerR": 14,
+        "targetColor": "#FFFFFF",
+        "label": "North Star"
+      },
+      {
+        "id": "r4",
+        "shape": "star",
+        "cx": 380,
+        "cy": 200,
+        "points": 4,
+        "outerR": 22,
+        "innerR": 10,
+        "targetColor": "#5AC8FA",
+        "label": "Sky Star 1"
+      },
+      {
+        "id": "r5",
+        "shape": "star",
+        "cx": 240,
+        "cy": 230,
+        "points": 4,
+        "outerR": 18,
+        "innerR": 8,
+        "targetColor": "#FFF59D",
+        "label": "Sky Star 2"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          350.0,
+          180.0,
+          290.0,
+          330.0,
+          330.0,
+          460.0,
+          300.0,
+          460.0,
+          440.0,
+          40.0,
+          440.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Rolling Hills"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#FFCC00",
+      "#FFFFFF",
+      "#5AC8FA",
+      "#FFF59D",
+      "#2C2C2E"
+    ],
+    "background": "#020617"
+  },
+  {
+    "id": 60,
+    "name": "Active Volcano",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 250,
+        "targetColor": "#1A237E",
+        "label": "Ash Cloud Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          70.0,
+          400.0,
+          210.0,
+          190.0,
+          290.0,
+          190.0,
+          430.0,
+          400.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Volcano Cone"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 190,
+        "rx": 40,
+        "ry": 14,
+        "targetColor": "#FF3B30",
+        "label": "Magma Crater"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          195.0,
+          230.0,
+          270.0,
+          260.0,
+          330.0,
+          235.0,
+          400.0,
+          260.0,
+          400.0,
+          280.0,
+          320.0,
+          255.0,
+          260.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Lava River"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 120,
+        "rx": 75,
+        "ry": 45,
+        "targetColor": "#8E8E93",
+        "label": "Smoke Plume"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#2C2C2E",
+      "#FF3B30",
+      "#FF9500",
+      "#8E8E93",
+      "#FFCC00"
+    ],
+    "background": "#0B0F19"
+  },
+  {
+    "id": 61,
+    "name": "Coral Reef Haven",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 310,
+        "targetColor": "#009688",
+        "label": "Ocean Water"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 160,
+        "cy": 320,
+        "rx": 65,
+        "ry": 50,
+        "targetColor": "#FF2D55",
+        "label": "Brain Coral"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          340.0,
+          230.0,
+          240.0,
+          260.0,
+          260.0,
+          290.0,
+          210.0,
+          300.0,
+          280.0,
+          330.0,
+          250.0,
+          320.0,
+          340.0
+        ],
+        "targetColor": "#FF6F59",
+        "label": "Branching Coral"
+      },
+      {
+        "id": "r4",
+        "shape": "star",
+        "cx": 370,
+        "cy": 330,
+        "points": 8,
+        "outerR": 42,
+        "innerR": 22,
+        "targetColor": "#AF52DE",
+        "label": "Sea Anemone"
+      },
+      {
+        "id": "r5",
+        "shape": "star",
+        "cx": 200,
+        "cy": 380,
+        "points": 5,
+        "outerR": 25,
+        "innerR": 12,
+        "targetColor": "#FFCC00",
+        "label": "Sea Star"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 360,
+        "w": 420,
+        "h": 80,
+        "targetColor": "#F5DEB3",
+        "label": "Sandy Seabed"
+      }
+    ],
+    "palette": [
+      "#009688",
+      "#FF2D55",
+      "#FF6F59",
+      "#AF52DE",
+      "#FFCC00",
+      "#F5DEB3"
+    ],
+    "background": "#004D40"
+  },
+  {
+    "id": 62,
+    "name": "Enchanted Mushroom Glen",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          250.0,
+          250.0,
+          110.0,
+          380.0,
+          250.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Toadstool Cap"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 200,
+        "cy": 185,
+        "r": 20,
+        "targetColor": "#FFFFFF",
+        "label": "Cap Spot Left"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 280,
+        "cy": 175,
+        "r": 22,
+        "targetColor": "#FFFFFF",
+        "label": "Cap Spot Right"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 225,
+        "r": 16,
+        "targetColor": "#FFFFFF",
+        "label": "Cap Spot Center"
+      },
+      {
+        "id": "r5",
+        "shape": "roundRect",
+        "x": 220,
+        "y": 250,
+        "w": 60,
+        "h": 120,
+        "radius": 20,
+        "targetColor": "#F5DEB3",
+        "label": "Mushroom Stalk"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 50,
+        "y": 370,
+        "w": 400,
+        "h": 60,
+        "radius": 12,
+        "targetColor": "#1B5E20",
+        "label": "Mossy Turf"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FFFFFF",
+      "#F5DEB3",
+      "#1B5E20",
+      "#30D158",
+      "#FFCC00"
+    ],
+    "background": "#064E3B"
+  },
+  {
+    "id": 63,
+    "name": "Waterlily Pond",
+    "category": "nature",
+    "difficulty": 6,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 60,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#007AFF",
+        "label": "Pond Surface"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 290,
+        "rx": 145,
+        "ry": 60,
+        "targetColor": "#1B5E20",
+        "label": "Giant Lily Pad"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 260,
+        "points": 8,
+        "outerR": 65,
+        "innerR": 35,
+        "targetColor": "#FF2D55",
+        "label": "Waterlily Petals"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 260,
+        "r": 22,
+        "targetColor": "#FFCC00",
+        "label": "Lily Flower Center"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 80,
+        "y": 120,
+        "w": 16,
+        "h": 260,
+        "targetColor": "#34C759",
+        "label": "Water Reed"
+      }
+    ],
+    "palette": [
+      "#007AFF",
+      "#1B5E20",
+      "#FF2D55",
+      "#FFCC00",
+      "#34C759",
+      "#5AC8FA"
+    ],
+    "background": "#082F49"
+  },
+  {
+    "id": 64,
+    "name": "Summer Thunderstorm",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 330,
+        "targetColor": "#2C2C2E",
+        "label": "Dark Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 180,
+        "cy": 160,
+        "rx": 85,
+        "ry": 60,
+        "targetColor": "#8E8E93",
+        "label": "Storm Cloud Left"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 310,
+        "cy": 160,
+        "rx": 95,
+        "ry": 65,
+        "targetColor": "#8E8E93",
+        "label": "Storm Cloud Right"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 130,
+        "rx": 80,
+        "ry": 55,
+        "targetColor": "#E5E5EA",
+        "label": "Storm Cloud Top"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          180.0,
+          230.0,
+          250.0,
+          265.0,
+          250.0,
+          225.0,
+          330.0,
+          280.0,
+          240.0,
+          245.0,
+          240.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Lightning Bolt"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 40,
+        "y": 380,
+        "w": 420,
+        "h": 60,
+        "radius": 8,
+        "targetColor": "#1B5E20",
+        "label": "Soaked Earth"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#8E8E93",
+      "#E5E5EA",
+      "#FFCC00",
+      "#1B5E20",
+      "#007AFF"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 65,
+    "name": "Canyon Sunrise",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 220,
+        "targetColor": "#FFF59D",
+        "label": "Morning Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 160,
+        "r": 55,
+        "targetColor": "#FF9500",
+        "label": "Sunrise Disc"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          120.0,
+          190.0,
+          160.0,
+          150.0,
+          400.0,
+          40.0,
+          400.0
+        ],
+        "targetColor": "#FF6F59",
+        "label": "Left Canyon Wall"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          460.0,
+          100.0,
+          310.0,
+          170.0,
+          350.0,
+          400.0,
+          460.0,
+          400.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Right Canyon Wall"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          150.0,
+          400.0,
+          220.0,
+          260.0,
+          280.0,
+          260.0,
+          350.0,
+          400.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Canyon River Flow"
+      }
+    ],
+    "palette": [
+      "#FFF59D",
+      "#FF9500",
+      "#FF6F59",
+      "#8D6E63",
+      "#007AFF",
+      "#FFB300"
+    ],
+    "background": "#451A03"
+  },
+  {
+    "id": 66,
+    "name": "Cherry Blossom Bonsai",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 150,
+        "y": 360,
+        "w": 200,
+        "h": 45,
+        "radius": 8,
+        "targetColor": "#8D6E63",
+        "label": "Ceramic Bonsai Pot"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          360.0,
+          260.0,
+          360.0,
+          275.0,
+          260.0,
+          230.0,
+          210.0,
+          245.0,
+          190.0,
+          290.0,
+          230.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Gnarled Trunk"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 190,
+        "cy": 180,
+        "rx": 55,
+        "ry": 45,
+        "targetColor": "#FF2D55",
+        "label": "Blossom Cloud Left"
+      },
+      {
+        "id": "r4",
+        "shape": "ellipse",
+        "cx": 300,
+        "cy": 160,
+        "rx": 65,
+        "ry": 50,
+        "targetColor": "#FFB3BA",
+        "label": "Blossom Cloud Right"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 240,
+        "cy": 130,
+        "rx": 50,
+        "ry": 40,
+        "targetColor": "#FF2D55",
+        "label": "Blossom Crown"
+      },
+      {
+        "id": "r6",
+        "shape": "heart",
+        "cx": 330,
+        "cy": 320,
+        "size": 18,
+        "targetColor": "#FF2D55",
+        "label": "Falling Petal"
+      }
+    ],
+    "palette": [
+      "#8D6E63",
+      "#5D4037",
+      "#FF2D55",
+      "#FFB3BA",
+      "#34C759",
+      "#FFFFFF"
+    ],
+    "background": "#FFF1F2"
+  },
+  {
+    "id": 67,
+    "name": "Arctic Glacier",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 210,
+        "targetColor": "#1A237E",
+        "label": "Polar Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          150.0,
+          260.0,
+          240.0,
+          110.0,
+          330.0,
+          260.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Iceberg Pinnacle"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          260.0,
+          370.0,
+          260.0,
+          310.0,
+          380.0,
+          170.0,
+          380.0
+        ],
+        "targetColor": "#5AC8FA",
+        "label": "Submerged Ice Shelf"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 40,
+        "y": 260,
+        "w": 420,
+        "h": 160,
+        "targetColor": "#007AFF",
+        "label": "Freezing Arctic Waters"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 380,
+        "cy": 100,
+        "r": 30,
+        "targetColor": "#FFF59D",
+        "label": "Pale Arctic Sun"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#FFFFFF",
+      "#5AC8FA",
+      "#007AFF",
+      "#FFF59D",
+      "#009688"
+    ],
+    "background": "#082F49"
+  },
+  {
+    "id": 68,
+    "name": "Jungle Canopy",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#009688",
+        "label": "Jungle Mist Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          80.0,
+          80.0,
+          220.0,
+          150.0,
+          160.0,
+          240.0,
+          60.0,
+          200.0
+        ],
+        "targetColor": "#1B5E20",
+        "label": "Monstera Leaf 1"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          320.0,
+          70.0,
+          440.0,
+          130.0,
+          390.0,
+          230.0,
+          290.0,
+          180.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Monstera Leaf 2"
+      },
+      {
+        "id": "r4",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 270,
+        "r": 110,
+        "startAngle": 0.4,
+        "endAngle": 2.7,
+        "targetColor": "#AEEA00",
+        "label": "Jungle Liana Vine"
+      },
+      {
+        "id": "r5",
+        "shape": "star",
+        "cx": 250,
+        "cy": 270,
+        "points": 5,
+        "outerR": 45,
+        "innerR": 20,
+        "targetColor": "#FF2D55",
+        "label": "Orchid Blossom"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 370,
+        "w": 420,
+        "h": 40,
+        "targetColor": "#8D6E63",
+        "label": "Canopy Branch"
+      }
+    ],
+    "palette": [
+      "#009688",
+      "#1B5E20",
+      "#34C759",
+      "#AEEA00",
+      "#FF2D55",
+      "#8D6E63"
+    ],
+    "background": "#022C22"
+  },
+  {
+    "id": 69,
+    "name": "Wilderness Campfire",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 270,
+        "targetColor": "#2C2C2E",
+        "label": "Night Forest Air"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 350,
+        "outerR": 110,
+        "innerR": 80,
+        "targetColor": "#8E8E93",
+        "label": "Campfire Stone Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          330.0,
+          320.0,
+          370.0,
+          310.0,
+          385.0,
+          170.0,
+          345.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Firewood Log 1"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          320.0,
+          330.0,
+          180.0,
+          370.0,
+          190.0,
+          385.0,
+          330.0,
+          345.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Firewood Log 2"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          210.0,
+          340.0,
+          250.0,
+          170.0,
+          290.0,
+          340.0,
+          250.0,
+          310.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Outer Campfire Flame"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          225.0,
+          335.0,
+          250.0,
+          215.0,
+          275.0,
+          335.0,
+          250.0,
+          305.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Inner Fire Core"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#8E8E93",
+      "#8D6E63",
+      "#5D4037",
+      "#FF3B30",
+      "#FFCC00",
+      "#FF9500"
+    ],
+    "background": "#0A0A0A"
+  },
+  {
+    "id": 70,
+    "name": "Northern Lights Aurora",
+    "category": "nature",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 260,
+        "targetColor": "#1A237E",
+        "label": "Arctic Midnight Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          160.0,
+          160.0,
+          90.0,
+          290.0,
+          170.0,
+          460.0,
+          100.0,
+          460.0,
+          140.0,
+          300.0,
+          210.0,
+          150.0,
+          130.0,
+          40.0,
+          200.0
+        ],
+        "targetColor": "#30D158",
+        "label": "Aurora Veil 1"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          210.0,
+          180.0,
+          140.0,
+          310.0,
+          220.0,
+          460.0,
+          150.0,
+          460.0,
+          190.0,
+          320.0,
+          260.0,
+          170.0,
+          180.0,
+          40.0,
+          250.0
+        ],
+        "targetColor": "#009688",
+        "label": "Aurora Veil 2"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          250.0,
+          200.0,
+          180.0,
+          340.0,
+          260.0,
+          460.0,
+          200.0,
+          460.0,
+          230.0,
+          330.0,
+          290.0,
+          190.0,
+          220.0,
+          40.0,
+          280.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Aurora Veil 3"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          340.0,
+          180.0,
+          290.0,
+          300.0,
+          330.0,
+          460.0,
+          280.0,
+          460.0,
+          430.0,
+          40.0,
+          430.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Frozen Mountains"
+      },
+      {
+        "id": "r6",
+        "shape": "star",
+        "cx": 250,
+        "cy": 90,
+        "points": 4,
+        "outerR": 18,
+        "innerR": 8,
+        "targetColor": "#FFFFFF",
+        "label": "Polaris Star"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#30D158",
+      "#009688",
+      "#AF52DE",
+      "#2C2C2E",
+      "#FFFFFF"
+    ],
+    "background": "#020617"
+  },
+  {
+    "id": 71,
+    "name": "Fairytale Castle",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 240,
+        "targetColor": "#5AC8FA",
+        "label": "Castle Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          360.0,
+          250.0,
+          310.0,
+          460.0,
+          360.0,
+          460.0,
+          440.0,
+          40.0,
+          440.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Castle Hill"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 170,
+        "y": 210,
+        "w": 160,
+        "h": 130,
+        "targetColor": "#E5E5EA",
+        "label": "Central Keep"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 110,
+        "y": 180,
+        "w": 55,
+        "h": 160,
+        "radius": 6,
+        "targetColor": "#8E8E93",
+        "label": "West Turret"
+      },
+      {
+        "id": "r5",
+        "shape": "roundRect",
+        "x": 335,
+        "y": 180,
+        "w": 55,
+        "h": 160,
+        "radius": 6,
+        "targetColor": "#8E8E93",
+        "label": "East Turret"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          210.0,
+          250.0,
+          120.0,
+          320.0,
+          210.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Main Spire Roof"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          180.0,
+          137.0,
+          130.0,
+          165.0,
+          180.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "West Spire Roof"
+      },
+      {
+        "id": "r8",
+        "shape": "polygon",
+        "points": [
+          335.0,
+          180.0,
+          362.0,
+          130.0,
+          390.0,
+          180.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "East Spire Roof"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#34C759",
+      "#E5E5EA",
+      "#8E8E93",
+      "#007AFF",
+      "#FFB300"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 72,
+    "name": "Cosmic Starship",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#1A237E",
+        "label": "Deep Space Void"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          90.0,
+          285.0,
+          230.0,
+          310.0,
+          340.0,
+          190.0,
+          340.0,
+          215.0,
+          230.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Starship Hull"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 190,
+        "rx": 25,
+        "ry": 45,
+        "targetColor": "#5AC8FA",
+        "label": "Cockpit Canopy"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 90,
+        "y": 240,
+        "w": 100,
+        "h": 35,
+        "targetColor": "#2979FF",
+        "label": "Port Solar Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 310,
+        "y": 240,
+        "w": 100,
+        "h": 35,
+        "targetColor": "#2979FF",
+        "label": "Starboard Solar Wing"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          220.0,
+          340.0,
+          250.0,
+          410.0,
+          280.0,
+          340.0
+        ],
+        "targetColor": "#5AC8FA",
+        "label": "Ion Plasma Exhaust"
+      },
+      {
+        "id": "r7",
+        "shape": "circle",
+        "cx": 380,
+        "cy": 120,
+        "r": 35,
+        "targetColor": "#AF52DE",
+        "label": "Alien Gas Giant"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#FFFFFF",
+      "#5AC8FA",
+      "#2979FF",
+      "#AF52DE",
+      "#FF9500"
+    ],
+    "background": "#030712"
+  },
+  {
+    "id": 73,
+    "name": "Deep Sea Submarine",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#009688",
+        "label": "Deep Ocean Trench"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 120,
+        "y": 210,
+        "w": 230,
+        "h": 95,
+        "radius": 45,
+        "targetColor": "#FFCC00",
+        "label": "Submarine Hull"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 200,
+        "y": 160,
+        "w": 50,
+        "h": 50,
+        "targetColor": "#FFCC00",
+        "label": "Conning Tower"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 220,
+        "y": 125,
+        "w": 12,
+        "h": 40,
+        "radius": 4,
+        "targetColor": "#2C2C2E",
+        "label": "Periscope"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 175,
+        "cy": 250,
+        "r": 22,
+        "targetColor": "#5AC8FA",
+        "label": "Porthole 1"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 240,
+        "cy": 250,
+        "r": 22,
+        "targetColor": "#5AC8FA",
+        "label": "Porthole 2"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          255.0,
+          75.0,
+          220.0,
+          75.0,
+          290.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Propeller Screw"
+      }
+    ],
+    "palette": [
+      "#009688",
+      "#FFCC00",
+      "#2C2C2E",
+      "#5AC8FA",
+      "#FF9500",
+      "#FFFFFF"
+    ],
+    "background": "#022C22"
+  },
+  {
+    "id": 74,
+    "name": "Country Barnyard",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 220,
+        "targetColor": "#5AC8FA",
+        "label": "Prairie Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 130,
+        "y": 220,
+        "w": 180,
+        "h": 130,
+        "targetColor": "#FF3B30",
+        "label": "Red Barn Wall"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          220.0,
+          140.0,
+          150.0,
+          220.0,
+          120.0,
+          300.0,
+          150.0,
+          330.0,
+          220.0
+        ],
+        "targetColor": "#C0392B",
+        "label": "Gambrel Roof"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 330,
+        "y": 160,
+        "w": 55,
+        "h": 190,
+        "radius": 8,
+        "targetColor": "#E5E5EA",
+        "label": "Grain Silo"
+      },
+      {
+        "id": "r5",
+        "shape": "arc",
+        "cx": 357,
+        "cy": 160,
+        "r": 27,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#8E8E93",
+        "label": "Silo Dome"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 190,
+        "y": 280,
+        "w": 60,
+        "h": 70,
+        "targetColor": "#FFFFFF",
+        "label": "Barn Double Doors"
+      },
+      {
+        "id": "r7",
+        "shape": "rect",
+        "x": 40,
+        "y": 350,
+        "w": 420,
+        "h": 90,
+        "targetColor": "#34C759",
+        "label": "Green Pasture"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#FF3B30",
+      "#C0392B",
+      "#E5E5EA",
+      "#8E8E93",
+      "#FFFFFF",
+      "#34C759"
+    ],
+    "background": "#FEF3C7"
+  },
+  {
+    "id": 75,
+    "name": "Playground Adventure",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 260,
+        "targetColor": "#5AC8FA",
+        "label": "Sunny Park Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 40,
+        "y": 350,
+        "w": 420,
+        "h": 90,
+        "targetColor": "#34C759",
+        "label": "Playground Turf"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 120,
+        "y": 180,
+        "w": 20,
+        "h": 170,
+        "targetColor": "#007AFF",
+        "label": "Slide Tower"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          140.0,
+          200.0,
+          240.0,
+          350.0,
+          215.0,
+          350.0,
+          140.0,
+          230.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Slide Chute"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          270.0,
+          350.0,
+          310.0,
+          170.0,
+          318.0,
+          170.0,
+          358.0,
+          350.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Swing A-Frame"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 300,
+        "y": 270,
+        "w": 30,
+        "h": 10,
+        "targetColor": "#AF52DE",
+        "label": "Swing Seat"
+      },
+      {
+        "id": "r7",
+        "shape": "roundRect",
+        "x": 100,
+        "y": 380,
+        "w": 280,
+        "h": 45,
+        "radius": 10,
+        "targetColor": "#F5DEB3",
+        "label": "Sandbox Border"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#34C759",
+      "#007AFF",
+      "#FFCC00",
+      "#FF3B30",
+      "#AF52DE",
+      "#F5DEB3"
+    ],
+    "background": "#F0FDF4"
+  },
+  {
+    "id": 76,
+    "name": "City Skyline at Dusk",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 250,
+        "targetColor": "#FF9500",
+        "label": "Sunset Glow Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "rect",
+        "x": 80,
+        "y": 180,
+        "w": 80,
+        "h": 180,
+        "targetColor": "#1A237E",
+        "label": "Skyscraper West"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 180,
+        "y": 120,
+        "w": 90,
+        "h": 240,
+        "targetColor": "#2C2C2E",
+        "label": "Central Tower"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          225.0,
+          60.0,
+          218.0,
+          120.0,
+          232.0,
+          120.0
+        ],
+        "targetColor": "#5856D6",
+        "label": "Skyscraper Spire"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 290,
+        "y": 160,
+        "w": 85,
+        "h": 200,
+        "targetColor": "#1A237E",
+        "label": "Skyscraper East"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 360,
+        "w": 420,
+        "h": 80,
+        "targetColor": "#AF52DE",
+        "label": "River Waterfront"
+      },
+      {
+        "id": "r7",
+        "shape": "arc",
+        "cx": 225,
+        "cy": 360,
+        "r": 110,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#FFB300",
+        "label": "Arched Suspension Bridge"
+      }
+    ],
+    "palette": [
+      "#FF9500",
+      "#1A237E",
+      "#2C2C2E",
+      "#5856D6",
+      "#AF52DE",
+      "#FFB300",
+      "#FFCC00"
+    ],
+    "background": "#1E1B4B"
+  },
+  {
+    "id": 77,
+    "name": "Pirate Galleon",
+    "category": "scenes",
+    "difficulty": 7,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 320,
+        "w": 420,
+        "h": 120,
+        "targetColor": "#1A237E",
+        "label": "Ocean Waves"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          90.0,
+          280.0,
+          410.0,
+          280.0,
+          350.0,
+          370.0,
+          140.0,
+          370.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Galleon Wooden Hull"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 242,
+        "y": 90,
+        "w": 16,
+        "h": 200,
+        "targetColor": "#5D4037",
+        "label": "Main Mast"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          120.0,
+          360.0,
+          180.0,
+          260.0,
+          200.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Main Sail"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          235.0,
+          140.0,
+          145.0,
+          200.0,
+          235.0,
+          210.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Fore Sail"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 235,
+        "y": 100,
+        "w": 30,
+        "h": 20,
+        "radius": 4,
+        "targetColor": "#8D6E63",
+        "label": "Crow's Nest"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          258.0,
+          85.0,
+          310.0,
+          95.0,
+          258.0,
+          110.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Pirate Jolly Flag"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#8D6E63",
+      "#5D4037",
+      "#FFFFFF",
+      "#2C2C2E",
+      "#5AC8FA"
+    ],
+    "background": "#0C4A6E"
+  },
+  {
+    "id": 78,
+    "name": "Carnival Ferris Wheel",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#1A237E",
+        "label": "Carnival Dusk Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          380.0,
+          250.0,
+          240.0,
+          320.0,
+          380.0
+        ],
+        "targetColor": "#8E8E93",
+        "label": "Support A-Legs"
+      },
+      {
+        "id": "r3",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 220,
+        "outerR": 130,
+        "innerR": 110,
+        "targetColor": "#FFCC00",
+        "label": "Outer Wheel Rim"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 220,
+        "r": 28,
+        "targetColor": "#FF9500",
+        "label": "Center Hub"
+      },
+      {
+        "id": "r5",
+        "shape": "roundRect",
+        "x": 235,
+        "y": 75,
+        "w": 30,
+        "h": 26,
+        "radius": 6,
+        "targetColor": "#FF3B30",
+        "label": "North Gondola"
+      },
+      {
+        "id": "r6",
+        "shape": "roundRect",
+        "x": 365,
+        "y": 205,
+        "w": 30,
+        "h": 26,
+        "radius": 6,
+        "targetColor": "#007AFF",
+        "label": "East Gondola"
+      },
+      {
+        "id": "r7",
+        "shape": "roundRect",
+        "x": 235,
+        "y": 335,
+        "w": 30,
+        "h": 26,
+        "radius": 6,
+        "targetColor": "#FF3B30",
+        "label": "South Gondola"
+      },
+      {
+        "id": "r8",
+        "shape": "roundRect",
+        "x": 105,
+        "y": 205,
+        "w": 30,
+        "h": 26,
+        "radius": 6,
+        "targetColor": "#007AFF",
+        "label": "West Gondola"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#8E8E93",
+      "#FFCC00",
+      "#FF9500",
+      "#FF3B30",
+      "#007AFF",
+      "#34C759"
+    ],
+    "background": "#050814"
+  },
+  {
+    "id": 79,
+    "name": "Steam Engine Train",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 270,
+        "targetColor": "#5AC8FA",
+        "label": "Clear Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 280,
+        "y": 170,
+        "w": 100,
+        "h": 140,
+        "radius": 10,
+        "targetColor": "#2C2C2E",
+        "label": "Engineer Cab"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 120,
+        "y": 210,
+        "w": 170,
+        "h": 100,
+        "radius": 14,
+        "targetColor": "#FF3B30",
+        "label": "Boiler Chamber"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 140,
+        "y": 150,
+        "w": 28,
+        "h": 60,
+        "targetColor": "#2C2C2E",
+        "label": "Smokestack"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          80.0,
+          310.0,
+          120.0,
+          270.0,
+          120.0,
+          310.0
+        ],
+        "targetColor": "#8E8E93",
+        "label": "Cowcatcher Wedge"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 330,
+        "cy": 325,
+        "r": 42,
+        "targetColor": "#FFCC00",
+        "label": "Big Drive Wheel"
+      },
+      {
+        "id": "r7",
+        "shape": "rect",
+        "x": 40,
+        "y": 370,
+        "w": 420,
+        "h": 20,
+        "targetColor": "#5D4037",
+        "label": "Railway Ties"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#2C2C2E",
+      "#FF3B30",
+      "#8E8E93",
+      "#FFCC00",
+      "#5D4037",
+      "#FFFFFF"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 80,
+    "name": "Dutch Windmill",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 260,
+        "targetColor": "#5AC8FA",
+        "label": "Windy Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          360.0,
+          250.0,
+          300.0,
+          460.0,
+          360.0,
+          460.0,
+          440.0,
+          40.0,
+          440.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Windmill Mound"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 205,
+        "y": 170,
+        "w": 90,
+        "h": 150,
+        "radius": 8,
+        "targetColor": "#8D6E63",
+        "label": "Mill Tower"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          195.0,
+          170.0,
+          250.0,
+          110.0,
+          305.0,
+          170.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Mill Cap Roof"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          170.0,
+          350.0,
+          120.0,
+          360.0,
+          135.0,
+          250.0,
+          175.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Blade East"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          170.0,
+          150.0,
+          220.0,
+          140.0,
+          205.0,
+          250.0,
+          165.0
+        ],
+        "targetColor": "#FFFFFF",
+        "label": "Blade West"
+      },
+      {
+        "id": "r7",
+        "shape": "roundRect",
+        "x": 235,
+        "y": 270,
+        "w": 30,
+        "h": 50,
+        "radius": 4,
+        "targetColor": "#2C2C2E",
+        "label": "Mill Door"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#34C759",
+      "#8D6E63",
+      "#5D4037",
+      "#FFFFFF",
+      "#2C2C2E",
+      "#FFCC00"
+    ],
+    "background": "#F1F5F9"
+  },
+  {
+    "id": 81,
+    "name": "Orbital Space Station",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 480,
+        "rx": 320,
+        "ry": 120,
+        "targetColor": "#007AFF",
+        "label": "Earth Horizon"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 200,
+        "r": 48,
+        "targetColor": "#FFFFFF",
+        "label": "Station Command Hub"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 140,
+        "y": 185,
+        "w": 70,
+        "h": 30,
+        "radius": 6,
+        "targetColor": "#E5E5EA",
+        "label": "Science Module West"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 290,
+        "y": 185,
+        "w": 70,
+        "h": 30,
+        "radius": 6,
+        "targetColor": "#E5E5EA",
+        "label": "Habitat Module East"
+      },
+      {
+        "id": "r5",
+        "shape": "rect",
+        "x": 70,
+        "y": 150,
+        "w": 60,
+        "h": 100,
+        "targetColor": "#2979FF",
+        "label": "Solar Wing Alpha"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 370,
+        "y": 150,
+        "w": 60,
+        "h": 100,
+        "targetColor": "#2979FF",
+        "label": "Solar Wing Beta"
+      },
+      {
+        "id": "r7",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 130,
+        "r": 18,
+        "targetColor": "#FFB300",
+        "label": "Docking Port"
+      }
+    ],
+    "palette": [
+      "#007AFF",
+      "#FFFFFF",
+      "#E5E5EA",
+      "#2979FF",
+      "#FFB300",
+      "#5AC8FA"
+    ],
+    "background": "#020617"
+  },
+  {
+    "id": 82,
+    "name": "Airport Runway",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 230,
+        "targetColor": "#5AC8FA",
+        "label": "Airport Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          240.0,
+          320.0,
+          240.0,
+          440.0,
+          440.0,
+          60.0,
+          440.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Asphalt Runway"
+      },
+      {
+        "id": "r3",
+        "shape": "roundRect",
+        "x": 230,
+        "y": 140,
+        "w": 40,
+        "h": 170,
+        "radius": 18,
+        "targetColor": "#FFFFFF",
+        "label": "Airplane Fuselage"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          230.0,
+          200.0,
+          120.0,
+          260.0,
+          140.0,
+          275.0,
+          230.0,
+          245.0
+        ],
+        "targetColor": "#E5E5EA",
+        "label": "Port Wing"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          270.0,
+          200.0,
+          380.0,
+          260.0,
+          360.0,
+          275.0,
+          270.0,
+          245.0
+        ],
+        "targetColor": "#E5E5EA",
+        "label": "Starboard Wing"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          280.0,
+          260.0,
+          280.0,
+          250.0,
+          325.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Tail Fin"
+      },
+      {
+        "id": "r7",
+        "shape": "rect",
+        "x": 246,
+        "y": 250,
+        "w": 8,
+        "h": 180,
+        "targetColor": "#FFCC00",
+        "label": "Runway Centerline"
+      }
+    ],
+    "palette": [
+      "#5AC8FA",
+      "#2C2C2E",
+      "#FFFFFF",
+      "#E5E5EA",
+      "#FF3B30",
+      "#FFCC00",
+      "#34C759"
+    ],
+    "background": "#F8FAFC"
+  },
+  {
+    "id": 83,
+    "name": "Lakeside Camp",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 190,
+        "targetColor": "#1A237E",
+        "label": "Night Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          240.0,
+          160.0,
+          140.0,
+          280.0,
+          240.0,
+          400.0,
+          160.0,
+          460.0,
+          240.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Distant Ridge"
+      },
+      {
+        "id": "r3",
+        "shape": "rect",
+        "x": 40,
+        "y": 240,
+        "w": 420,
+        "h": 130,
+        "targetColor": "#007AFF",
+        "label": "Still Lake"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 110,
+        "y": 320,
+        "w": 80,
+        "h": 60,
+        "targetColor": "#8D6E63",
+        "label": "Log Cabin Base"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          95.0,
+          320.0,
+          150.0,
+          270.0,
+          205.0,
+          320.0
+        ],
+        "targetColor": "#5D4037",
+        "label": "Log Cabin Roof"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          280.0,
+          370.0,
+          300.0,
+          310.0,
+          320.0,
+          370.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Campfire Blaze"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          340.0,
+          345.0,
+          430.0,
+          345.0,
+          410.0,
+          370.0,
+          360.0,
+          370.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Moored Canoe"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#2C2C2E",
+      "#007AFF",
+      "#8D6E63",
+      "#5D4037",
+      "#FF9500",
+      "#FFB300"
+    ],
+    "background": "#030712"
+  },
+  {
+    "id": 84,
+    "name": "Great Pyramids of Giza",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 210,
+        "targetColor": "#FFF59D",
+        "label": "Desert Dawn Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 380,
+        "cy": 110,
+        "r": 45,
+        "targetColor": "#FF9500",
+        "label": "Blazing Sun"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          340.0,
+          230.0,
+          160.0,
+          280.0,
+          340.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Pyramid Light Face"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          280.0,
+          340.0,
+          230.0,
+          160.0,
+          360.0,
+          340.0
+        ],
+        "targetColor": "#8D6E63",
+        "label": "Pyramid Shadow Face"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          340.0,
+          110.0,
+          240.0,
+          170.0,
+          340.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Second Pyramid"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          40.0,
+          340.0,
+          180.0,
+          310.0,
+          320.0,
+          360.0,
+          460.0,
+          320.0,
+          460.0,
+          440.0,
+          40.0,
+          440.0
+        ],
+        "targetColor": "#F5DEB3",
+        "label": "Sand Dunes Foreground"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          400.0,
+          340.0,
+          430.0,
+          300.0,
+          440.0,
+          340.0
+        ],
+        "targetColor": "#1B5E20",
+        "label": "Oasis Palm Top"
+      }
+    ],
+    "palette": [
+      "#FFF59D",
+      "#FF9500",
+      "#FFB300",
+      "#8D6E63",
+      "#F5DEB3",
+      "#1B5E20",
+      "#5AC8FA"
+    ],
+    "background": "#451A03"
+  },
+  {
+    "id": 85,
+    "name": "Wizard Astronomy Tower",
+    "category": "scenes",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 320,
+        "targetColor": "#5856D6",
+        "label": "Arcane Cosmic Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "roundRect",
+        "x": 190,
+        "y": 190,
+        "w": 120,
+        "h": 180,
+        "radius": 12,
+        "targetColor": "#8E8E93",
+        "label": "Stone Tower Shaft"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          170.0,
+          190.0,
+          250.0,
+          75.0,
+          330.0,
+          190.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Conical Wizard Roof"
+      },
+      {
+        "id": "r4",
+        "shape": "roundRect",
+        "x": 175,
+        "y": 230,
+        "w": 150,
+        "h": 30,
+        "radius": 8,
+        "targetColor": "#2C2C2E",
+        "label": "Viewing Balcony"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 145,
+        "r": 22,
+        "targetColor": "#5AC8FA",
+        "label": "Glowing Scrying Orb"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          270.0,
+          225.0,
+          360.0,
+          165.0,
+          370.0,
+          175.0,
+          280.0,
+          235.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Brass Telescope"
+      },
+      {
+        "id": "r7",
+        "shape": "ring",
+        "cx": 120,
+        "cy": 120,
+        "outerR": 42,
+        "innerR": 28,
+        "targetColor": "#FFCC00",
+        "label": "Arcane Crescent Moon"
+      }
+    ],
+    "palette": [
+      "#5856D6",
+      "#8E8E93",
+      "#AF52DE",
+      "#2C2C2E",
+      "#5AC8FA",
+      "#FFB300",
+      "#FFCC00"
+    ],
+    "background": "#0A061E"
+  },
+  {
+    "id": 86,
+    "name": "Kaleidoscope Mandala",
+    "category": "master",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 8,
+        "outerR": 70,
+        "innerR": 35,
+        "targetColor": "#FFCC00",
+        "label": "Core Star"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 115,
+        "innerR": 80,
+        "targetColor": "#FF9500",
+        "label": "Inner Gem Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          135.0,
+          275.0,
+          175.0,
+          250.0,
+          215.0,
+          225.0,
+          175.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Facet North"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          365.0,
+          250.0,
+          325.0,
+          275.0,
+          285.0,
+          250.0,
+          325.0,
+          225.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Facet East"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          365.0,
+          275.0,
+          325.0,
+          250.0,
+          285.0,
+          225.0,
+          325.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Facet South"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          135.0,
+          250.0,
+          175.0,
+          275.0,
+          215.0,
+          250.0,
+          175.0,
+          225.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Facet West"
+      },
+      {
+        "id": "r7",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 185,
+        "innerR": 150,
+        "targetColor": "#009688",
+        "label": "Outer Scalloped Ring"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 16,
+        "outerR": 225,
+        "innerR": 195,
+        "targetColor": "#30D158",
+        "label": "Peripheral Star Radiance"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#FF3B30",
+      "#FF2D55",
+      "#AF52DE",
+      "#007AFF",
+      "#009688",
+      "#30D158"
+    ],
+    "background": "#090514"
+  },
+  {
+    "id": 87,
+    "name": "Stained Glass Rose Window",
+    "category": "master",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 225,
+        "innerR": 190,
+        "targetColor": "#2C2C2E",
+        "label": "Stone Tracery Rim"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 48,
+        "targetColor": "#FFCC00",
+        "label": "Central Solar Rosette"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          195.0,
+          285.0,
+          130.0,
+          250.0,
+          70.0,
+          215.0,
+          130.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Top Glass Petal"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          305.0,
+          250.0,
+          370.0,
+          285.0,
+          430.0,
+          250.0,
+          370.0,
+          215.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Right Glass Petal"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          305.0,
+          285.0,
+          370.0,
+          250.0,
+          430.0,
+          215.0,
+          370.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Bottom Glass Petal"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          195.0,
+          250.0,
+          130.0,
+          285.0,
+          70.0,
+          250.0,
+          130.0,
+          215.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Left Glass Petal"
+      },
+      {
+        "id": "r7",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 110,
+        "innerR": 60,
+        "targetColor": "#FF9500",
+        "label": "Inner Glass Halo"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 8,
+        "outerR": 180,
+        "innerR": 135,
+        "targetColor": "#5AC8FA",
+        "label": "Connecting Facets"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#FFCC00",
+      "#FF3B30",
+      "#007AFF",
+      "#34C759",
+      "#AF52DE",
+      "#FF9500",
+      "#5AC8FA"
+    ],
+    "background": "#000000"
+  },
+  {
+    "id": 88,
+    "name": "Celestial Sun & Moon",
+    "category": "master",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 16,
+        "outerR": 230,
+        "innerR": 175,
+        "targetColor": "#FFB300",
+        "label": "Solar Corona Flare"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 180,
+        "innerR": 140,
+        "targetColor": "#1A237E",
+        "label": "Cosmic Void Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 110,
+        "targetColor": "#FFCC00",
+        "label": "Sun Face Disc"
+      },
+      {
+        "id": "r4",
+        "shape": "ring",
+        "cx": 235,
+        "cy": 250,
+        "outerR": 110,
+        "innerR": 80,
+        "targetColor": "#5AC8FA",
+        "label": "Crescent Moon Face"
+      },
+      {
+        "id": "r5",
+        "shape": "ellipse",
+        "cx": 280,
+        "cy": 235,
+        "rx": 16,
+        "ry": 28,
+        "targetColor": "#FF9500",
+        "label": "Solar Eye Right"
+      },
+      {
+        "id": "r6",
+        "shape": "ellipse",
+        "cx": 210,
+        "cy": 235,
+        "rx": 14,
+        "ry": 24,
+        "targetColor": "#5856D6",
+        "label": "Lunar Eye Left"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          60.0,
+          260.0,
+          110.0,
+          240.0,
+          110.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Apex Flame Tongue"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 390,
+        "points": 6,
+        "outerR": 25,
+        "innerR": 12,
+        "targetColor": "#FFFFFF",
+        "label": "North Star Pendant"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#1A237E",
+      "#FFCC00",
+      "#5AC8FA",
+      "#FF9500",
+      "#5856D6",
+      "#FF3B30",
+      "#FFFFFF"
+    ],
+    "background": "#020617"
+  },
+  {
+    "id": 89,
+    "name": "Celtic Knot Medallion",
+    "category": "master",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 220,
+        "innerR": 185,
+        "targetColor": "#1B5E20",
+        "label": "Outer Torc Ring"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 48,
+        "targetColor": "#FFB300",
+        "label": "Center Knot Boss"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          120.0,
+          290.0,
+          170.0,
+          250.0,
+          210.0,
+          210.0,
+          170.0
+        ],
+        "targetColor": "#34C759",
+        "label": "North Knot Loop"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          330.0,
+          250.0,
+          380.0,
+          290.0,
+          330.0,
+          330.0,
+          280.0,
+          290.0
+        ],
+        "targetColor": "#34C759",
+        "label": "East Knot Loop"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          380.0,
+          290.0,
+          330.0,
+          250.0,
+          290.0,
+          210.0,
+          330.0
+        ],
+        "targetColor": "#34C759",
+        "label": "South Knot Loop"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          170.0,
+          250.0,
+          120.0,
+          290.0,
+          170.0,
+          330.0,
+          220.0,
+          290.0
+        ],
+        "targetColor": "#34C759",
+        "label": "West Knot Loop"
+      },
+      {
+        "id": "r7",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 135,
+        "innerR": 105,
+        "targetColor": "#30D158",
+        "label": "Interlaced Ribbon"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 4,
+        "outerR": 180,
+        "innerR": 140,
+        "targetColor": "#FFCC00",
+        "label": "Corner Triquetra Tips"
+      }
+    ],
+    "palette": [
+      "#1B5E20",
+      "#FFB300",
+      "#34C759",
+      "#30D158",
+      "#FFCC00",
+      "#009688",
+      "#5D4037",
+      "#F5DEB3"
+    ],
+    "background": "#022C22"
+  },
+  {
+    "id": 90,
+    "name": "Alhambra Mosaic Tile",
+    "category": "master",
+    "difficulty": 8,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 50,
+        "y": 50,
+        "w": 400,
+        "h": 400,
+        "targetColor": "#2C2C2E",
+        "label": "Mosaic Border Frame"
+      },
+      {
+        "id": "r2",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 8,
+        "outerR": 90,
+        "innerR": 45,
+        "targetColor": "#FFCC00",
+        "label": "Central 8-Point Star"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          120.0,
+          295.0,
+          165.0,
+          250.0,
+          210.0,
+          205.0,
+          165.0
+        ],
+        "targetColor": "#009688",
+        "label": "North Geometric Diamond"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          380.0,
+          250.0,
+          335.0,
+          295.0,
+          290.0,
+          250.0,
+          335.0,
+          205.0
+        ],
+        "targetColor": "#009688",
+        "label": "East Geometric Diamond"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          380.0,
+          295.0,
+          335.0,
+          250.0,
+          290.0,
+          205.0,
+          335.0
+        ],
+        "targetColor": "#009688",
+        "label": "South Geometric Diamond"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          250.0,
+          165.0,
+          295.0,
+          210.0,
+          250.0,
+          165.0,
+          205.0
+        ],
+        "targetColor": "#009688",
+        "label": "West Geometric Diamond"
+      },
+      {
+        "id": "r7",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 195,
+        "innerR": 160,
+        "targetColor": "#2979FF",
+        "label": "Interlocking Arabesque Ring"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 4,
+        "outerR": 160,
+        "innerR": 110,
+        "targetColor": "#FF6F59",
+        "label": "Diagonal Star Corners"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#FFCC00",
+      "#009688",
+      "#2979FF",
+      "#FF6F59",
+      "#FFFFFF",
+      "#FFB300",
+      "#5AC8FA"
+    ],
+    "background": "#0F172A"
+  },
+  {
+    "id": 91,
+    "name": "Japanese Zen Pavilion",
+    "category": "master",
+    "difficulty": 9,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 230,
+        "targetColor": "#FFF59D",
+        "label": "Misty Morning Sky"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          150.0,
+          160.0,
+          250.0,
+          100.0,
+          350.0,
+          160.0,
+          330.0,
+          175.0,
+          170.0,
+          175.0
+        ],
+        "targetColor": "#C0392B",
+        "label": "Upper Pagoda Roof"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          120.0,
+          230.0,
+          250.0,
+          175.0,
+          380.0,
+          230.0,
+          360.0,
+          245.0,
+          140.0,
+          245.0
+        ],
+        "targetColor": "#C0392B",
+        "label": "Lower Pagoda Roof"
+      },
+      {
+        "id": "r4",
+        "shape": "rect",
+        "x": 180,
+        "y": 245,
+        "w": 140,
+        "h": 80,
+        "targetColor": "#5D4037",
+        "label": "Temple Wooden Chamber"
+      },
+      {
+        "id": "r5",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 370,
+        "r": 110,
+        "startAngle": 3.1416,
+        "endAngle": 6.2832,
+        "targetColor": "#FF3B30",
+        "label": "Arched Moon Bridge"
+      },
+      {
+        "id": "r6",
+        "shape": "rect",
+        "x": 40,
+        "y": 370,
+        "w": 420,
+        "h": 70,
+        "targetColor": "#009688",
+        "label": "Reflective Koi Pond"
+      },
+      {
+        "id": "r7",
+        "shape": "ellipse",
+        "cx": 110,
+        "cy": 390,
+        "rx": 35,
+        "ry": 15,
+        "targetColor": "#8E8E93",
+        "label": "Stepping Stone West"
+      },
+      {
+        "id": "r8",
+        "shape": "roundRect",
+        "x": 360,
+        "y": 310,
+        "w": 30,
+        "h": 60,
+        "radius": 6,
+        "targetColor": "#8E8E93",
+        "label": "Toro Stone Lantern"
+      }
+    ],
+    "palette": [
+      "#FFF59D",
+      "#C0392B",
+      "#5D4037",
+      "#FF3B30",
+      "#009688",
+      "#8E8E93",
+      "#34C759",
+      "#FF2D55"
+    ],
+    "background": "#FFFBEB"
+  },
+  {
+    "id": 92,
+    "name": "Venetian Carnival Mask",
+    "category": "master",
+    "difficulty": 9,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "roundRect",
+        "x": 110,
+        "y": 210,
+        "w": 280,
+        "h": 110,
+        "radius": 45,
+        "targetColor": "#FFFFFF",
+        "label": "Masquerade Base Mask"
+      },
+      {
+        "id": "r2",
+        "shape": "ellipse",
+        "cx": 180,
+        "cy": 260,
+        "rx": 32,
+        "ry": 18,
+        "targetColor": "#2C2C2E",
+        "label": "Eye Aperture Left"
+      },
+      {
+        "id": "r3",
+        "shape": "ellipse",
+        "cx": 320,
+        "cy": 260,
+        "rx": 32,
+        "ry": 18,
+        "targetColor": "#2C2C2E",
+        "label": "Eye Aperture Right"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          210.0,
+          200.0,
+          60.0,
+          250.0,
+          110.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Crown Feather Center"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          220.0,
+          210.0,
+          120.0,
+          90.0,
+          190.0,
+          140.0
+        ],
+        "targetColor": "#2979FF",
+        "label": "Flamboyant Feather Left"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          280.0,
+          210.0,
+          380.0,
+          90.0,
+          310.0,
+          140.0
+        ],
+        "targetColor": "#2979FF",
+        "label": "Flamboyant Feather Right"
+      },
+      {
+        "id": "r7",
+        "shape": "star",
+        "cx": 250,
+        "cy": 220,
+        "points": 6,
+        "outerR": 26,
+        "innerR": 12,
+        "targetColor": "#FFB300",
+        "label": "Forehead Filigree Brooch"
+      },
+      {
+        "id": "r8",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 300,
+        "size": 24,
+        "targetColor": "#FF2D55",
+        "label": "Chin Heart Accent"
+      }
+    ],
+    "palette": [
+      "#FFFFFF",
+      "#2C2C2E",
+      "#AF52DE",
+      "#2979FF",
+      "#FFB300",
+      "#FF2D55",
+      "#009688",
+      "#FF3B30"
+    ],
+    "background": "#1E1B4B"
+  },
+  {
+    "id": 93,
+    "name": "Majestic Peacock Fan",
+    "category": "master",
+    "difficulty": 9,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ellipse",
+        "cx": 250,
+        "cy": 340,
+        "rx": 45,
+        "ry": 90,
+        "targetColor": "#009688",
+        "label": "Peacock Slender Torso"
+      },
+      {
+        "id": "r2",
+        "shape": "star",
+        "cx": 250,
+        "cy": 230,
+        "points": 5,
+        "outerR": 25,
+        "innerR": 10,
+        "targetColor": "#2979FF",
+        "label": "Crest Crown"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          320.0,
+          90.0,
+          110.0,
+          140.0,
+          90.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Plume Far Left"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          320.0,
+          180.0,
+          70.0,
+          230.0,
+          60.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Plume Mid Left"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          320.0,
+          270.0,
+          60.0,
+          320.0,
+          70.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Plume Mid Right"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          320.0,
+          360.0,
+          90.0,
+          410.0,
+          110.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Plume Far Right"
+      },
+      {
+        "id": "r7",
+        "shape": "circle",
+        "cx": 205,
+        "cy": 115,
+        "r": 18,
+        "targetColor": "#FFB300",
+        "label": "Eye Spot Left"
+      },
+      {
+        "id": "r8",
+        "shape": "circle",
+        "cx": 295,
+        "cy": 115,
+        "r": 18,
+        "targetColor": "#FFB300",
+        "label": "Eye Spot Right"
+      }
+    ],
+    "palette": [
+      "#009688",
+      "#2979FF",
+      "#34C759",
+      "#FFB300",
+      "#007AFF",
+      "#AF52DE",
+      "#FFCC00",
+      "#30D158"
+    ],
+    "background": "#022C22"
+  },
+  {
+    "id": 94,
+    "name": "Heraldic Dragon Crest",
+    "category": "master",
+    "difficulty": 9,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          80.0,
+          390.0,
+          80.0,
+          390.0,
+          280.0,
+          250.0,
+          430.0,
+          110.0,
+          280.0
+        ],
+        "targetColor": "#1A237E",
+        "label": "Heraldic Shield Mantle"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          220.0,
+          290.0,
+          270.0,
+          290.0,
+          285.0,
+          220.0,
+          240.0,
+          180.0,
+          215.0,
+          230.0
+        ],
+        "targetColor": "#C0392B",
+        "label": "Dragon Scaled Torso"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          180.0,
+          140.0,
+          130.0,
+          160.0,
+          200.0,
+          110.0,
+          180.0,
+          170.0,
+          250.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Dragon Wing Left"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          180.0,
+          360.0,
+          130.0,
+          340.0,
+          200.0,
+          390.0,
+          180.0,
+          330.0,
+          250.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Dragon Wing Right"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          230.0,
+          180.0,
+          205.0,
+          130.0,
+          265.0,
+          130.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Horned Dragon Head"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          205.0,
+          140.0,
+          120.0,
+          110.0,
+          150.0,
+          135.0,
+          110.0,
+          130.0,
+          160.0,
+          150.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Fiery Breath"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          110.0,
+          80.0,
+          390.0,
+          80.0,
+          370.0,
+          100.0,
+          130.0,
+          100.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Gold Shield Border Top"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 250,
+        "cy": 365,
+        "points": 5,
+        "outerR": 24,
+        "innerR": 11,
+        "targetColor": "#FFB300",
+        "label": "Chivalric Star"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#C0392B",
+      "#FF3B30",
+      "#FF9500",
+      "#FFCC00",
+      "#FFB300",
+      "#2C2C2E",
+      "#FFFFFF"
+    ],
+    "background": "#0B0F19"
+  },
+  {
+    "id": 95,
+    "name": "Clockwork Horology",
+    "category": "master",
+    "difficulty": 9,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 215,
+        "innerR": 175,
+        "targetColor": "#FFB300",
+        "label": "Master Brass Cog"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 165,
+        "innerR": 125,
+        "targetColor": "#5D4037",
+        "label": "Intermediate Escapement Rim"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 12,
+        "outerR": 125,
+        "innerR": 90,
+        "targetColor": "#FFCC00",
+        "label": "Sunburst Gear Teeth"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 60,
+        "targetColor": "#FFFFFF",
+        "label": "Chronometer Dial"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          246.0,
+          250.0,
+          246.0,
+          120.0,
+          254.0,
+          120.0,
+          254.0,
+          250.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Minute Hand"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          246.0,
+          320.0,
+          246.0,
+          320.0,
+          254.0,
+          250.0,
+          254.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Hour Hand"
+      },
+      {
+        "id": "r7",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 14,
+        "targetColor": "#FF3B30",
+        "label": "Ruby Bearing"
+      },
+      {
+        "id": "r8",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 45,
+        "innerR": 30,
+        "targetColor": "#5AC8FA",
+        "label": "Balance Spring Ring"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#5D4037",
+      "#FFCC00",
+      "#FFFFFF",
+      "#2C2C2E",
+      "#FF3B30",
+      "#5AC8FA",
+      "#8E8E93"
+    ],
+    "background": "#1C1917"
+  },
+  {
+    "id": 96,
+    "name": "Aztec Sun Stone",
+    "category": "master",
+    "difficulty": 10,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 220,
+        "targetColor": "#FFB300",
+        "label": "Solar Stone Plaque"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 205,
+        "innerR": 170,
+        "targetColor": "#C0392B",
+        "label": "Sacred Glyph Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 8,
+        "outerR": 170,
+        "innerR": 130,
+        "targetColor": "#FF9500",
+        "label": "Eight Cardinal Rays"
+      },
+      {
+        "id": "r4",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 125,
+        "innerR": 95,
+        "targetColor": "#2C2C2E",
+        "label": "Calendar Quadrant Rim"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 250,
+        "r": 80,
+        "targetColor": "#FFCC00",
+        "label": "Central Solar Deity Face"
+      },
+      {
+        "id": "r6",
+        "shape": "ellipse",
+        "cx": 225,
+        "cy": 235,
+        "rx": 12,
+        "ry": 8,
+        "targetColor": "#FF6F59",
+        "label": "Deity Left Eye"
+      },
+      {
+        "id": "r7",
+        "shape": "ellipse",
+        "cx": 275,
+        "cy": 235,
+        "rx": 12,
+        "ry": 8,
+        "targetColor": "#FF6F59",
+        "label": "Deity Right Eye"
+      },
+      {
+        "id": "r8",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          265.0,
+          260.0,
+          265.0,
+          250.0,
+          290.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Deity Tongue"
+      }
+    ],
+    "palette": [
+      "#FFB300",
+      "#C0392B",
+      "#FF9500",
+      "#2C2C2E",
+      "#FFCC00",
+      "#FF6F59",
+      "#FF3B30",
+      "#F5DEB3"
+    ],
+    "background": "#451A03"
+  },
+  {
+    "id": 97,
+    "name": "Gothic Cathedral Tracery",
+    "category": "master",
+    "difficulty": 10,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "polygon",
+        "points": [
+          100.0,
+          440.0,
+          100.0,
+          220.0,
+          250.0,
+          60.0,
+          400.0,
+          220.0,
+          400.0,
+          440.0
+        ],
+        "targetColor": "#2C2C2E",
+        "label": "Gothic Portal Arch"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 220,
+        "outerR": 110,
+        "innerR": 80,
+        "targetColor": "#8E8E93",
+        "label": "Rose Window Spandrel"
+      },
+      {
+        "id": "r3",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 220,
+        "r": 40,
+        "targetColor": "#FF3B30",
+        "label": "Center Ruby Glass"
+      },
+      {
+        "id": "r4",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 145,
+        "r": 25,
+        "targetColor": "#007AFF",
+        "label": "North Glass Quatrefoil"
+      },
+      {
+        "id": "r5",
+        "shape": "circle",
+        "cx": 325,
+        "cy": 220,
+        "r": 25,
+        "targetColor": "#007AFF",
+        "label": "East Glass Quatrefoil"
+      },
+      {
+        "id": "r6",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 295,
+        "r": 25,
+        "targetColor": "#007AFF",
+        "label": "South Glass Quatrefoil"
+      },
+      {
+        "id": "r7",
+        "shape": "circle",
+        "cx": 175,
+        "cy": 220,
+        "r": 25,
+        "targetColor": "#007AFF",
+        "label": "West Glass Quatrefoil"
+      },
+      {
+        "id": "r8",
+        "shape": "polygon",
+        "points": [
+          180.0,
+          440.0,
+          180.0,
+          350.0,
+          250.0,
+          310.0,
+          320.0,
+          350.0,
+          320.0,
+          440.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Cathedral Portal Gates"
+      }
+    ],
+    "palette": [
+      "#2C2C2E",
+      "#8E8E93",
+      "#FF3B30",
+      "#007AFF",
+      "#FFB300",
+      "#AF52DE",
+      "#FFCC00",
+      "#34C759"
+    ],
+    "background": "#030712"
+  },
+  {
+    "id": 98,
+    "name": "Deep Space Nebula Genesis",
+    "category": "master",
+    "difficulty": 10,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "rect",
+        "x": 40,
+        "y": 50,
+        "w": 420,
+        "h": 340,
+        "targetColor": "#1A237E",
+        "label": "Deep Space Canvas"
+      },
+      {
+        "id": "r2",
+        "shape": "circle",
+        "cx": 250,
+        "cy": 220,
+        "r": 40,
+        "targetColor": "#FFFFFF",
+        "label": "Radiant Proto-Star Core"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          160.0,
+          140.0,
+          260.0,
+          80.0,
+          360.0,
+          130.0,
+          290.0,
+          210.0,
+          190.0,
+          200.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Nebular Gas Lobe Alpha"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          200.0,
+          230.0,
+          340.0,
+          210.0,
+          380.0,
+          320.0,
+          250.0,
+          360.0,
+          150.0,
+          310.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Nebular Gas Lobe Beta"
+      },
+      {
+        "id": "r5",
+        "shape": "arc",
+        "cx": 250,
+        "cy": 220,
+        "r": 140,
+        "startAngle": 0.5,
+        "endAngle": 3.6,
+        "targetColor": "#5AC8FA",
+        "label": "Stellar Shockwave Arc"
+      },
+      {
+        "id": "r6",
+        "shape": "star",
+        "cx": 120,
+        "cy": 110,
+        "points": 4,
+        "outerR": 24,
+        "innerR": 10,
+        "targetColor": "#FFCC00",
+        "label": "Young Star Cluster A"
+      },
+      {
+        "id": "r7",
+        "shape": "star",
+        "cx": 390,
+        "cy": 100,
+        "points": 4,
+        "outerR": 20,
+        "innerR": 9,
+        "targetColor": "#FFCC00",
+        "label": "Young Star Cluster B"
+      },
+      {
+        "id": "r8",
+        "shape": "star",
+        "cx": 380,
+        "cy": 340,
+        "points": 5,
+        "outerR": 22,
+        "innerR": 10,
+        "targetColor": "#5AC8FA",
+        "label": "Reflecting Nebula Cluster"
+      }
+    ],
+    "palette": [
+      "#1A237E",
+      "#FFFFFF",
+      "#AF52DE",
+      "#FF2D55",
+      "#5AC8FA",
+      "#FFCC00",
+      "#2979FF",
+      "#30D158"
+    ],
+    "background": "#000005"
+  },
+  {
+    "id": 99,
+    "name": "Mythical Phoenix Rising",
+    "category": "master",
+    "difficulty": 10,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "heart",
+        "cx": 250,
+        "cy": 250,
+        "size": 65,
+        "targetColor": "#FF3B30",
+        "label": "Phoenix Flame Heart"
+      },
+      {
+        "id": "r2",
+        "shape": "polygon",
+        "points": [
+          235.0,
+          270.0,
+          265.0,
+          270.0,
+          260.0,
+          180.0,
+          240.0,
+          180.0
+        ],
+        "targetColor": "#FF9500",
+        "label": "Phoenix Body Pillar"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          180.0,
+          120.0,
+          130.0,
+          170.0,
+          210.0,
+          100.0,
+          200.0,
+          160.0,
+          270.0
+        ],
+        "targetColor": "#E65100",
+        "label": "Fiery Wing West"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          260.0,
+          180.0,
+          380.0,
+          130.0,
+          330.0,
+          210.0,
+          400.0,
+          200.0,
+          340.0,
+          270.0
+        ],
+        "targetColor": "#E65100",
+        "label": "Fiery Wing East"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          240.0,
+          180.0,
+          250.0,
+          110.0,
+          260.0,
+          180.0
+        ],
+        "targetColor": "#FFCC00",
+        "label": "Crowned Head Feathers"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          235.0,
+          270.0,
+          180.0,
+          390.0,
+          240.0,
+          330.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Trailing Plume Left"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          265.0,
+          270.0,
+          320.0,
+          390.0,
+          260.0,
+          330.0
+        ],
+        "targetColor": "#FFB300",
+        "label": "Trailing Plume Right"
+      },
+      {
+        "id": "r8",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 180,
+        "innerR": 150,
+        "targetColor": "#FF6F59",
+        "label": "Aura of Rebirth"
+      }
+    ],
+    "palette": [
+      "#FF3B30",
+      "#FF9500",
+      "#E65100",
+      "#FFCC00",
+      "#FFB300",
+      "#FF6F59",
+      "#AF52DE",
+      "#FF2D55"
+    ],
+    "background": "#0B0500"
+  },
+  {
+    "id": 100,
+    "name": "Grand Colour Quest Symphony",
+    "category": "master",
+    "difficulty": 10,
+    "regions": [
+      {
+        "id": "r1",
+        "shape": "star",
+        "cx": 250,
+        "cy": 250,
+        "points": 12,
+        "outerR": 60,
+        "innerR": 30,
+        "targetColor": "#FFCC00",
+        "label": "Apex Radiant Core"
+      },
+      {
+        "id": "r2",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 95,
+        "innerR": 68,
+        "targetColor": "#FF9500",
+        "label": "Inner Victory Ring"
+      },
+      {
+        "id": "r3",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          100.0,
+          278.0,
+          142.0,
+          250.0,
+          185.0,
+          222.0,
+          142.0
+        ],
+        "targetColor": "#FF3B30",
+        "label": "Symphony Petal North"
+      },
+      {
+        "id": "r4",
+        "shape": "polygon",
+        "points": [
+          356.0,
+          144.0,
+          356.0,
+          194.0,
+          304.0,
+          218.0,
+          304.0,
+          168.0
+        ],
+        "targetColor": "#FF2D55",
+        "label": "Symphony Petal North-East"
+      },
+      {
+        "id": "r5",
+        "shape": "polygon",
+        "points": [
+          356.0,
+          306.0,
+          304.0,
+          282.0,
+          304.0,
+          332.0,
+          356.0,
+          356.0
+        ],
+        "targetColor": "#AF52DE",
+        "label": "Symphony Petal South-East"
+      },
+      {
+        "id": "r6",
+        "shape": "polygon",
+        "points": [
+          250.0,
+          400.0,
+          222.0,
+          358.0,
+          250.0,
+          315.0,
+          278.0,
+          358.0
+        ],
+        "targetColor": "#5856D6",
+        "label": "Symphony Petal South"
+      },
+      {
+        "id": "r7",
+        "shape": "polygon",
+        "points": [
+          144.0,
+          356.0,
+          144.0,
+          306.0,
+          196.0,
+          282.0,
+          196.0,
+          332.0
+        ],
+        "targetColor": "#007AFF",
+        "label": "Symphony Petal South-West"
+      },
+      {
+        "id": "r8",
+        "shape": "polygon",
+        "points": [
+          144.0,
+          144.0,
+          196.0,
+          168.0,
+          196.0,
+          218.0,
+          144.0,
+          194.0
+        ],
+        "targetColor": "#34C759",
+        "label": "Symphony Petal North-West"
+      },
+      {
+        "id": "r9",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 195,
+        "innerR": 165,
+        "targetColor": "#FF9500",
+        "label": "Harmonic Spectrum Ring"
+      },
+      {
+        "id": "r10",
+        "shape": "ring",
+        "cx": 250,
+        "cy": 250,
+        "outerR": 230,
+        "innerR": 205,
+        "targetColor": "#FFCC00",
+        "label": "Grand Victory Halo"
+      }
+    ],
+    "palette": [
+      "#FFCC00",
+      "#FF9500",
+      "#FF3B30",
+      "#FF2D55",
+      "#AF52DE",
+      "#5856D6",
+      "#007AFF",
+      "#34C759"
+    ],
+    "background": "#030712"
+  }
+]
