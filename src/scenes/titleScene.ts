@@ -21,6 +21,7 @@ import {
   type ButtonOptions,
 } from '../ui/components';
 import { eventBus } from '../shared/eventBus';
+import { audioManager } from '../audio/audioManager';
 import { saveManager } from '../game/saveManager';
 import { sceneManager, type Scene } from '../core/sceneManager';
 import { DESIGN_WIDTH, DESIGN_HEIGHT, TOTAL_LEVELS } from '../shared/constants';
@@ -522,11 +523,12 @@ export class TitleScene implements Scene {
   private onPlayClicked(): void {
     // Unlock WebAudio context on user gesture
     eventBus.emit('audio:unlock', {});
+    audioManager.playSound('lets_play');
 
     const progress = saveManager.getProgress();
     const targetLevel = progress.currentLevel || progress.highestUnlocked || 1;
 
-    eventBus.emit('level:start', { levelId: targetLevel });
+    eventBus.emit('level:start', { levelId: targetLevel, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: targetLevel });
   }
 

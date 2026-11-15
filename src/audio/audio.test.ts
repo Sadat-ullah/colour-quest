@@ -12,6 +12,7 @@ import {
   playMismatch,
   playClear,
   playLevelTransition,
+  playLetsPlay,
 } from './soundEffects';
 import { musicSynth, MusicSynth } from './musicSynth';
 import { getAudioContext, isAudioUnlocked, unlockAudio, initMobileUnlock, _resetUnlockForTesting } from './mobileUnlock';
@@ -196,12 +197,19 @@ describe('Audio Subsystem (Agent A5)', () => {
       expect(() => audioManager.playNextLevel()).not.toThrow();
     });
 
-    it('plays level transition 3-note ascending chime without error', () => {
+    it('plays level transition warm marimba chime without error', () => {
       expect(() => soundEffects.playLevelComplete(3)).not.toThrow();
       expect(() => playLevelTransition(0.9)).not.toThrow();
       expect(() => audioManager.playLevelTransition()).not.toThrow();
       expect(() => audioManager.playSound('level_transition')).not.toThrow();
       expect(() => audioManager.playSound('transition')).not.toThrow();
+    });
+
+    it('plays gentle warm bubble lets_play sound without error', () => {
+      expect(() => playLetsPlay(0.9)).not.toThrow();
+      expect(() => audioManager.playLetsPlay()).not.toThrow();
+      expect(() => audioManager.playSound('lets_play')).not.toThrow();
+      expect(() => audioManager.playSound('play')).not.toThrow();
     });
 
     it('manages volume and mute state correctly', () => {
