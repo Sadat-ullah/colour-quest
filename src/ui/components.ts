@@ -237,12 +237,10 @@ export function drawButton(ctx: CanvasRenderingContext2D, opts: ButtonOptions): 
     const iconSize = Math.min(w * 0.55, faceHeight * 0.55, fontSize * 1.4);
     drawIcon(ctx, icon, x + w / 2, centerY, iconSize, finalTextColor);
   } else if (text) {
-    // Text only (explicitly centered using measured width for robust cross-browser and emoji alignment)
-    const textMetrics = ctx.measureText(text);
-    const textStartX = x + (w - textMetrics.width) / 2;
-    ctx.textAlign = 'left';
+    // Text only (explicitly centered natively by canvas)
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, textStartX, centerY + 1);
+    ctx.fillText(text, x + w / 2, centerY + 1);
   }
 
   // Optional Badge (e.g. level count, notification)

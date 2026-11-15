@@ -300,9 +300,9 @@ export class GameplayScene implements Scene {
 
       // Left Side Palette (Full-Space Tight Vertical Grid)
       this.paletteArea = {
-        x: 36,
+        x: 34,
         y: 88,
-        w: 250,
+        w: 256,
         h: height - 108,
       };
 
@@ -659,12 +659,24 @@ export class GameplayScene implements Scene {
     ctx.save();
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = getFont(isPortrait ? 15 : 17, 'extraBold');
     ctx.fillStyle = COLORS.spruceVelvet;
 
     const labelTopPad = isPortrait ? 18 : 24;
     const labelH = isPortrait ? 38 : 52;
-    const promptText = hasSelection ? '👇 TAP A COLOUR TO PAINT!' : 'TAP A SHAPE FIRST';
+    const promptText = hasSelection
+      ? (w < 320 ? '👇 TAP A COLOUR!' : '👇 TAP A COLOUR TO PAINT!')
+      : 'TAP A SHAPE FIRST';
+
+    let fontSize = isPortrait ? 15 : 15;
+    ctx.font = getFont(fontSize, 'extraBold');
+
+    // Auto-shrink font if needed so text never encroaches on the card's rounded borders
+    const maxTextW = w - 40;
+    while (ctx.measureText(promptText).width > maxTextW && fontSize > 11) {
+      fontSize -= 0.5;
+      ctx.font = getFont(fontSize, 'extraBold');
+    }
+
     ctx.fillText(promptText, x + w / 2, y + labelTopPad);
     ctx.restore();
 

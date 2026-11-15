@@ -157,9 +157,9 @@ describe('UI Drawing Components (/src/ui/components.ts)', () => {
     ).not.toThrow();
   });
 
-  it('drawButton horizontally centers text using measuredText width', () => {
-    // When width = 200, measured text width = 100, x = 50:
-    // textStartX should be 50 + (200 - 100) / 2 = 100
+  it('drawButton horizontally centers text at x + w / 2 with textAlign center', () => {
+    // When width = 200, x = 50:
+    // text should be drawn at 50 + 200 / 2 = 150
     drawButton(ctx, {
       x: 50,
       y: 50,
@@ -168,8 +168,8 @@ describe('UI Drawing Components (/src/ui/components.ts)', () => {
       text: 'Level Select 🗺️',
     });
 
-    expect(ctx.textAlign).toBe('left');
-    expect(ctx.fillText).toHaveBeenCalledWith('Level Select 🗺️', 100, expect.any(Number));
+    expect(ctx.textAlign).toBe('center');
+    expect(ctx.fillText).toHaveBeenCalledWith('Level Select 🗺️', 150, expect.any(Number));
   });
 
   it('drawGlossyGreenButton applies earlier dark green Spruce Velvet gradient', () => {
