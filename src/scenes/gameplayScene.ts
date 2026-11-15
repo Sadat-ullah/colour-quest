@@ -162,11 +162,11 @@ export class GameplayScene implements Scene {
     // 6. Render Main Middle Container with 80%-85% Auto-Fit Blank Template
     this.renderTemplate(ctx, level);
 
-    // 7. Render Overlapping Pill Toolbar (Undo, Clear, Hint)
-    this.renderPillToolbar(ctx);
-
-    // 8. Render Bottom Full-Space Tight Color Grid
+    // 7. Render Bottom Full-Space Tight Color Grid (or Left side in landscape)
     this.renderPalette(ctx, level, isPortrait);
+
+    // 8. Render Floating Pill Toolbar (Undo, Clear, Hint) ON TOP of both containers!
+    this.renderPillToolbar(ctx);
 
     // 9. Render Toast Notification if active
     this.renderToast(ctx, width, height);
@@ -239,7 +239,7 @@ export class GameplayScene implements Scene {
 
       // 4. Main Middle Container
       const centerTop = row2Y + refH + 16;
-      const centerBottom = bottomTop - 26;
+      const centerBottom = bottomTop - 28;
       const centerH = centerBottom - centerTop;
       const centerW = width - 40;
 
@@ -250,11 +250,12 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // 5. Floating Pill Toolbar: Horizontally centered & floating between containers
+      // 5. Floating Pill Toolbar: Horizontally centered & floating over both containers
       const pillW = Math.min(width - 40, 440);
-      const pillH = 68;
+      const pillH = 64;
       const pillX = Math.round((width - pillW) / 2);
-      const pillY = Math.round(centerBottom - pillH / 2);
+      // Symmetrically straddle the boundary between middle container and bottom palette container
+      const pillY = Math.round((centerBottom + bottomTop - pillH) / 2);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -267,7 +268,7 @@ export class GameplayScene implements Scene {
       const btnGap = 8;
       const pillPad = 10;
       const btnW = Math.floor((pillW - pillPad * 2 - btnGap * 2) / 3);
-      const btnH = 52;
+      const btnH = 50;
       const btnY = pillY + Math.round((pillH - btnH) / 2);
 
       this.buttons.undo = { x: pillX + pillPad, y: btnY, w: btnW, h: btnH, label: '↩ Undo' };
@@ -661,8 +662,8 @@ export class GameplayScene implements Scene {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = COLORS.spruceVelvet;
 
-    const labelTopPad = isPortrait ? 18 : 24;
-    const labelH = isPortrait ? 38 : 52;
+    const labelTopPad = isPortrait ? 26 : 24;
+    const labelH = isPortrait ? 44 : 52;
     const promptText = hasSelection
       ? (w < 320 ? '👇 TAP A COLOUR!' : '👇 TAP A COLOUR TO PAINT!')
       : 'TAP A SHAPE FIRST';
