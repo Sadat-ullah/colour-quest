@@ -250,11 +250,11 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // 5. Overlapping Pill Toolbar: Horizontally centered & overlaps bottom border of middle container
+      // 5. Floating Pill Toolbar: Horizontally centered & floating on top of middle container
       const pillW = Math.min(width - 40, 440);
-      const pillH = 70;
+      const pillH = 68;
       const pillX = Math.round((width - pillW) / 2);
-      const pillY = Math.round(centerTop + centerH - pillH / 2);
+      const pillY = Math.round(centerTop + 14);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -267,17 +267,18 @@ export class GameplayScene implements Scene {
       const btnGap = 8;
       const pillPad = 10;
       const btnW = Math.floor((pillW - pillPad * 2 - btnGap * 2) / 3);
-      const btnH = 54;
+      const btnH = 52;
       const btnY = pillY + Math.round((pillH - btnH) / 2);
 
       this.buttons.undo = { x: pillX + pillPad, y: btnY, w: btnW, h: btnH, label: '↩ Undo' };
       this.buttons.reset = { x: pillX + pillPad + btnW + btnGap, y: btnY, w: btnW, h: btnH, label: '🔄 Clear' };
       this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
 
-      // Auto-fit calculation for Middle Container (fills 80%-85% with clearance for overlapping toolbar)
-      const bottomClearance = pillH / 2 + 12;
+      // Auto-fit calculation for Middle Container (fills 80%-85% with top clearance for floating toolbar)
+      const topClearance = pillH + 18;
+      const bottomClearance = 16;
       const tmplAvailW = (centerW - 32) * 0.84;
-      const tmplAvailH = (centerH - bottomClearance - 28) * 0.84;
+      const tmplAvailH = (centerH - topClearance - bottomClearance) * 0.84;
       const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
 
       this.templateTransform = {
@@ -288,8 +289,8 @@ export class GameplayScene implements Scene {
           bBox.minX * tmplScale,
         offsetY:
           this.templateBounds.y +
-          14 +
-          (centerH - bottomClearance - 14 - bBox.height * tmplScale) / 2 -
+          topClearance +
+          (centerH - topClearance - bottomClearance - bBox.height * tmplScale) / 2 -
           bBox.minY * tmplScale,
       };
     } else {
@@ -318,11 +319,11 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // Overlapping Pill Toolbar on bottom border of middle container
+      // Floating Pill Toolbar on top of middle container
       const pillW = 400;
-      const pillH = 68;
+      const pillH = 64;
       const pillX = centerX + Math.round((centerW - pillW) / 2);
-      const pillY = Math.round(centerY + centerH - pillH / 2);
+      const pillY = Math.round(centerY + 14);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -334,7 +335,7 @@ export class GameplayScene implements Scene {
       const btnGap = 8;
       const pillPad = 8;
       const btnW = Math.floor((pillW - pillPad * 2 - btnGap * 2) / 3);
-      const btnH = 52;
+      const btnH = 48;
       const btnY = pillY + Math.round((pillH - btnH) / 2);
 
       this.buttons.undo = { x: pillX + pillPad, y: btnY, w: btnW, h: btnH, label: '↩ Undo' };
@@ -342,9 +343,10 @@ export class GameplayScene implements Scene {
       this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
 
       // Auto-fit calculation for Middle Container in Landscape (80%-85%)
-      const bottomClearance = pillH / 2 + 10;
+      const topClearance = pillH + 16;
+      const bottomClearance = 16;
       const tmplAvailW = (centerW - 32) * 0.84;
-      const tmplAvailH = (centerH - bottomClearance - 24) * 0.84;
+      const tmplAvailH = (centerH - topClearance - bottomClearance) * 0.84;
       const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
 
       this.templateTransform = {
@@ -353,8 +355,8 @@ export class GameplayScene implements Scene {
           centerX + (centerW - bBox.width * tmplScale) / 2 - bBox.minX * tmplScale,
         offsetY:
           centerY +
-          12 +
-          (centerH - bottomClearance - 12 - bBox.height * tmplScale) / 2 -
+          topClearance +
+          (centerH - topClearance - bottomClearance - bBox.height * tmplScale) / 2 -
           bBox.minY * tmplScale,
       };
 
@@ -593,11 +595,15 @@ export class GameplayScene implements Scene {
   private renderPillToolbar(ctx: CanvasRenderingContext2D): void {
     const { x, y, w, h } = this.pillToolbarBounds;
 
-    // 1. Sleek Pill-shaped Container overlapping the bottom border of middle container
+    // 1. Sleek Pill-shaped Container floating on top of middle container with elevated drop shadow
     ctx.save();
-    // Drop shadow
+    ctx.shadowColor = 'rgba(27, 69, 50, 0.28)';
+    ctx.shadowBlur = 18;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 6;
+    // 3D bottom bevel
     this.drawRoundedRect(ctx, x, y + 4, w, h, h / 2, COLORS.spruceVelvetShadow);
-    // Pill face in Clotted Cream with Spruce Velvet outline
+    // Pill face in bright Clotted Cream with Spruce Velvet outline
     this.drawRoundedRect(ctx, x, y, w, h, h / 2, '#FAF5EC', COLORS.spruceVelvet, 3.5);
     ctx.restore();
 
@@ -762,7 +768,7 @@ export class GameplayScene implements Scene {
     if (isHinted) {
       // Golden luminous aura for hinted color
       ctx.save();
-      ctx.shadowColor = 'rgba(242, 201, 76, 0.9)';
+      ctx.shadowColor = 'rgba(242, 201, 76, 0.95)';
       ctx.shadowBlur = 18;
       this.drawRoundedRect(
         ctx,
@@ -771,16 +777,17 @@ export class GameplayScene implements Scene {
         sw + 8,
         sh + 8,
         18,
-        'rgba(242, 201, 76, 0.4)',
+        'rgba(242, 201, 76, 0.45)',
         '#F2C94C',
         3.5
       );
       ctx.restore();
     } else if (hasSelection) {
-      // Radiant white glowing aura around active swatches
+      // Dazzling brilliant white glitter glowing effect around active swatches
       ctx.save();
-      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
-      ctx.shadowBlur = 16;
+      // Outer bright shimmer aura
+      ctx.shadowColor = '#FFFFFF';
+      ctx.shadowBlur = 22;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
       this.drawRoundedRect(
@@ -790,9 +797,26 @@ export class GameplayScene implements Scene {
         sw + 8,
         sh + 8,
         18,
-        'rgba(255, 255, 255, 0.65)',
+        'rgba(255, 255, 255, 0.75)',
         '#FFFFFF',
-        2.5
+        3
+      );
+      ctx.restore();
+
+      // Sharp specular white rim for intense glitter sparkle
+      ctx.save();
+      ctx.shadowColor = '#FFFFFF';
+      ctx.shadowBlur = 8;
+      this.drawRoundedRect(
+        ctx,
+        sx - 2,
+        sy - 2,
+        sw + 4,
+        sh + 4,
+        16,
+        undefined,
+        '#FFFFFF',
+        2
       );
       ctx.restore();
     }
@@ -800,7 +824,7 @@ export class GameplayScene implements Scene {
     // 3D bottom bevel/shadow
     this.drawRoundedRect(ctx, sx, sy + 4, sw, sh, 14, COLORS.clottedCreamDark);
 
-    // Rounded rectangle swatch face with clean border
+    // Rounded rectangle swatch face with dazzling pure white border
     this.drawRoundedRect(
       ctx,
       sx,
@@ -810,11 +834,11 @@ export class GameplayScene implements Scene {
       14,
       color,
       isHinted ? '#F2C94C' : hasSelection ? '#FFFFFF' : '#DFD2BD',
-      isHinted ? 4.5 : hasSelection ? 3.5 : 2
+      isHinted ? 4.5 : hasSelection ? 4 : 2
     );
 
-    // Inner gloss
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    // High-specularity crystalline glitter shine
+    ctx.fillStyle = hasSelection ? 'rgba(255, 255, 255, 0.55)' : 'rgba(255, 255, 255, 0.35)';
     ctx.beginPath();
     if (typeof ctx.ellipse === 'function') {
       ctx.ellipse(sx + sw / 2, sy + Math.min(14, sh * 0.25), sw * 0.38, Math.min(8, sh * 0.15), 0, 0, Math.PI * 2);
@@ -823,6 +847,40 @@ export class GameplayScene implements Scene {
     }
     ctx.fill();
 
+    // Glitter sparkle diamond glints on active swatch corners
+    if (hasSelection) {
+      this.drawGlitterSparkle(ctx, sx + sw - 8, sy + 8, 6);
+      this.drawGlitterSparkle(ctx, sx + 9, sy + sh - 9, 4.5);
+    }
+
+    ctx.restore();
+  }
+
+  private drawGlitterSparkle(
+    ctx: CanvasRenderingContext2D,
+    cx: number,
+    cy: number,
+    size: number
+  ): void {
+    ctx.save();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = '#FFFFFF';
+    ctx.shadowBlur = 10;
+
+    // 4-point diamond sparkle star
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size);
+    ctx.quadraticCurveTo(cx, cy, cx + size, cy);
+    ctx.quadraticCurveTo(cx, cy, cx, cy + size);
+    ctx.quadraticCurveTo(cx, cy, cx - size, cy);
+    ctx.quadraticCurveTo(cx, cy, cx, cy - size);
+    ctx.fill();
+
+    // Specular brilliant center pinprick
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1.5, size * 0.35), 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
     ctx.restore();
   }
 
