@@ -250,12 +250,12 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // 5. Floating Pill Toolbar: Horizontally centered & floating over both containers
+      // 5. Floating Pill Toolbar: Horizontally centered & floating between containers
       const pillW = Math.min(width - 40, 440);
       const pillH = 64;
       const pillX = Math.round((width - pillW) / 2);
-      // Symmetrically straddle the boundary between middle container and bottom palette container
-      const pillY = Math.round((centerBottom + bottomTop - pillH) / 2);
+      // Move toolbar slightly upwards so it bridges the bottom of the middle container without obscuring the palette text
+      const pillY = Math.round(centerBottom - pillH / 2 - 6);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -275,9 +275,9 @@ export class GameplayScene implements Scene {
       this.buttons.reset = { x: pillX + pillPad + btnW + btnGap, y: btnY, w: btnW, h: btnH, label: '🔄 Clear' };
       this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
 
-      // Auto-fit calculation for Middle Container (fills 80%-85% with clearance for toolbar between containers)
+      // Auto-fit calculation for Middle Container (fills 80%-85% with clearance for toolbar)
       const topClearance = 16;
-      const bottomClearance = pillH / 2 + 14;
+      const bottomClearance = pillH + 12;
       const tmplAvailW = (centerW - 32) * 0.84;
       const tmplAvailH = (centerH - topClearance - bottomClearance) * 0.84;
       const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
@@ -662,8 +662,8 @@ export class GameplayScene implements Scene {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = COLORS.spruceVelvet;
 
-    const labelTopPad = isPortrait ? 26 : 24;
-    const labelH = isPortrait ? 44 : 52;
+    const labelTopPad = isPortrait ? 20 : 24;
+    const labelH = isPortrait ? 40 : 52;
     const promptText = hasSelection
       ? (w < 320 ? '👇 TAP A COLOUR!' : '👇 TAP A COLOUR TO PAINT!')
       : 'TAP A SHAPE FIRST';
