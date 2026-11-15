@@ -250,11 +250,11 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // 5. Floating Pill Toolbar: Horizontally centered & floating on top of middle container
+      // 5. Floating Pill Toolbar: Horizontally centered & floating between containers
       const pillW = Math.min(width - 40, 440);
       const pillH = 68;
       const pillX = Math.round((width - pillW) / 2);
-      const pillY = Math.round(centerTop + 14);
+      const pillY = Math.round(centerBottom - pillH / 2);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -274,9 +274,9 @@ export class GameplayScene implements Scene {
       this.buttons.reset = { x: pillX + pillPad + btnW + btnGap, y: btnY, w: btnW, h: btnH, label: '🔄 Clear' };
       this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
 
-      // Auto-fit calculation for Middle Container (fills 80%-85% with top clearance for floating toolbar)
-      const topClearance = pillH + 18;
-      const bottomClearance = 16;
+      // Auto-fit calculation for Middle Container (fills 80%-85% with clearance for toolbar between containers)
+      const topClearance = 16;
+      const bottomClearance = pillH / 2 + 14;
       const tmplAvailW = (centerW - 32) * 0.84;
       const tmplAvailH = (centerH - topClearance - bottomClearance) * 0.84;
       const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
@@ -319,11 +319,11 @@ export class GameplayScene implements Scene {
         h: centerH,
       };
 
-      // Floating Pill Toolbar on top of middle container
+      // Floating Pill Toolbar between middle container and bottom edge
       const pillW = 400;
       const pillH = 64;
       const pillX = centerX + Math.round((centerW - pillW) / 2);
-      const pillY = Math.round(centerY + 14);
+      const pillY = Math.round(centerY + centerH - pillH / 2);
 
       this.pillToolbarBounds = {
         x: pillX,
@@ -343,8 +343,8 @@ export class GameplayScene implements Scene {
       this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
 
       // Auto-fit calculation for Middle Container in Landscape (80%-85%)
-      const topClearance = pillH + 16;
-      const bottomClearance = 16;
+      const topClearance = 16;
+      const bottomClearance = pillH / 2 + 12;
       const tmplAvailW = (centerW - 32) * 0.84;
       const tmplAvailH = (centerH - topClearance - bottomClearance) * 0.84;
       const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
