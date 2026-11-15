@@ -24,16 +24,58 @@ export class SoundEffects {
   private volume: number = SFX_DEFAULT_VOL;
   private muted: boolean = false;
   private masterGain: GainNode | null = null;
+  private compressor: DynamicsCompressorNode | null = null;
   private currentContext: AudioContext | null = null;
+  private activeCelebrationNodes: Array<{ osc?: OscillatorNode; gain: GainNode }> = [];
 
   private getMasterNode(ctx: AudioContext): GainNode {
     if (!this.masterGain || this.currentContext !== ctx) {
       this.currentContext = ctx;
       this.masterGain = ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, ctx.currentTime);
-      this.masterGain.connect(ctx.destination);
+
+      // Master DynamicsCompressorNode to prevent clipping, distortion, and mobile speaker crackle
+      if (typeof ctx.createDynamicsCompressor === 'function') {
+        this.compressor = ctx.createDynamicsCompressor();
+        this.compressor.threshold.setValueAtTime(-12, ctx.currentTime);
+        this.compressor.knee.setValueAtTime(10, ctx.currentTime);
+        this.compressor.ratio.setValueAtTime(8, ctx.currentTime);
+        this.compressor.attack.setValueAtTime(0.003, ctx.currentTime);
+        this.compressor.release.setValueAtTime(0.25, ctx.currentTime);
+
+        this.masterGain.connect(this.compressor);
+        this.compressor.connect(ctx.destination);
+      } else {
+        this.masterGain.connect(ctx.destination);
+      }
     }
     return this.masterGain;
+  }
+
+  public registerCelebrationNode(gain: GainNode, osc?: OscillatorNode): void {
+    this.activeCelebrationNodes.push({ osc, gain });
+  }
+
+  /**
+   * Smoothly fades out any active fanfare, star chimes, or completion chords
+   * to prevent harsh cuts or crackling during scene transitions.
+   */
+  public stopCelebration(): void {
+    if (!this.currentContext) return;
+    const now = this.currentContext.currentTime;
+    for (const item of this.activeCelebrationNodes) {
+      try {
+        item.gain.gain.cancelScheduledValues(now);
+        item.gain.gain.setValueAtTime(Math.max(0.0001, item.gain.gain.value), now);
+        item.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+        if (item.osc) {
+          item.osc.stop(now + 0.055);
+        }
+      } catch {
+        // Node already finished or disposed
+      }
+    }
+    this.activeCelebrationNodes = [];
   }
 
   public setVolume(vol: number): void {
@@ -411,6 +453,9 @@ export class SoundEffects {
       gain.connect(master);
       shimmerGain.connect(master);
 
+      this.registerCelebrationNode(gain, osc);
+      this.registerCelebrationNode(shimmerGain, shimmer);
+
       osc.start(noteTime);
       shimmer.start(noteTime);
       osc.stop(noteTime + 0.68);
@@ -480,6 +525,7 @@ export class SoundEffects {
 
       osc.connect(gain);
       gain.connect(master);
+      this.registerCelebrationNode(gain, osc);
       osc.start(noteTime);
       osc.stop(noteTime + dur + 0.06);
 
@@ -523,6 +569,9 @@ export class SoundEffects {
       chordGain.connect(filter);
       filter.connect(master);
 
+      this.registerCelebrationNode(chordGain, oscTri);
+      this.registerCelebrationNode(sawGain, oscSaw);
+
       oscTri.start(chordStart);
       oscSaw.start(chordStart);
       oscTri.stop(chordStart + 0.88);
@@ -554,6 +603,7 @@ export class SoundEffects {
 
         bell.connect(bellGain);
         bellGain.connect(master);
+        this.registerCelebrationNode(bellGain, bell);
         bell.start(trillTime);
         bell.stop(trillTime + 0.62);
 
@@ -681,6 +731,78 @@ export class SoundEffects {
       rewindGain.disconnect();
     };
   }
+
+  /**
+   * playNextLevel: bright, clean, rewarding 2-note upward chime (C5 -> G5)
+   * soft sine + triangle harmonic blend with fast 10ms attack, smooth 180ms decay,
+   * and 2400Hz low-pass filter with zero harshness.
+   */
+  public playNextLevel(volMultiplier: number = 1.0): void {
+    this.stopCelebration();
+    const ready = this.prepareContext();
+    if (!ready) return;
+    const { ctx, master } = ready;
+    const now = ctx.currentTime;
+    const vol = Math.max(0, Math.min(1, volMultiplier));
+
+    // 2-note upward chime: C5 (523.25Hz) -> G5 (783.99Hz)
+    const notes = [
+      { freq: 523.25, delay: 0.000, dur: 0.18, gain: 0.65 }, // C5
+      { freq: 783.99, delay: 0.075, dur: 0.20, gain: 0.70 }, // G5
+    ];
+
+    notes.forEach(({ freq, delay, dur, gain: weight }) => {
+      const t = now + delay;
+
+      // Primary soft sine fundamental
+      const oscSine = ctx.createOscillator();
+      const gainSine = ctx.createGain();
+      oscSine.type = 'sine';
+      oscSine.frequency.setValueAtTime(freq, t);
+
+      // Warm triangle harmonic layer
+      const oscTri = ctx.createOscillator();
+      const gainTri = ctx.createGain();
+      oscTri.type = 'triangle';
+      oscTri.frequency.setValueAtTime(freq, t);
+
+      // Low-pass filter locked to 2400Hz to eliminate harshness
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2400, t);
+      filter.Q.setValueAtTime(1.0, t);
+
+      // Fast 10ms attack, smooth 180ms exponential decay
+      gainSine.gain.setValueAtTime(0.0001, t);
+      gainSine.gain.linearRampToValueAtTime(weight * 0.7 * vol, t + 0.010);
+      gainSine.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      gainSine.gain.setValueAtTime(0, t + dur + 0.001);
+
+      gainTri.gain.setValueAtTime(0.0001, t);
+      gainTri.gain.linearRampToValueAtTime(weight * 0.3 * vol, t + 0.010);
+      gainTri.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      gainTri.gain.setValueAtTime(0, t + dur + 0.001);
+
+      oscSine.connect(gainSine);
+      oscTri.connect(gainTri);
+      gainSine.connect(filter);
+      gainTri.connect(filter);
+      filter.connect(master);
+
+      oscSine.start(t);
+      oscTri.start(t);
+      oscSine.stop(t + dur + 0.02);
+      oscTri.stop(t + dur + 0.02);
+
+      oscSine.onended = () => {
+        oscSine.disconnect();
+        oscTri.disconnect();
+        gainSine.disconnect();
+        gainTri.disconnect();
+        filter.disconnect();
+      };
+    });
+  }
 }
 
 export const soundEffects = new SoundEffects();
@@ -694,3 +816,5 @@ export const playStar = (starIndex?: number, vol?: number): void => soundEffects
 export const playLevelComplete = (stars?: number, vol?: number): void => soundEffects.playLevelComplete(stars, vol);
 export const playMismatch = (vol?: number): void => soundEffects.playMismatch(vol);
 export const playClear = (vol?: number): void => soundEffects.playClear(vol);
+export const playNextLevel = (vol?: number): void => soundEffects.playNextLevel(vol);
+export const stopCelebration = (): void => soundEffects.stopCelebration();

@@ -11,6 +11,8 @@ import {
 } from '../ui/tokens';
 import {
   drawButton,
+  drawGlossyGreenButton,
+  drawVolumeButton,
   drawRoundedRect,
   drawIcon,
   drawBubble,
@@ -144,11 +146,11 @@ export class TitleScene implements Scene {
   ): void {
     const isPortrait = height > width;
 
-    // 1. Vibrant Soft Gradient Sky Background
+    // 1. Warm Clotted Cream Background (80% dominant surface)
     const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#E1F4FF');
-    bgGrad.addColorStop(0.5, '#F4EEFB');
-    bgGrad.addColorStop(1, '#FFF5EA');
+    bgGrad.addColorStop(0, '#FAF5EB');
+    bgGrad.addColorStop(0.5, '#EEE2CB');
+    bgGrad.addColorStop(1, '#E4D6BC');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, width, height);
 
@@ -185,8 +187,8 @@ export class TitleScene implements Scene {
   private renderHills(ctx: CanvasRenderingContext2D, width: number, height: number): void {
     ctx.save();
 
-    // Back Hill (Soft Lavender)
-    ctx.fillStyle = '#E8DDF7';
+    // Back Hill (Clotted Cream Darker Tint)
+    ctx.fillStyle = '#DFD0B5';
     ctx.beginPath();
     ctx.moveTo(0, height);
     ctx.quadraticCurveTo(width * 0.35, height - 120, width * 0.75, height - 70);
@@ -195,8 +197,8 @@ export class TitleScene implements Scene {
     ctx.closePath();
     ctx.fill();
 
-    // Front Hill (Soft Mint / Cream)
-    ctx.fillStyle = '#DCF6E8';
+    // Front Hill (Warm Muted Tone)
+    ctx.fillStyle = '#D2C1A2';
     ctx.beginPath();
     ctx.moveTo(0, height);
     ctx.lineTo(0, height - 75);
@@ -206,8 +208,8 @@ export class TitleScene implements Scene {
     ctx.closePath();
     ctx.fill();
 
-    // Outline over front hill
-    ctx.strokeStyle = 'rgba(30, 26, 52, 0.12)';
+    // Outline over front hill in Spruce Velvet
+    ctx.strokeStyle = 'rgba(27, 69, 50, 0.25)';
     ctx.lineWidth = 3;
     ctx.stroke();
 
@@ -252,28 +254,24 @@ export class TitleScene implements Scene {
     ctx.fillText(`${totalStars} / ${maxStarsPossible}`, badgeX + 46, badgeY + badgeH / 2 + 1);
     ctx.restore();
 
-    // Audio Mute/Unmute Button in top-right
+    // Audio Mute/Unmute Button in top-right with signature green gradient
     const isMuted = progress.settings.musicMuted && progress.settings.sfxMuted;
+    const audioBtnSize = Math.max(MIN_TOUCH_TARGET, 58);
     this.audioBtnRect = {
-      x: width - margin - MIN_TOUCH_TARGET,
+      x: width - margin - audioBtnSize,
       y: margin,
-      w: MIN_TOUCH_TARGET,
-      h: MIN_TOUCH_TARGET,
+      w: audioBtnSize,
+      h: audioBtnSize,
     };
 
-    drawButton(ctx, {
+    drawVolumeButton(ctx, {
       x: this.audioBtnRect.x,
       y: this.audioBtnRect.y,
       w: this.audioBtnRect.w,
       h: this.audioBtnRect.h,
-      icon: isMuted ? 'audio-off' : 'audio-on',
-      color: COLORS.creamWhite,
-      shadowColor: COLORS.creamWhiteShadow,
-      textColor: isMuted ? COLORS.candyPink : COLORS.darkPlum,
-      radius: DIMENSIONS.borderRadiusPill,
-      shadowDepth: 6,
+      isMuted,
       isPressed: this.pressedButtonId === 'audio',
-      isHovered: this.hoveredButtonId === 'audio',
+      radius: 18,
     });
   }
 
@@ -425,7 +423,7 @@ export class TitleScene implements Scene {
     const startY = isPortrait ? height * 0.62 : height * 0.65;
     const gap = 20;
 
-    // 1. Play Button "Let's Play! ▶"
+    // 1. Play Button "Let's Play! ▶" with rich 3D green gradient
     this.playBtnRect = {
       x: centerX,
       y: startY,
@@ -433,24 +431,15 @@ export class TitleScene implements Scene {
       h: btnH,
     };
 
-    const pulseGlow = Math.sin(this.animTime * 4) > 0.2;
-
-    drawButton(ctx, {
+    drawGlossyGreenButton(ctx, {
       x: this.playBtnRect.x,
       y: this.playBtnRect.y,
       w: this.playBtnRect.w,
       h: this.playBtnRect.h,
       text: "Let's Play! ▶",
-      color: COLORS.sunnyYellow,
-      shadowColor: COLORS.sunnyYellowShadow,
-      textColor: COLORS.darkPlum,
-      fontSize: 30,
-      radius: DIMENSIONS.borderRadiusLg,
-      shadowDepth: 8,
-      glow: pulseGlow,
-      glowColor: COLORS.starGlow,
+      fontSize: 32,
+      radius: 22,
       isPressed: this.pressedButtonId === 'play',
-      isHovered: this.hoveredButtonId === 'play',
     });
 
     // 2. Level Select Button
@@ -468,9 +457,9 @@ export class TitleScene implements Scene {
       w: this.levelSelectBtnRect.w,
       h: this.levelSelectBtnRect.h,
       text: 'Level Select 🗺️',
-      color: COLORS.brightCyan,
-      shadowColor: COLORS.brightCyanShadow,
-      textColor: COLORS.creamWhite,
+      color: COLORS.clottedCreamCard,
+      shadowColor: COLORS.clottedCreamDark,
+      textColor: COLORS.spruceVelvet,
       fontSize: 24,
       radius: DIMENSIONS.borderRadiusLg,
       shadowDepth: 7,

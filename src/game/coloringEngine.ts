@@ -12,6 +12,8 @@ export class ColoringEngine {
   private selectedColor: string | null = null;
   private filledColors = new Map<string, string>(); // regionId -> hex colour
   private fillHistory: Array<{ regionId: string; prevColor: string | null }> = [];
+  private hintUsed: boolean = false;
+  private hintedColor: string | null = null;
 
   public loadLevel(level: LevelData): void {
     this.level = level;
@@ -19,11 +21,50 @@ export class ColoringEngine {
     this.selectedColor = null;
     this.filledColors.clear();
     this.fillHistory = [];
+    this.hintUsed = false;
+    this.hintedColor = null;
     eventBus.emit('level:start', { levelId: level.id });
   }
 
   public getLevel(): LevelData | null {
     return this.level;
+  }
+
+  public isHintUsed(): boolean {
+    return this.hintUsed;
+  }
+
+  public getHintedColor(): string | null {
+    return this.hintedColor;
+  }
+
+  public clearHintedColor(): void {
+    this.hintedColor = null;
+  }
+
+  /**
+   * Request a single-use hint for the currently selected container.
+   */
+  public requestHint(): {
+    success: boolean;
+    reason?: 'no_selection' | 'already_used' | 'invalid_region';
+    targetColor?: string;
+    regionId?: string;
+  } {
+    if (this.hintUsed) {
+      return { success: false, reason: 'already_used' };
+    }
+    if (!this.selectedRegionId || !this.level) {
+      return { success: false, reason: 'no_selection' };
+    }
+    const region = this.level.regions.find((r) => r.id === this.selectedRegionId);
+    if (!region) {
+      return { success: false, reason: 'invalid_region' };
+    }
+
+    this.hintUsed = true;
+    this.hintedColor = region.targetColor;
+    return { success: true, targetColor: region.targetColor, regionId: region.id };
   }
 
   public getSelectedRegionId(): string | null {
@@ -43,42 +84,46 @@ export class ColoringEngine {
   }
 
   /**
+   * Step A: Tap Container
    * Selects a region in the template.
-   * If a color is already selected, immediately fills this region with that color!
+   * NEVER fills a colour on container tap!
+   * Highlights the container outline and activates the colour palette.
    */
-  public selectRegion(regionId: string): { filled: boolean; color?: string; correct?: boolean } {
-    if (!this.level) return { filled: false };
+  public selectRegion(regionId: string): { filled: boolean; regionId: string } {
+    if (!this.level) return { filled: false, regionId };
 
     this.selectedRegionId = regionId;
+    this.selectedColor = null; // Always clear sticky color so container tap NEVER auto-fills
     eventBus.emit('region:selected', { regionId });
 
-    // If child already picked a color, fill this region right away!
-    if (this.selectedColor) {
-      const fillResult = this.fillRegion(regionId, this.selectedColor);
-      return { filled: true, color: this.selectedColor, correct: fillResult.correct };
-    }
-
-    return { filled: false };
+    return { filled: false, regionId };
   }
 
   /**
-   * Selects a color from the palette.
-   * If a region is already selected, immediately fills that region with this color!
+   * Step B: Tap Colour
+   * While a container (region) is selected, fills ONLY that selectedRegionId with this color.
+   * Step C: Immediate Reset
+   * Immediately resets selectedRegionId = null and selectedColor = null, clearing palette highlight.
    */
-  public selectColor(color: string): { filled: boolean; regionId?: string; correct?: boolean } {
+  public selectColor(color: string): { filled: boolean; regionId?: string; color?: string; correct?: boolean } {
     if (!this.level) return { filled: false };
 
-    this.selectedColor = color;
-    eventBus.emit('color:selected', { color });
-
-    // If child already highlighted a region, fill it immediately!
-    if (this.selectedRegionId) {
-      const regionId = this.selectedRegionId;
-      const fillResult = this.fillRegion(regionId, color);
-      return { filled: true, regionId, correct: fillResult.correct };
+    // If no region is selected, color tap does NOT stick or auto-fill later
+    if (!this.selectedRegionId) {
+      this.selectedColor = null;
+      return { filled: false };
     }
 
-    return { filled: false };
+    const regionId = this.selectedRegionId;
+    const fillResult = this.fillRegion(regionId, color);
+
+    // Step C: Immediate Reset
+    this.selectedRegionId = null;
+    this.selectedColor = null;
+    this.hintedColor = null;
+    eventBus.emit('color:selected', { color: '' });
+
+    return { filled: true, regionId, color, correct: fillResult.correct };
   }
 
   /**
@@ -160,6 +205,9 @@ export class ColoringEngine {
     this.filledColors.clear();
     this.fillHistory = [];
     this.selectedRegionId = null;
+    this.selectedColor = null;
+    this.hintUsed = false;
+    this.hintedColor = null;
   }
 
   public clearSelection(): void {

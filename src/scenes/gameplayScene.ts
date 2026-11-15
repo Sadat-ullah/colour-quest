@@ -1,54 +1,55 @@
 /* ─────────────────────────────────────────────────────────────
- *  gameplayScene.ts – The Core Interactive Colouring Scene
- *  Reference image (top-right), Blank template (center), Palette (side)
+ *  gameplayScene.ts – Core Interactive Colouring Scene
+ *  Responsive layout for Mobile Portrait (720x1280), Tablet, and Desktop (1280x720)
+ *  Enforces 80% Clotted Cream (#EEE2CB) & 20% Spruce Velvet (#1B4532) theme.
+ *  Features dynamic auto-fit shape scaling (80%-85%), an overlapping pill toolbar,
+ *  full-space tight color grid, and single-use interactive hint mechanics.
  * ───────────────────────────────────────────────────────────── */
 import type { Scene } from '../core/sceneManager';
 import { sceneManager } from '../core/sceneManager';
 import { ShapeRenderer } from '../core/shapeRenderer';
 import { coloringEngine } from '../game/coloringEngine';
 import { saveManager } from '../game/saveManager';
+import { audioManager } from '../audio/audioManager';
 import { DESIGN_WIDTH, DESIGN_HEIGHT } from '../shared/constants';
-import type { LevelData, Region } from '../shared/contracts';
+import type { LevelData } from '../shared/contracts';
+import { COLORS, getFont } from '../ui/tokens';
+import { drawGlossyGreenButton, drawVolumeButton } from '../ui/components';
 
 export class GameplayScene implements Scene {
   public name = 'gameplay' as const;
 
-  // Layout rectangles (in design canvas coordinates: 1280 x 720)
-  private readonly templateBounds = {
-    x: 360,
-    y: 110,
-    size: 480,
-  };
+  // Dynamic layout bounds (updated per-frame according to active viewport)
+  private templateBounds = { x: 360, y: 110, w: 480, h: 480 };
+  private referenceBounds = { x: 960, y: 100, w: 240, h: 240 };
+  private paletteArea = { x: 80, y: 120, w: 220, h: 520 };
+  private pillToolbarBounds = { x: 200, y: 560, w: 400, h: 64 };
+  private infoCardBounds = { x: 20, y: 84, w: 280, h: 180 };
 
-  private readonly referenceBounds = {
-    x: 960,
-    y: 100,
-    size: 240,
-  };
-
-  private readonly paletteArea = {
-    x: 80,
-    y: 120,
-    w: 220,
-    h: 520,
-  };
+  // Computed dynamic shape transformations for auto-fit scaling (80%-85%)
+  private templateTransform = { offsetX: 0, offsetY: 0, scale: 1 };
+  private referenceTransform = { offsetX: 0, offsetY: 0, scale: 1 };
 
   // Color swatches clickable bounds
-  private swatchRects: Array<{ color: string; x: number; y: number; size: number }> = [];
+  private swatchRects: Array<{ color: string; x: number; y: number; w: number; h: number }> = [];
 
   // Buttons bounds
   private buttons = {
-    back: { x: 40, y: 30, w: 100, h: 54, label: '◀ Levels' },
-    sound: { x: 1140, y: 30, w: 60, h: 54, label: '🔊' },
-    undo: { x: 440, y: 620, w: 130, h: 60, label: '↩ Undo' },
-    reset: { x: 590, y: 620, w: 130, h: 60, label: '🔄 Clear' },
-    hint: { x: 740, y: 620, w: 130, h: 60, label: '💡 Hint' },
+    back: { x: 40, y: 24, w: 110, h: 54, label: '◀ Levels' },
+    sound: { x: 1140, y: 24, w: 60, h: 54, label: '🔊' },
+    undo: { x: 440, y: 620, w: 120, h: 50, label: '↩ Undo' },
+    reset: { x: 590, y: 620, w: 120, h: 50, label: '🔄 Clear' },
+    hint: { x: 740, y: 620, w: 120, h: 50, label: '💡 Hint' },
   };
 
-  // Pulse animation state
+  // Animation states
   private pulseTimer = 0;
   private completionTimer = 0;
   private isCompleting = false;
+
+  // Gentle feedback toast
+  private toastMessage: string | null = null;
+  private toastTimer = 0;
 
   // External hooks (audio / particles / levels)
   public onPlaySound?: (sound: string) => void;
@@ -58,8 +59,10 @@ export class GameplayScene implements Scene {
   public enter(params?: Record<string, unknown>): void {
     this.isCompleting = false;
     this.completionTimer = 0;
+    this.toastMessage = null;
+    this.toastTimer = 0;
 
-    let levelId = (params?.levelId as number) || saveManager.getProgress().currentLevel || 1;
+    const levelId = (params?.levelId as number) || saveManager.getProgress().currentLevel || 1;
     if (this.onGetLevel) {
       const level = this.onGetLevel(levelId);
       if (level) {
@@ -71,10 +74,24 @@ export class GameplayScene implements Scene {
 
   public exit(): void {
     this.isCompleting = false;
+    this.toastMessage = null;
+    this.toastTimer = 0;
+  }
+
+  public showToast(msg: string, durationMs: number = 2200): void {
+    this.toastMessage = msg;
+    this.toastTimer = durationMs;
   }
 
   public update(dt: number): void {
     this.pulseTimer += dt;
+
+    if (this.toastTimer > 0) {
+      this.toastTimer -= dt;
+      if (this.toastTimer <= 0) {
+        this.toastMessage = null;
+      }
+    }
 
     if (this.isCompleting) {
       this.completionTimer += dt;
@@ -99,164 +116,398 @@ export class GameplayScene implements Scene {
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  public render(
+    ctx: CanvasRenderingContext2D,
+    width: number = DESIGN_WIDTH,
+    height: number = DESIGN_HEIGHT
+  ): void {
     const level = coloringEngine.getLevel();
     if (!level) return;
 
-    // 1. Background gradient
-    const bgGrad = ctx.createLinearGradient(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
-    bgGrad.addColorStop(0, '#251F47');
-    bgGrad.addColorStop(1, '#1A1633');
+    const isPortrait = height > width;
+
+    // 1. Calculate responsive layout coordinates & auto-fit bounding box transforms
+    this.calculateLayout(width, height, isPortrait, level);
+
+    // 2. Warm Clotted Cream Background (80% Dominant Surface)
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+    bgGrad.addColorStop(0, '#FAF5EB');
+    bgGrad.addColorStop(0.5, '#EEE2CB');
+    bgGrad.addColorStop(1, '#E4D6BC');
     ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
+    ctx.fillRect(0, 0, width, height);
 
-    // 2. Header HUD
-    this.renderHeader(ctx, level);
+    // 3. Render Header HUD (Dedicated Top AppBar)
+    this.renderHeader(ctx, level, width, isPortrait);
 
-    // 3. Side Palette (Square boxes with rounded corners)
-    this.renderPalette(ctx, level);
-
-    // 4. Centre Blank / Colouring Template
-    this.renderTemplate(ctx, level);
-
-    // 5. Top Right Reference Image (Coloured Target)
+    // 4. Render Top-Right 'TARGET' Container
     this.renderReference(ctx, level);
 
-    // 6. Bottom action controls (Undo, Reset, Hint)
-    this.renderControls(ctx);
+    // 5. In Portrait: Render Left Info / Goal Badge Card
+    if (isPortrait) {
+      this.renderInfoCard(ctx, level);
+    }
+
+    // 6. Render Main Middle Container with 80%-85% Auto-Fit Blank Template
+    this.renderTemplate(ctx, level);
+
+    // 7. Render Overlapping Pill Toolbar (Undo, Clear, Hint)
+    this.renderPillToolbar(ctx);
+
+    // 8. Render Bottom Full-Space Tight Color Grid
+    this.renderPalette(ctx, level, isPortrait);
+
+    // 9. Render Toast Notification if active
+    this.renderToast(ctx, width, height);
   }
 
-  private renderHeader(ctx: CanvasRenderingContext2D, level: LevelData): void {
-    // Back button
-    this.drawCardButton(ctx, this.buttons.back.x, this.buttons.back.y, this.buttons.back.w, this.buttons.back.h, this.buttons.back.label, '#3B336A', '#FFF');
+  private calculateLayout(
+    width: number,
+    height: number,
+    isPortrait: boolean,
+    level: LevelData
+  ): void {
+    const bBox = ShapeRenderer.calculateBoundingBox(level.regions);
 
-    // Sound toggle
+    if (isPortrait) {
+      // ── Mobile Portrait Layout: 100% Full-Screen Vertical Stack ──
+      // 1. Top AppBar (y: 12, h: 58)
+      const topBarY = 12;
+      const topBarH = 58;
+      this.buttons.back = { x: 20, y: topBarY, w: 120, h: topBarH, label: '◀ Levels' };
+      this.buttons.sound = { x: width - 20 - 58, y: topBarY, w: 58, h: topBarH, label: '🔊' };
+
+      // 2. Row 2 (y: 80 to 280): Enlarged Target Reference Card (right) + Goal Info Card (left)
+      const row2Y = 80;
+      const refW = Math.min(236, Math.round(width * 0.32));
+      const refH = 200;
+      this.referenceBounds = {
+        x: width - 20 - refW,
+        y: row2Y,
+        w: refW,
+        h: refH,
+      };
+
+      this.infoCardBounds = {
+        x: 20,
+        y: row2Y,
+        w: width - refW - 48,
+        h: refH,
+      };
+
+      // Auto-fit calculation for TARGET Container (fills 86%-90% of enlarged TARGET box)
+      const refBadgeH = 28;
+      const refAvailW = (this.referenceBounds.w - 18) * 0.88;
+      const refAvailH = (this.referenceBounds.h - refBadgeH - 14) * 0.88;
+      const refScale = Math.min(refAvailW / bBox.width, refAvailH / bBox.height);
+      this.referenceTransform = {
+        scale: refScale,
+        offsetX:
+          this.referenceBounds.x +
+          (this.referenceBounds.w - bBox.width * refScale) / 2 -
+          bBox.minX * refScale,
+        offsetY:
+          this.referenceBounds.y +
+          refBadgeH +
+          (this.referenceBounds.h - refBadgeH - bBox.height * refScale) / 2 -
+          bBox.minY * refScale,
+      };
+
+      // 3. Bottom Color Container (Full-Space Tight Grid)
+      const marginSide = 20;
+      const marginBottom = 22;
+      const bottomZoneH = Math.round(height * 0.22);
+      const bottomTop = height - bottomZoneH - marginBottom;
+
+      this.paletteArea = {
+        x: marginSide,
+        y: bottomTop,
+        w: width - marginSide * 2,
+        h: bottomZoneH,
+      };
+
+      // 4. Main Middle Container
+      const centerTop = row2Y + refH + 16;
+      const centerBottom = bottomTop - 26;
+      const centerH = centerBottom - centerTop;
+      const centerW = width - 40;
+
+      this.templateBounds = {
+        x: 20,
+        y: centerTop,
+        w: centerW,
+        h: centerH,
+      };
+
+      // 5. Overlapping Pill Toolbar: Horizontally centered & overlaps bottom border of middle container
+      const pillW = Math.min(width - 40, 440);
+      const pillH = 70;
+      const pillX = Math.round((width - pillW) / 2);
+      const pillY = Math.round(centerTop + centerH - pillH / 2);
+
+      this.pillToolbarBounds = {
+        x: pillX,
+        y: pillY,
+        w: pillW,
+        h: pillH,
+      };
+
+      // 3 Buttons inside Pill Toolbar
+      const btnGap = 8;
+      const pillPad = 10;
+      const btnW = Math.floor((pillW - pillPad * 2 - btnGap * 2) / 3);
+      const btnH = 54;
+      const btnY = pillY + Math.round((pillH - btnH) / 2);
+
+      this.buttons.undo = { x: pillX + pillPad, y: btnY, w: btnW, h: btnH, label: '↩ Undo' };
+      this.buttons.reset = { x: pillX + pillPad + btnW + btnGap, y: btnY, w: btnW, h: btnH, label: '🔄 Clear' };
+      this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
+
+      // Auto-fit calculation for Middle Container (fills 80%-85% with clearance for overlapping toolbar)
+      const bottomClearance = pillH / 2 + 12;
+      const tmplAvailW = (centerW - 32) * 0.84;
+      const tmplAvailH = (centerH - bottomClearance - 28) * 0.84;
+      const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
+
+      this.templateTransform = {
+        scale: tmplScale,
+        offsetX:
+          this.templateBounds.x +
+          (this.templateBounds.w - bBox.width * tmplScale) / 2 -
+          bBox.minX * tmplScale,
+        offsetY:
+          this.templateBounds.y +
+          14 +
+          (centerH - bottomClearance - 14 - bBox.height * tmplScale) / 2 -
+          bBox.minY * tmplScale,
+      };
+    } else {
+      // ── Desktop / Laptop Landscape Layout: 1280x720 ──
+      this.buttons.back = { x: 36, y: 18, w: 126, h: 56, label: '◀ Levels' };
+      this.buttons.sound = { x: width - 86, y: 18, w: 62, h: 56, label: '🔊' };
+
+      // Left Side Palette (Full-Space Tight Vertical Grid)
+      this.paletteArea = {
+        x: 36,
+        y: 88,
+        w: 250,
+        h: height - 108,
+      };
+
+      // Main Middle Container
+      const centerW = 580;
+      const centerH = height - 150;
+      const centerX = 312;
+      const centerY = 88;
+
+      this.templateBounds = {
+        x: centerX,
+        y: centerY,
+        w: centerW,
+        h: centerH,
+      };
+
+      // Overlapping Pill Toolbar on bottom border of middle container
+      const pillW = 400;
+      const pillH = 68;
+      const pillX = centerX + Math.round((centerW - pillW) / 2);
+      const pillY = Math.round(centerY + centerH - pillH / 2);
+
+      this.pillToolbarBounds = {
+        x: pillX,
+        y: pillY,
+        w: pillW,
+        h: pillH,
+      };
+
+      const btnGap = 8;
+      const pillPad = 8;
+      const btnW = Math.floor((pillW - pillPad * 2 - btnGap * 2) / 3);
+      const btnH = 52;
+      const btnY = pillY + Math.round((pillH - btnH) / 2);
+
+      this.buttons.undo = { x: pillX + pillPad, y: btnY, w: btnW, h: btnH, label: '↩ Undo' };
+      this.buttons.reset = { x: pillX + pillPad + btnW + btnGap, y: btnY, w: btnW, h: btnH, label: '🔄 Clear' };
+      this.buttons.hint = { x: pillX + pillPad + (btnW + btnGap) * 2, y: btnY, w: btnW, h: btnH, label: '💡 Hint' };
+
+      // Auto-fit calculation for Middle Container in Landscape (80%-85%)
+      const bottomClearance = pillH / 2 + 10;
+      const tmplAvailW = (centerW - 32) * 0.84;
+      const tmplAvailH = (centerH - bottomClearance - 24) * 0.84;
+      const tmplScale = Math.min(tmplAvailW / bBox.width, tmplAvailH / bBox.height);
+
+      this.templateTransform = {
+        scale: tmplScale,
+        offsetX:
+          centerX + (centerW - bBox.width * tmplScale) / 2 - bBox.minX * tmplScale,
+        offsetY:
+          centerY +
+          12 +
+          (centerH - bottomClearance - 12 - bBox.height * tmplScale) / 2 -
+          bBox.minY * tmplScale,
+      };
+
+      // Top-Right TARGET Container (Enlarged card)
+      const refW = width - (centerX + centerW) - 44;
+      const refH = 285;
+      this.referenceBounds = {
+        x: centerX + centerW + 22,
+        y: 88,
+        w: refW,
+        h: refH,
+      };
+
+      const refBadgeH = 28;
+      const refAvailW = (refW - 24) * 0.88;
+      const refAvailH = (refH - refBadgeH - 20) * 0.88;
+      const refScale = Math.min(refAvailW / bBox.width, refAvailH / bBox.height);
+
+      this.referenceTransform = {
+        scale: refScale,
+        offsetX:
+          this.referenceBounds.x +
+          (this.referenceBounds.w - bBox.width * refScale) / 2 -
+          bBox.minX * refScale,
+        offsetY:
+          this.referenceBounds.y +
+          refBadgeH +
+          (this.referenceBounds.h - refBadgeH - bBox.height * refScale) / 2 -
+          bBox.minY * refScale,
+      };
+    }
+  }
+
+  private renderHeader(
+    ctx: CanvasRenderingContext2D,
+    level: LevelData,
+    width: number,
+    isPortrait: boolean
+  ): void {
     const settings = saveManager.getSettings();
-    const soundIcon = settings.sfxMuted ? '🔇' : '🔊';
-    this.drawCardButton(ctx, this.buttons.sound.x, this.buttons.sound.y, this.buttons.sound.w, this.buttons.sound.h, soundIcon, '#3B336A', '#FFF');
+    const isMuted = !!(settings.sfxMuted && settings.musicMuted);
 
-    // Title & Badge
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    if (isPortrait) {
+      // Top AppBar Backdrop
+      ctx.save();
+      ctx.fillStyle = '#FAF5EC';
+      ctx.fillRect(0, 0, width, 76);
+      ctx.strokeStyle = 'rgba(27, 69, 50, 0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, 76);
+      ctx.lineTo(width, 76);
+      ctx.stroke();
+      ctx.restore();
 
-    // Level number
-    ctx.font = 'bold 32px "Nunito", sans-serif';
-    ctx.fillStyle = '#FFD000';
-    ctx.fillText(`Level ${level.id}: ${level.name}`, DESIGN_WIDTH / 2, 45);
-
-    // Category pill
-    ctx.font = 'bold 16px "Nunito", sans-serif';
-    ctx.fillStyle = '#00C4FF';
-    ctx.fillText(level.category.toUpperCase().replace('_', ' '), DESIGN_WIDTH / 2, 80);
-    ctx.restore();
-  }
-
-  private renderPalette(ctx: CanvasRenderingContext2D, level: LevelData): void {
-    const { x, y, w, h } = this.paletteArea;
-
-    // Background card for palette
-    this.drawRoundedRect(ctx, x, y, w, h, 24, '#2E2756', '#433B78', 3);
-
-    // Palette header
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 20px "Nunito", sans-serif';
-    ctx.fillStyle = '#FFD000';
-    ctx.fillText('🎨 COLOURS', x + w / 2, y + 36);
-
-    const hasSelection = coloringEngine.getSelectedRegionId() !== null;
-    ctx.font = '14px "Nunito", sans-serif';
-    ctx.fillStyle = hasSelection ? '#00E676' : '#B8B3E0';
-    ctx.fillText(hasSelection ? 'Pick a colour!' : 'Tap region or colour', x + w / 2, y + 62);
-    ctx.restore();
-
-    // Swatches grid (2 columns)
-    this.swatchRects = [];
-    const colors = level.palette;
-    const swatchSize = 72;
-    const gap = 16;
-    const startX = x + (w - (swatchSize * 2 + gap)) / 2;
-    const startY = y + 84;
-
-    const selectedColor = coloringEngine.getSelectedColor();
-    const pulseScale = 1 + Math.sin(this.pulseTimer * 8) * 0.05;
-
-    for (let i = 0; i < colors.length; i++) {
-      const col = i % 2;
-      const row = Math.floor(i / 2);
-      const sx = startX + col * (swatchSize + gap);
-      const sy = startY + row * (swatchSize + gap);
-
-      const isSelected = selectedColor?.toLowerCase() === colors[i].toLowerCase();
-
-      this.swatchRects.push({
-        color: colors[i],
-        x: sx,
-        y: sy,
-        size: swatchSize,
+      // Back button on left with green gradient
+      drawGlossyGreenButton(ctx, {
+        x: this.buttons.back.x,
+        y: this.buttons.back.y,
+        w: this.buttons.back.w,
+        h: this.buttons.back.h,
+        text: this.buttons.back.label,
+        fontSize: 18,
+        radius: 18,
       });
 
+      // Sound toggle on right with green gradient and slash when muted
+      drawVolumeButton(ctx, {
+        x: this.buttons.sound.x,
+        y: this.buttons.sound.y,
+        w: this.buttons.sound.w,
+        h: this.buttons.sound.h,
+        isMuted,
+        radius: 16,
+      });
+
+      // Level Title: increased font size (+30%), bold Spruce Velvet #1B4532, strictly centered
       ctx.save();
-      if (isSelected || (hasSelection && !selectedColor)) {
-        // Highlighting / pulsating when child is prompted to pick a colour
-        ctx.translate(sx + swatchSize / 2, sy + swatchSize / 2);
-        ctx.scale(pulseScale, pulseScale);
-        ctx.translate(-(sx + swatchSize / 2), -(sy + swatchSize / 2));
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = COLORS.spruceVelvet;
+      ctx.font = getFont(29, 'extraBold');
+
+      const titleText = `Lv.${level.id}: ${level.name}`;
+      const maxTitleW = width - this.buttons.back.w - this.buttons.sound.w - 56;
+      if (ctx.measureText(titleText).width > maxTitleW) {
+        ctx.font = getFont(24, 'extraBold');
       }
+      ctx.fillText(titleText, width / 2, 42);
+      ctx.restore();
+    } else {
+      // Landscape Top Bar
+      drawGlossyGreenButton(ctx, {
+        x: this.buttons.back.x,
+        y: this.buttons.back.y,
+        w: this.buttons.back.w,
+        h: this.buttons.back.h,
+        text: this.buttons.back.label,
+        fontSize: 19,
+        radius: 18,
+      });
 
-      // Rounded square box
-      this.drawRoundedRect(
-        ctx,
-        sx,
-        sy,
-        swatchSize,
-        swatchSize,
-        18,
-        colors[i],
-        isSelected ? '#FFD000' : '#FFFFFF',
-        isSelected ? 5 : 3
-      );
+      drawVolumeButton(ctx, {
+        x: this.buttons.sound.x,
+        y: this.buttons.sound.y,
+        w: this.buttons.sound.w,
+        h: this.buttons.sound.h,
+        isMuted,
+        radius: 16,
+      });
 
-      // Inner highlight gloss
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-      ctx.beginPath();
-      ctx.ellipse(sx + swatchSize / 2, sy + 18, swatchSize * 0.35, 10, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Checkmark if selected
-      if (isSelected) {
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 4;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(sx + 24, sy + swatchSize / 2);
-        ctx.lineTo(sx + swatchSize / 2 - 4, sy + swatchSize - 24);
-        ctx.lineTo(sx + swatchSize - 20, sy + 22);
-        ctx.stroke();
-      }
-
+      // Center title (+30% larger, bold Spruce Velvet)
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = getFont(32, 'extraBold');
+      ctx.fillStyle = COLORS.spruceVelvet;
+      ctx.fillText(`Level ${level.id}: ${level.name}`, width / 2, 46);
       ctx.restore();
     }
   }
 
+  private renderInfoCard(ctx: CanvasRenderingContext2D, level: LevelData): void {
+    const { x, y, w, h } = this.infoCardBounds;
+
+    // Card background in warm cream with Spruce Velvet border
+    this.drawRoundedRect(ctx, x, y, w, h, 20, COLORS.clottedCreamCard, COLORS.spruceVelvet, 3.5);
+
+    const filledCount = coloringEngine.getFilledColors().size;
+    const totalCount = level.regions.length;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+
+    // 1. Category Pill Badge - Increased font size
+    const categoryName = level.category.toUpperCase().replace('_', ' ');
+    ctx.font = getFont(16, 'extraBold');
+    ctx.fillStyle = COLORS.spruceVelvet;
+    ctx.fillText(`CATEGORY: ${categoryName}`, x + w / 2, y + 42);
+
+    // 2. Goal prompt - Increased font size
+    ctx.font = getFont(22, 'extraBold');
+    ctx.fillStyle = COLORS.spruceVelvet;
+    ctx.fillText('🎯 Match Target!', x + w / 2, y + 96);
+
+    // 3. Progress counter - Increased font size
+    ctx.font = getFont(18, 'bold');
+    ctx.fillStyle = COLORS.spruceVelvetMuted;
+    ctx.fillText(`${filledCount} / ${totalCount} shapes coloured`, x + w / 2, y + 148);
+
+    ctx.restore();
+  }
+
   private renderTemplate(ctx: CanvasRenderingContext2D, level: LevelData): void {
-    const { x, y, size } = this.templateBounds;
+    const { x, y, w, h } = this.templateBounds;
 
-    // Card background for template
-    this.drawRoundedRect(ctx, x, y, size, size, 32, '#FFFDF7', '#FFD000', 4);
+    // Main Middle Container Card Face in Clotted Cream light with Spruce Velvet border
+    this.drawRoundedRect(ctx, x, y, w, h, 28, COLORS.clottedCreamLight, COLORS.spruceVelvet, 4);
 
-    // Scale template from standard 500x500 box to inner canvas area (e.g. 420x420)
-    const innerPadding = 30;
-    const targetSize = size - innerPadding * 2;
-    const scale = targetSize / 500;
-    const offsetX = x + innerPadding;
-    const offsetY = y + innerPadding;
-
+    const { offsetX, offsetY, scale } = this.templateTransform;
     const selectedRegionId = coloringEngine.getSelectedRegionId();
     const filledColors = coloringEngine.getFilledColors();
 
-    // Draw all regions
+    // Render all blank template layers, dynamically scaled/centered to 80%-85%
     for (const region of level.regions) {
       const isSelected = selectedRegionId === region.id;
       const filledColor = filledColors.get(region.id) || '#FFFFFF';
@@ -266,74 +517,294 @@ export class GameplayScene implements Scene {
         offsetY,
         scale,
         fillColor: filledColor,
-        strokeColor: '#2C2554',
-        strokeWidth: 4,
+        strokeColor: isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
+        strokeWidth: isSelected ? 5 : 3,
         isHighlighted: isSelected,
-        highlightColor: '#FFD000',
+        highlightColor: COLORS.sunnyYellow,
         glow: isSelected,
       });
     }
   }
 
   private renderReference(ctx: CanvasRenderingContext2D, level: LevelData): void {
-    const { x, y, size } = this.referenceBounds;
+    const { x, y, w, h } = this.referenceBounds;
 
-    // Reference Card Background
-    this.drawRoundedRect(ctx, x, y, size, size, 24, '#2E2756', '#00C4FF', 3);
+    // Enlarged TARGET Container Card Background
+    this.drawRoundedRect(ctx, x, y, w, h, 20, COLORS.clottedCreamCard, COLORS.spruceVelvet, 3.5);
 
     // Header badge
     ctx.save();
     ctx.textAlign = 'center';
-    ctx.font = 'bold 16px "Nunito", sans-serif';
-    ctx.fillStyle = '#00C4FF';
-    ctx.fillText('⭐ TARGET IMAGE', x + size / 2, y + 26);
+    ctx.font = getFont(14, 'extraBold');
+    ctx.fillStyle = COLORS.spruceVelvet;
+    ctx.fillText('🎯 TARGET', x + w / 2, y + 20);
     ctx.restore();
 
-    // Scale from 500x500 to reference box inner area
-    const innerPad = 36;
-    const targetSize = size - innerPad * 2;
-    const scale = targetSize / 500;
-    const offsetX = x + innerPad;
-    const offsetY = y + innerPad + 8;
+    // Render coloured preview shape, dynamically scaled to 80%-85% without clipping
+    const { offsetX, offsetY, scale } = this.referenceTransform;
 
-    // Reference always draws the exact target colours!
     for (const region of level.regions) {
       ShapeRenderer.drawRegion(ctx, region, {
         offsetX,
         offsetY,
         scale,
         fillColor: region.targetColor,
-        strokeColor: '#2C2554',
+        strokeColor: COLORS.spruceVelvet,
         strokeWidth: 2,
         isHighlighted: false,
       });
     }
   }
 
-  private renderControls(ctx: CanvasRenderingContext2D): void {
-    this.drawCardButton(ctx, this.buttons.undo.x, this.buttons.undo.y, this.buttons.undo.w, this.buttons.undo.h, this.buttons.undo.label, '#3B336A', '#FFF');
-    this.drawCardButton(ctx, this.buttons.reset.x, this.buttons.reset.y, this.buttons.reset.w, this.buttons.reset.h, this.buttons.reset.label, '#3B336A', '#FFF');
-    this.drawCardButton(ctx, this.buttons.hint.x, this.buttons.hint.y, this.buttons.hint.w, this.buttons.hint.h, this.buttons.hint.label, '#00C4FF', '#1E1A34');
+  private renderPillToolbar(ctx: CanvasRenderingContext2D): void {
+    const { x, y, w, h } = this.pillToolbarBounds;
 
-    // Progress counter
-    const level = coloringEngine.getLevel();
-    if (level) {
-      const filledCount = coloringEngine.getFilledColors().size;
-      const totalCount = level.regions.length;
+    // 1. Sleek Pill-shaped Container overlapping the bottom border of middle container
+    ctx.save();
+    // Drop shadow
+    this.drawRoundedRect(ctx, x, y + 4, w, h, h / 2, COLORS.spruceVelvetShadow);
+    // Pill face in Clotted Cream with Spruce Velvet outline
+    this.drawRoundedRect(ctx, x, y, w, h, h / 2, '#FAF5EC', COLORS.spruceVelvet, 3.5);
+    ctx.restore();
 
-      ctx.save();
-      ctx.textAlign = 'center';
-      ctx.font = 'bold 22px "Nunito", sans-serif';
-      ctx.fillStyle = filledCount === totalCount ? '#00E676' : '#FFD000';
-      ctx.fillText(`${filledCount} / ${totalCount} coloured`, DESIGN_WIDTH / 2, 705);
-      ctx.restore();
+    // 2. Action buttons: Undo, Clear, Hint horizontally side-by-side
+    // All 3 styled in signature "Let's Play" 3D green gradient with crisp white text
+    drawGlossyGreenButton(ctx, {
+      x: this.buttons.undo.x,
+      y: this.buttons.undo.y,
+      w: this.buttons.undo.w,
+      h: this.buttons.undo.h,
+      text: this.buttons.undo.label,
+      fontSize: 17,
+      radius: 18,
+    });
+
+    drawGlossyGreenButton(ctx, {
+      x: this.buttons.reset.x,
+      y: this.buttons.reset.y,
+      w: this.buttons.reset.w,
+      h: this.buttons.reset.h,
+      text: this.buttons.reset.label,
+      fontSize: 17,
+      radius: 18,
+    });
+
+    // Hint Button: When used once, keep green gradient but render in disabled state (opacity: 0.45)
+    const hintUsed = coloringEngine.isHintUsed();
+    drawGlossyGreenButton(ctx, {
+      x: this.buttons.hint.x,
+      y: this.buttons.hint.y,
+      w: this.buttons.hint.w,
+      h: this.buttons.hint.h,
+      text: hintUsed ? '💡 Used' : '💡 Hint',
+      fontSize: 17,
+      radius: 18,
+      isDisabled: hintUsed,
+    });
+  }
+
+  private renderPalette(
+    ctx: CanvasRenderingContext2D,
+    level: LevelData,
+    isPortrait: boolean
+  ): void {
+    const { x, y, w, h } = this.paletteArea;
+
+    // Palette background card
+    this.drawRoundedRect(ctx, x, y, w, h, 22, COLORS.clottedCreamCard, COLORS.spruceVelvet, 3.5);
+
+    const hasSelection = coloringEngine.getSelectedRegionId() !== null;
+
+    // Prompt Header
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = getFont(isPortrait ? 15 : 17, 'extraBold');
+    ctx.fillStyle = COLORS.spruceVelvet;
+
+    const labelH = 34;
+    const promptText = hasSelection ? '👇 TAP A COLOUR TO PAINT!' : 'TAP A SHAPE FIRST';
+    ctx.fillText(promptText, x + w / 2, y + 18);
+    ctx.restore();
+
+    // Full-Space Tight Grid: Color blocks expand to fill the entire interior width and available height
+    this.swatchRects = [];
+    const colors = level.palette;
+    const pulseScale = 1 + Math.sin(this.pulseTimer * 8) * 0.05;
+
+    const innerPad = 12;
+    const gridX = x + innerPad;
+    const gridY = y + labelH;
+    const availW = w - innerPad * 2;
+    const availH = h - labelH - innerPad;
+
+    const gap = 10;
+
+    if (isPortrait) {
+      // Mobile Portrait: Tight grid occupying 100% of available space below label
+      if (colors.length <= 4) {
+        // 1 row
+        const swatchW = Math.floor((availW - (colors.length - 1) * gap) / colors.length);
+        const swatchH = Math.floor(availH);
+
+        for (let i = 0; i < colors.length; i++) {
+          const sx = gridX + i * (swatchW + gap);
+          const sy = gridY;
+
+          this.swatchRects.push({
+            color: colors[i],
+            x: sx,
+            y: sy,
+            w: swatchW,
+            h: swatchH,
+          });
+
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+        }
+      } else {
+        // 2 rows tight grid (e.g. 2 rows of 4 for 8-colour levels)
+        const cols = Math.ceil(colors.length / 2);
+        const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
+        const swatchH = Math.floor((availH - gap) / 2);
+
+        for (let i = 0; i < colors.length; i++) {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const sx = gridX + col * (swatchW + gap);
+          const sy = gridY + row * (swatchH + gap);
+
+          this.swatchRects.push({
+            color: colors[i],
+            x: sx,
+            y: sy,
+            w: swatchW,
+            h: swatchH,
+          });
+
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+        }
+      }
+    } else {
+      // Landscape: Vertical tight 2-column grid
+      const cols = 2;
+      const rows = Math.ceil(colors.length / cols);
+      const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
+      const swatchH = Math.floor((availH - (rows - 1) * gap) / rows);
+
+      for (let i = 0; i < colors.length; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const sx = gridX + col * (swatchW + gap);
+        const sy = gridY + row * (swatchH + gap);
+
+        this.swatchRects.push({
+          color: colors[i],
+          x: sx,
+          y: sy,
+          w: swatchW,
+          h: swatchH,
+        });
+
+        this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection, pulseScale);
+      }
     }
+  }
+
+  private drawFullSpaceSwatch(
+    ctx: CanvasRenderingContext2D,
+    color: string,
+    sx: number,
+    sy: number,
+    sw: number,
+    sh: number,
+    hasSelection: boolean,
+    pulseScale: number
+  ): void {
+    const hintedColor = coloringEngine.getHintedColor();
+    const isHinted = hintedColor !== null && hintedColor.toLowerCase() === color.toLowerCase();
+
+    ctx.save();
+
+    // Pulse swatches when container is selected and ready to be coloured
+    if (hasSelection) {
+      ctx.translate(sx + sw / 2, sy + sh / 2);
+      ctx.scale(pulseScale, pulseScale);
+      ctx.translate(-(sx + sw / 2), -(sy + sh / 2));
+    }
+
+    // Step 2 Hint Flow: Pulsating golden highlight when matching hint
+    if (isHinted) {
+      const auraExpand = 6 + Math.sin(this.pulseTimer * 10) * 3;
+      this.drawRoundedRect(
+        ctx,
+        sx - auraExpand,
+        sy - auraExpand,
+        sw + auraExpand * 2,
+        sh + auraExpand * 2,
+        18,
+        'rgba(242, 201, 76, 0.5)',
+        '#F2C94C',
+        3.5
+      );
+    }
+
+    // 3D shadow
+    this.drawRoundedRect(ctx, sx, sy + 4, sw, sh, 14, COLORS.clottedCreamDark);
+
+    // Rounded rectangle swatch face occupying 100% of space
+    this.drawRoundedRect(
+      ctx,
+      sx,
+      sy,
+      sw,
+      sh,
+      14,
+      color,
+      isHinted ? '#F2C94C' : hasSelection ? COLORS.spruceVelvet : '#FFFDF7',
+      isHinted ? 4.5 : hasSelection ? 3.5 : 2
+    );
+
+    // Inner gloss
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.beginPath();
+    if (typeof ctx.ellipse === 'function') {
+      ctx.ellipse(sx + sw / 2, sy + Math.min(14, sh * 0.25), sw * 0.38, Math.min(8, sh * 0.15), 0, 0, Math.PI * 2);
+    } else {
+      ctx.arc(sx + sw / 2, sy + Math.min(14, sh * 0.25), 8, 0, Math.PI * 2);
+    }
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  private renderToast(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    if (!this.toastMessage) return;
+
+    ctx.save();
+    ctx.font = getFont(16, 'bold');
+    const text = this.toastMessage;
+    const textW = ctx.measureText(text).width;
+    const toastW = textW + 48;
+    const toastH = 46;
+    const toastX = Math.round((width - toastW) / 2);
+    const toastY = height > width ? 232 : 54;
+
+    // Toast shadow
+    this.drawRoundedRect(ctx, toastX, toastY + 4, toastW, toastH, 23, 'rgba(0, 0, 0, 0.25)');
+    // Toast face (Spruce Velvet with sunny gold border)
+    this.drawRoundedRect(ctx, toastX, toastY, toastW, toastH, 23, 'rgba(27, 69, 50, 0.95)', '#F2C94C', 2.5);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#FAF5EC';
+    ctx.fillText(text, width / 2, toastY + toastH / 2);
+    ctx.restore();
   }
 
   public onTap(x: number, y: number): void {
     if (this.isCompleting) return;
 
-    // 1. Check HUD buttons
+    // 1. Check Top App Bar buttons
     if (this.isInside(x, y, this.buttons.back)) {
       this.onPlaySound?.('tap');
       sceneManager.switchTo('levelSelect');
@@ -341,12 +812,19 @@ export class GameplayScene implements Scene {
     }
 
     if (this.isInside(x, y, this.buttons.sound)) {
-      const s = saveManager.getSettings();
-      saveManager.updateSettings({ sfxMuted: !s.sfxMuted, musicMuted: !s.musicMuted });
-      this.onPlaySound?.('tap');
+      const settings = saveManager.getSettings();
+      const nowMuted = !(settings.sfxMuted && settings.musicMuted);
+      saveManager.updateSettings({ sfxMuted: nowMuted, musicMuted: nowMuted });
+      audioManager.setSfxMuted(nowMuted);
+      audioManager.setMusicMuted(nowMuted);
+      if (!nowMuted) {
+        this.onPlaySound?.('tap');
+      }
       return;
     }
 
+    // 2. CRUCIAL: Check Overlapping Pill Toolbar Buttons BEFORE main shape canvas
+    // So tapping Undo, Clear, or Hint never triggers a shape selection underneath!
     if (this.isInside(x, y, this.buttons.undo)) {
       this.onPlaySound?.('clear');
       coloringEngine.undo();
@@ -360,38 +838,38 @@ export class GameplayScene implements Scene {
     }
 
     if (this.isInside(x, y, this.buttons.hint)) {
-      const selectedId = coloringEngine.getSelectedRegionId();
-      const level = coloringEngine.getLevel();
-      if (level) {
-        let targetRegion: Region | undefined;
-        if (selectedId) {
-          targetRegion = level.regions.find((r) => r.id === selectedId);
-        } else {
-          // Find first unfilled or mismatched region
-          targetRegion = level.regions.find(
-            (r) => coloringEngine.getFilledColor(r.id) !== r.targetColor
-          );
-          if (targetRegion) {
-            coloringEngine.selectRegion(targetRegion.id);
-          }
-        }
+      if (coloringEngine.isHintUsed()) {
+        this.showToast('💡 Hint already used for this level!', 2200);
+        this.onPlaySound?.('tap');
+        return; // Ignore pointer tap when disabled
+      }
 
-        if (targetRegion) {
-          coloringEngine.selectColor(targetRegion.targetColor);
-          this.onPlaySound?.('correct');
-          this.checkCompletion();
-        }
+      // Step 1: Container Selection Required
+      const selectedId = coloringEngine.getSelectedRegionId();
+      if (!selectedId) {
+        this.showToast('👉 Tap a shape first to use a hint!', 2500);
+        this.onPlaySound?.('tap');
+        return;
+      }
+
+      // Step 2 & 3: Highlight Target Colour & Disable Hint
+      const res = coloringEngine.requestHint();
+      if (res.success && res.targetColor) {
+        this.showToast('✨ Look at the glowing colour in the palette!', 2500);
+        this.onPlaySound?.('correct');
+      } else if (res.reason === 'already_used') {
+        this.showToast('💡 Hint already used for this level!', 2200);
       }
       return;
     }
 
-    // 2. Check Palette Swatches
+    // 3. Check Palette Swatches (Step B: Fill selected container)
     for (const swatch of this.swatchRects) {
       if (
         x >= swatch.x &&
-        x <= swatch.x + swatch.size &&
+        x <= swatch.x + swatch.w &&
         y >= swatch.y &&
-        y <= swatch.y + swatch.size
+        y <= swatch.y + swatch.h
       ) {
         this.onPlaySound?.('select');
         const res = coloringEngine.selectColor(swatch.color);
@@ -404,39 +882,22 @@ export class GameplayScene implements Scene {
       }
     }
 
-    // 3. Check Centre Template Regions
+    // 4. Check Main Middle Container Regions (Step A: Select container)
     const level = coloringEngine.getLevel();
     if (!level) return;
 
-    const { x: tx, y: ty, size: tSize } = this.templateBounds;
-    const innerPadding = 30;
-    const targetSize = tSize - innerPadding * 2;
-    const scale = targetSize / 500;
-    const offsetX = tx + innerPadding;
-    const offsetY = ty + innerPadding;
-
-    // Create a temporary canvas context for hit testing if necessary
+    const { offsetX, offsetY, scale } = this.templateTransform;
     const offscreen = document.createElement('canvas');
     const offCtx = offscreen.getContext('2d');
     if (!offCtx) return;
 
-    // Check regions in reverse order (top layer first)
+    // Check regions in reverse order (topmost layer first)
     for (let i = level.regions.length - 1; i >= 0; i--) {
       const region = level.regions[i];
       if (ShapeRenderer.hitTest(offCtx, region, x, y, offsetX, offsetY, scale)) {
-        const res = coloringEngine.selectRegion(region.id);
-        if (res.filled && res.color) {
-          this.onPlaySound?.('fill');
-          const center = ShapeRenderer.getRegionCenter(region);
-          this.onSpawnSparkles?.(
-            offsetX + center.x * scale,
-            offsetY + center.y * scale,
-            res.color
-          );
-          this.checkCompletion();
-        } else {
-          this.onPlaySound?.('tap');
-        }
+        // Step A: Select container (NEVER fills on container tap!)
+        coloringEngine.selectRegion(region.id);
+        this.onPlaySound?.('tap');
         return;
       }
     }
@@ -489,7 +950,7 @@ export class GameplayScene implements Scene {
     ctx.restore();
   }
 
-  private drawCardButton(
+  private drawPillButton(
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
@@ -497,17 +958,18 @@ export class GameplayScene implements Scene {
     h: number,
     label: string,
     bgColor: string,
-    textColor: string
+    textColor: string,
+    borderColor: string = COLORS.spruceVelvet
   ): void {
     ctx.save();
-    // Drop shadow bottom edge (3D button effect)
-    this.drawRoundedRect(ctx, x, y + 4, w, h, 14, '#1A1633');
+    // Drop shadow
+    this.drawRoundedRect(ctx, x, y + 3, w, h, h / 2, COLORS.spruceVelvetShadow);
     // Button face
-    this.drawRoundedRect(ctx, x, y, w, h, 14, bgColor, '#4F4588', 2);
+    this.drawRoundedRect(ctx, x, y, w, h, h / 2, bgColor, borderColor, 2);
 
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = 'bold 18px "Nunito", sans-serif';
+    ctx.font = getFont(15, 'extraBold');
     ctx.fillStyle = textColor;
     ctx.fillText(label, x + w / 2, y + h / 2);
     ctx.restore();

@@ -18,6 +18,94 @@ export interface RenderOptions {
 
 export class ShapeRenderer {
   /**
+   * Calculates the bounding box of a collection of regions in template space.
+   */
+  public static calculateBoundingBox(regions: Region[]): {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+    width: number;
+    height: number;
+  } {
+    if (!regions || regions.length === 0) {
+      return { minX: 0, minY: 0, maxX: 500, maxY: 500, width: 500, height: 500 };
+    }
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    for (const r of regions) {
+      switch (r.shape) {
+        case 'circle':
+          minX = Math.min(minX, r.cx - r.r);
+          minY = Math.min(minY, r.cy - r.r);
+          maxX = Math.max(maxX, r.cx + r.r);
+          maxY = Math.max(maxY, r.cy + r.r);
+          break;
+        case 'ellipse':
+          minX = Math.min(minX, r.cx - r.rx);
+          minY = Math.min(minY, r.cy - r.ry);
+          maxX = Math.max(maxX, r.cx + r.rx);
+          maxY = Math.max(maxY, r.cy + r.ry);
+          break;
+        case 'rect':
+        case 'roundRect':
+          minX = Math.min(minX, r.x);
+          minY = Math.min(minY, r.y);
+          maxX = Math.max(maxX, r.x + r.w);
+          maxY = Math.max(maxY, r.y + r.h);
+          break;
+        case 'polygon':
+          for (let i = 0; i < r.points.length; i += 2) {
+            minX = Math.min(minX, r.points[i]);
+            minY = Math.min(minY, r.points[i + 1]);
+            maxX = Math.max(maxX, r.points[i]);
+            maxY = Math.max(maxY, r.points[i + 1]);
+          }
+          break;
+        case 'star':
+          minX = Math.min(minX, r.cx - r.outerR);
+          minY = Math.min(minY, r.cy - r.outerR);
+          maxX = Math.max(maxX, r.cx + r.outerR);
+          maxY = Math.max(maxY, r.cy + r.outerR);
+          break;
+        case 'heart':
+          minX = Math.min(minX, r.cx - r.size);
+          minY = Math.min(minY, r.cy - r.size);
+          maxX = Math.max(maxX, r.cx + r.size);
+          maxY = Math.max(maxY, r.cy + r.size);
+          break;
+        case 'arc':
+        case 'ring': {
+          const rad = r.shape === 'ring' ? r.outerR : r.r;
+          minX = Math.min(minX, r.cx - rad);
+          minY = Math.min(minY, r.cy - rad);
+          maxX = Math.max(maxX, r.cx + rad);
+          maxY = Math.max(maxY, r.cy + rad);
+          break;
+        }
+        default:
+          minX = Math.min(minX, 0);
+          minY = Math.min(minY, 0);
+          maxX = Math.max(maxX, 500);
+          maxY = Math.max(maxY, 500);
+          break;
+      }
+    }
+
+    if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+      return { minX: 0, minY: 0, maxX: 500, maxY: 500, width: 500, height: 500 };
+    }
+
+    const width = Math.max(10, maxX - minX);
+    const height = Math.max(10, maxY - minY);
+    return { minX, minY, maxX, maxY, width, height };
+  }
+
+  /**
    * Builds the Path2D object for a given region in standard template space.
    */
   public static createPath(region: Region): Path2D {
@@ -127,7 +215,7 @@ export class ShapeRenderer {
       offsetY = 0,
       scale = 1,
       fillColor = '#FFFFFF',
-      strokeColor = '#2C2C3E',
+      strokeColor = '#1B4532',
       strokeWidth = 3,
       isHighlighted = false,
       highlightColor = '#FFD000',

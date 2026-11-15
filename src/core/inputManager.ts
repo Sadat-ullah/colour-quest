@@ -24,6 +24,8 @@ export class InputManager {
     this.setupListeners();
   }
 
+  private lastTapTimestamp = 0;
+
   private setupListeners(): void {
     // 1. Prevent native browser gestures on the canvas & container
     this.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -40,6 +42,27 @@ export class InputManager {
     this.canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
     this.canvas.addEventListener('pointerup', (e) => this.onPointerUp(e));
     this.canvas.addEventListener('pointercancel', (e) => this.onPointerCancel(e));
+
+    // 3. Fallback click handler (debounced)
+    this.canvas.addEventListener('click', (e) => {
+      const now = performance.now();
+      if (now - this.lastTapTimestamp > 250) {
+        this.emitTap(e.clientX, e.clientY, e);
+      }
+    });
+  }
+
+  private emitTap(clientX: number, clientY: number, originalEvent: UIEvent): void {
+    this.lastTapTimestamp = performance.now();
+    const canvasCoord = this.scaleManager.clientToCanvas(clientX, clientY);
+    if (canvasCoord) {
+      const tapEv: TapEvent = {
+        x: canvasCoord.x,
+        y: canvasCoord.y,
+        originalEvent: originalEvent as any,
+      };
+      this.tapHandlers.forEach((handler) => handler(tapEv));
+    }
   }
 
   private handleTouchStart(e: TouchEvent): void {
@@ -84,17 +107,9 @@ export class InputManager {
     const dy = e.clientY - startPos.y;
     const distSq = dx * dx + dy * dy;
 
-    // Detect tap: duration < 500ms and movement < 15px
+    // Detect tap: duration < 600ms and movement < 20px
     if (dt < 600 && distSq < 400) {
-      const canvasCoord = this.scaleManager.clientToCanvas(e.clientX, e.clientY);
-      if (canvasCoord) {
-        const tapEv: TapEvent = {
-          x: canvasCoord.x,
-          y: canvasCoord.y,
-          originalEvent: e,
-        };
-        this.tapHandlers.forEach((handler) => handler(tapEv));
-      }
+      this.emitTap(e.clientX, e.clientY, e);
     }
   }
 

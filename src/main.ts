@@ -67,14 +67,16 @@ function bootstrap(): void {
 
   // 6. Connect global eventBus listeners
   eventBus.on('level:start', ({ levelId }) => {
-    audioManager.playSound('tap');
+    if (!resultsModal.isOpen()) {
+      audioManager.playSound('tap');
+    }
     sceneManager.switchTo('gameplay', { levelId });
   });
 
   eventBus.on('level:complete', ({ result }) => {
     audioManager.playLevelComplete(result.stars);
     if (result.stars === 3) {
-      confettiSystem.celebrate(DESIGN_WIDTH, DESIGN_HEIGHT, 150);
+      confettiSystem.celebrate(scaleManager.getVirtualWidth(), scaleManager.getVirtualHeight(), 150);
     }
   });
 
@@ -99,13 +101,22 @@ function bootstrap(): void {
     particleEmitter.update(dtSeconds);
     confettiSystem.update(dtSeconds);
 
-    // Clear and Render
-    renderCtx.clearRect(0, 0, DESIGN_WIDTH, DESIGN_HEIGHT);
-    sceneManager.render(renderCtx);
+    // Clear and Render with crisp DPR scaling
+    const dpr = scaleManager.getDpr();
+    const vw = scaleManager.getVirtualWidth();
+    const vh = scaleManager.getVirtualHeight();
+
+    renderCtx.save();
+    renderCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    renderCtx.clearRect(0, 0, vw, vh);
+
+    sceneManager.render(renderCtx, vw, vh);
 
     // Render Particle & Confetti FX Overlays
     particleEmitter.draw(renderCtx);
     confettiSystem.draw(renderCtx);
+
+    renderCtx.restore();
 
     requestAnimationFrame(gameLoop);
   }

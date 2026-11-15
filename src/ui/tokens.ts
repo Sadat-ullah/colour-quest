@@ -3,53 +3,67 @@
  *  Vibrant pastel/primary palette, rounded typography & touch dimensions
  * ───────────────────────────────────────────────────────────── */
 
-// ── Colors ──
+// ── Colors: 80% Clotted Cream (#EEE2CB) & 20% Spruce Velvet (#1B4532) ──
 export const COLORS = {
-  // Required core palette
+  // 80% Dominant Surface & Background – Clotted Cream (#EEE2CB)
+  clottedCream: '#EEE2CB',
+  clottedCreamLight: '#FAF5EC',
+  clottedCreamDark: '#D8C9AE',
+  clottedCreamCard: '#F5ECDB',
+
+  // 20% Primary Accent, Structural & Interactive – Spruce Velvet (#1B4532)
+  spruceVelvet: '#1B4532',
+  spruceVelvetLight: '#265D44',
+  spruceVelvetShadow: '#0E241A',
+  spruceVelvetMuted: '#3A6350',
+
+  // Semantic & child-friendly accent tokens
   candyPink: '#FF4B72',
   sunnyYellow: '#FFD000',
   brightCyan: '#00C4FF',
   mintGreen: '#00E676',
-  purpleJoy: '#9B51E0',
   softOrange: '#FF8A00',
-  darkPlum: '#2E1B4E',
   creamWhite: '#FFFDF7',
-  outlineDark: '#1E1A34',
+  outlineDark: '#1B4532',
 
-  // 3D Button Shadows (darker bevel shades)
+  // Backward-compatible non-purple aliases
+  purpleJoy: '#1B4532',
+  purpleJoyShadow: '#0E241A',
+  darkPlum: '#1B4532',
+
+  // 3D Button Shadows
   candyPinkShadow: '#D92A51',
   sunnyYellowShadow: '#D4A300',
   brightCyanShadow: '#0097C4',
   mintGreenShadow: '#00B359',
-  purpleJoyShadow: '#7935B8',
   softOrangeShadow: '#D46D00',
-  creamWhiteShadow: '#E2DEC9',
-  grayShadow: '#8C859E',
+  creamWhiteShadow: '#D8C9AE',
+  grayShadow: '#B5A995',
 
-  // Soft backgrounds and tints
-  skyBlueLight: '#E8F7FF',
-  lavenderLight: '#F3EEFB',
-  mintLight: '#E8FAF0',
-  pinkLight: '#FFEBF0',
-  yellowLight: '#FFFBE5',
+  // Soft backgrounds and tints (Warm Cream tones)
+  skyBlueLight: '#F2ECE0',
+  lavenderLight: '#EDE4D1',
+  mintLight: '#E8F3EC',
+  pinkLight: '#F7EBE8',
+  yellowLight: '#FAF5DF',
 
   // Card & Surface
-  cardBg: '#FFFFFF',
-  cardOutline: '#1E1A34',
-  cardShadow: '#E4DFEC',
-  modalBackdrop: 'rgba(30, 26, 52, 0.72)',
+  cardBg: '#FFFDF9',
+  cardOutline: '#1B4532',
+  cardShadow: '#D8C9AE',
+  modalBackdrop: 'rgba(27, 69, 50, 0.72)',
 
   // Stars & Rewards
   starGold: '#FFD000',
   starGlow: '#FFE866',
-  starEmpty: '#DDD7E8',
-  starEmptyOutline: '#B2AAC4',
+  starEmpty: '#DDD5C4',
+  starEmptyOutline: '#BDB19C',
 
   // State colors
-  disabledBg: '#D6D2E0',
-  disabledText: '#8E879E',
-  disabledShadow: '#B0AAC0',
-  success: '#00E676',
+  disabledBg: '#DDD5C4',
+  disabledText: '#8C8271',
+  disabledShadow: '#BDB19C',
+  success: '#1B4532',
   error: '#FF4B72',
 } as const;
 

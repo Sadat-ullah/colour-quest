@@ -75,17 +75,13 @@ describe('ColoringEngine Tests', () => {
       emitSpy.mockRestore();
     });
 
-    it('selects color without filling if no region is pre-selected', () => {
-      const emitSpy = vi.spyOn(eventBus, 'emit');
+    it('selects color without filling if no region is pre-selected and does not stick', () => {
       const result = engine.selectColor('#FF5722');
-
       expect(result.filled).toBe(false);
-      expect(engine.getSelectedColor()).toBe('#FF5722');
-      expect(emitSpy).toHaveBeenCalledWith('color:selected', { color: '#FF5722' });
-      emitSpy.mockRestore();
+      expect(engine.getSelectedColor()).toBeNull();
     });
 
-    it('immediately fills region when selecting color after region is highlighted', () => {
+    it('immediately fills region when selecting color after container is selected and resets', () => {
       engine.selectRegion('r_circle_1');
       const fillResult = engine.selectColor('#FF5722');
 
@@ -93,16 +89,32 @@ describe('ColoringEngine Tests', () => {
       expect(fillResult.regionId).toBe('r_circle_1');
       expect(fillResult.correct).toBe(true);
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
+
+      // Crucial: Step C immediate reset
+      expect(engine.getSelectedRegionId()).toBeNull();
+      expect(engine.getSelectedColor()).toBeNull();
     });
 
-    it('immediately fills region when selecting region after color is highlighted', () => {
-      engine.selectColor('#4CAF50');
-      const fillResult = engine.selectRegion('r_circle_2');
+    it('tapping 2nd container never auto-fills previous color', () => {
+      // 1st container filled
+      engine.selectRegion('r_circle_1');
+      engine.selectColor('#FF5722');
+      expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
+      expect(engine.getSelectedColor()).toBeNull();
 
-      expect(fillResult.filled).toBe(true);
-      expect(fillResult.color).toBe('#4CAF50');
-      expect(fillResult.correct).toBe(true);
+      // Tap 2nd container
+      const result = engine.selectRegion('r_circle_2');
+      expect(result.filled).toBe(false);
+      expect(engine.getFilledColor('r_circle_2')).toBeNull();
+      expect(engine.getSelectedRegionId()).toBe('r_circle_2');
+      expect(engine.getSelectedColor()).toBeNull();
+
+      // Now fill 2nd container with its own color
+      const fill2 = engine.selectColor('#4CAF50');
+      expect(fill2.filled).toBe(true);
+      expect(fill2.regionId).toBe('r_circle_2');
       expect(engine.getFilledColor('r_circle_2')).toBe('#4CAF50');
+      expect(engine.getSelectedRegionId()).toBeNull();
     });
 
     it('clears selection via clearSelection()', () => {
@@ -248,6 +260,76 @@ describe('ColoringEngine Tests', () => {
       expect(engine.getFilledColors().size).toBe(0);
       expect(engine.isAllRegionsFilled()).toBe(false);
       expect(engine.undo()).toBe(false);
+    });
+  });
+
+  describe('Interactive Hint Mechanics & Single-Use Enforcement', () => {
+    beforeEach(() => {
+      engine.loadLevel(mockLevel);
+    });
+
+    it('requires a container to be selected before granting a hint', () => {
+      expect(engine.getSelectedRegionId()).toBeNull();
+      const res = engine.requestHint();
+
+      expect(res.success).toBe(false);
+      expect(res.reason).toBe('no_selection');
+      expect(engine.isHintUsed()).toBe(false);
+      expect(engine.getHintedColor()).toBeNull();
+    });
+
+    it('grants a hint for selected container and reveals matching target color', () => {
+      engine.selectRegion('r_circle_1');
+      const res = engine.requestHint();
+
+      expect(res.success).toBe(true);
+      expect(res.targetColor).toBe('#FF5722');
+      expect(res.regionId).toBe('r_circle_1');
+      expect(engine.isHintUsed()).toBe(true);
+      expect(engine.getHintedColor()).toBe('#FF5722');
+
+      // Crucial: hint does NOT automatically fill the container!
+      expect(engine.getFilledColor('r_circle_1')).toBeNull();
+    });
+
+    it('enforces strictly one hint per level attempt', () => {
+      engine.selectRegion('r_circle_1');
+      const firstHint = engine.requestHint();
+      expect(firstHint.success).toBe(true);
+      expect(engine.isHintUsed()).toBe(true);
+
+      // Try requesting a second hint on another container
+      engine.selectRegion('r_circle_2');
+      const secondHint = engine.requestHint();
+      expect(secondHint.success).toBe(false);
+      expect(secondHint.reason).toBe('already_used');
+    });
+
+    it('clears hinted color after user selects a color to fill container', () => {
+      engine.selectRegion('r_circle_1');
+      engine.requestHint();
+      expect(engine.getHintedColor()).toBe('#FF5722');
+
+      engine.selectColor('#FF5722');
+      expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
+      expect(engine.getHintedColor()).toBeNull();
+      // But hint remains marked as used
+      expect(engine.isHintUsed()).toBe(true);
+    });
+
+    it('resets hint state when level is reset or reloaded', () => {
+      engine.selectRegion('r_circle_1');
+      engine.requestHint();
+      expect(engine.isHintUsed()).toBe(true);
+
+      engine.resetCurrentLevel();
+      expect(engine.isHintUsed()).toBe(false);
+      expect(engine.getHintedColor()).toBeNull();
+
+      // Reloading level also resets hint
+      engine.loadLevel(mockLevel);
+      expect(engine.isHintUsed()).toBe(false);
+      expect(engine.getHintedColor()).toBeNull();
     });
   });
 });

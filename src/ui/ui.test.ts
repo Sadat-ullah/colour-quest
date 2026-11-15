@@ -62,16 +62,16 @@ function createMockContext(): CanvasRenderingContext2D {
 }
 
 describe('Design Tokens (/src/ui/tokens.ts)', () => {
-  it('defines vibrant pastel/primary palette colors accurately', () => {
+  it('defines vibrant pastel/primary palette colors accurately with 80/20 Clotted Cream and Spruce Velvet', () => {
+    expect(COLORS.clottedCream).toBe('#EEE2CB');
+    expect(COLORS.spruceVelvet).toBe('#1B4532');
     expect(COLORS.candyPink).toBe('#FF4B72');
     expect(COLORS.sunnyYellow).toBe('#FFD000');
     expect(COLORS.brightCyan).toBe('#00C4FF');
     expect(COLORS.mintGreen).toBe('#00E676');
-    expect(COLORS.purpleJoy).toBe('#9B51E0');
     expect(COLORS.softOrange).toBe('#FF8A00');
-    expect(COLORS.darkPlum).toBe('#2E1B4E');
     expect(COLORS.creamWhite).toBe('#FFFDF7');
-    expect(COLORS.outlineDark).toBe('#1E1A34');
+    expect(COLORS.outlineDark).toBe('#1B4532');
   });
 
   it('defines rounded child-friendly font family and dimensions', () => {

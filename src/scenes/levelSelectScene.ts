@@ -11,6 +11,7 @@ import {
 } from '../ui/tokens';
 import {
   drawButton,
+  drawGlossyGreenButton,
   drawRoundedRect,
   drawStar,
   drawIcon,
@@ -146,11 +147,11 @@ export class LevelSelectScene implements Scene {
   ): void {
     const isPortrait = height > width;
 
-    // 1. Soft Gradient Background
+    // 1. Warm Clotted Cream Background (80% dominant surface)
     const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#E3F2FD');
-    bgGrad.addColorStop(0.45, '#F3E5F5');
-    bgGrad.addColorStop(1, '#FFF3E0');
+    bgGrad.addColorStop(0, '#FAF5EB');
+    bgGrad.addColorStop(0.5, '#EEE2CB');
+    bgGrad.addColorStop(1, '#E4D6BC');
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, width, height);
 
@@ -194,21 +195,15 @@ export class LevelSelectScene implements Scene {
       h: 52,
     };
 
-    drawButton(ctx, {
+    drawGlossyGreenButton(ctx, {
       x: this.backBtnRect.x,
       y: this.backBtnRect.y,
       w: this.backBtnRect.w,
       h: this.backBtnRect.h,
-      icon: 'back',
-      text: 'Back',
-      color: COLORS.creamWhite,
-      shadowColor: COLORS.creamWhiteShadow,
-      textColor: COLORS.darkPlum,
-      fontSize: 20,
-      radius: DIMENSIONS.borderRadiusPill,
-      shadowDepth: 5,
+      text: '◀ Back',
+      fontSize: 19,
+      radius: 18,
       isPressed: this.pressedId === 'back',
-      isHovered: this.hoveredId === 'back',
     });
 
     // 2. Center Title: "Select a Level 🎨"
@@ -221,11 +216,11 @@ export class LevelSelectScene implements Scene {
     const centerX = width / 2;
     const centerY = headerY + 26;
 
-    // Outline & Fill
-    ctx.strokeStyle = COLORS.outlineDark;
-    ctx.lineWidth = 5;
+    // Outline & Fill in Spruce Velvet
+    ctx.strokeStyle = '#FAF5EB';
+    ctx.lineWidth = 4;
     ctx.strokeText(titleText, centerX, centerY);
-    ctx.fillStyle = COLORS.creamWhite;
+    ctx.fillStyle = COLORS.spruceVelvet;
     ctx.fillText(titleText, centerX, centerY);
     ctx.restore();
 
@@ -294,9 +289,9 @@ export class LevelSelectScene implements Scene {
         page: i,
       });
 
-      const color = isSelected ? COLORS.sunnyYellow : COLORS.creamWhite;
-      const shadow = isSelected ? COLORS.sunnyYellowShadow : COLORS.creamWhiteShadow;
-      const textColor = isSelected ? COLORS.darkPlum : '#6B647A';
+      const color = isSelected ? COLORS.spruceVelvet : COLORS.clottedCreamCard;
+      const shadow = isSelected ? COLORS.spruceVelvetShadow : COLORS.clottedCreamDark;
+      const textColor = isSelected ? COLORS.creamWhite : COLORS.spruceVelvet;
 
       drawButton(ctx, {
         x: tabX,
@@ -435,7 +430,7 @@ export class LevelSelectScene implements Scene {
         ctx.restore();
       }
 
-      // 2. 3D Bottom shadow
+      // 2. 3D Bottom shadow in solid cream shadow
       drawRoundedRect(
         ctx,
         x,
@@ -443,12 +438,12 @@ export class LevelSelectScene implements Scene {
         w,
         faceH,
         radius,
-        categoryInfo.shadowColor,
-        COLORS.outlineDark,
-        3
+        COLORS.clottedCreamDark,
+        COLORS.spruceVelvet,
+        3.5
       );
 
-      // 3. Card Face
+      // 3. Card Face: Solid Brighter Clotted Cream (NO gradients, NO light green/blue)
       drawRoundedRect(
         ctx,
         x,
@@ -456,48 +451,53 @@ export class LevelSelectScene implements Scene {
         w,
         faceH,
         radius,
-        categoryInfo.faceColor,
-        COLORS.outlineDark,
-        3
+        '#FAF5EC',
+        COLORS.spruceVelvet,
+        3.5
       );
 
-      // Subtle top shine
-      drawRoundedRect(
-        ctx,
-        x + 3,
-        y + shiftY + 3,
-        w - 6,
-        faceH * 0.35,
-        { tl: radius - 2, tr: radius - 2, bl: 2, br: 2 },
-        'rgba(255, 255, 255, 0.4)'
-      );
-
-      // 4. Content: Level Number & Category Icon
+      // 4. Content: Top-left Level Number ONLY (top-right icon completely removed)
       ctx.save();
-      const faceCenterY = y + shiftY + faceH * 0.42;
 
-      // Category mini icon on top left or right
-      ctx.font = getFont(16, 'normal');
+      // Top-left Level Number (bold Spruce Velvet, ~35% larger)
+      ctx.font = getFont(isPortrait ? 26 : 24, 'extraBold');
+      ctx.fillStyle = COLORS.spruceVelvet;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText(categoryInfo.icon, x + 10, y + shiftY + 8);
+      ctx.fillText(String(levelId), x + 12, y + shiftY + 10);
 
-      // Level Number
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = getFont(isPortrait ? 26 : 28, 'extraBold');
+      // 5. Centre Icon (Completed Tick / Verification Mark)
+      const tickCenterX = x + w / 2;
+      const tickCenterY = y + shiftY + faceH / 2 - 4;
 
-      // Drop shadow for number
-      ctx.fillStyle = 'rgba(0,0,0,0.15)';
-      ctx.fillText(String(levelId), x + w / 2, faceCenterY + 2);
+      ctx.save();
+      if (stars > 0) {
+        // Completed: Bold clean Tick Mark (✓) in Spruce Velvet
+        ctx.strokeStyle = COLORS.spruceVelvet;
+        ctx.lineWidth = 4.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tickCenterX - 14, tickCenterY + 1);
+        ctx.lineTo(tickCenterX - 4, tickCenterY + 11);
+        ctx.lineTo(tickCenterX + 16, tickCenterY - 11);
+        ctx.stroke();
+      } else {
+        // Unlocked & In Progress: Clean Play triangle (▶) in Spruce Velvet
+        ctx.fillStyle = COLORS.spruceVelvet;
+        ctx.beginPath();
+        ctx.moveTo(tickCenterX - 8, tickCenterY - 12);
+        ctx.lineTo(tickCenterX + 12, tickCenterY);
+        ctx.lineTo(tickCenterX - 8, tickCenterY + 12);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
 
-      ctx.fillStyle = COLORS.darkPlum;
-      ctx.fillText(String(levelId), x + w / 2, faceCenterY);
-
-      // 5. Stars Row (0 to 3)
-      const starY = y + shiftY + faceH - (isPortrait ? 16 : 18);
-      const starSize = isPortrait ? 9 : 11;
-      const starSpacing = isPortrait ? 22 : 26;
+      // 6. Bottom Row (Achieved Stars): Directly below centre mark along the bottom
+      const starY = y + shiftY + faceH - (isPortrait ? 20 : 18);
+      const starSize = isPortrait ? 13 : 12;
+      const starSpacing = isPortrait ? 26 : 24;
       const starsStartX = x + w / 2 - starSpacing;
 
       for (let s = 0; s < 3; s++) {
@@ -508,7 +508,7 @@ export class LevelSelectScene implements Scene {
 
       ctx.restore();
     } else {
-      // ── Locked Card ──
+      // ── Locked Card (Solid Clotted Cream Muted, enlarged Lock icon & number) ──
       // 3D bottom shadow
       drawRoundedRect(
         ctx,
@@ -518,11 +518,11 @@ export class LevelSelectScene implements Scene {
         faceH,
         radius,
         COLORS.disabledShadow,
-        COLORS.outlineDark,
+        COLORS.disabledText,
         2.5
       );
 
-      // Face
+      // Face: flat solid muted cream
       drawRoundedRect(
         ctx,
         x,
@@ -531,20 +531,20 @@ export class LevelSelectScene implements Scene {
         faceH,
         radius,
         COLORS.disabledBg,
-        COLORS.outlineDark,
+        COLORS.disabledText,
         2.5
       );
 
-      // Dimmed level number
+      // Enlarged top-left level number (~35% larger: font 24 bold)
       ctx.save();
-      ctx.font = getFont(18, 'bold');
-      ctx.fillStyle = '#9C95A8';
+      ctx.font = getFont(isPortrait ? 24 : 22, 'extraBold');
+      ctx.fillStyle = COLORS.disabledText;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText(String(levelId), x + 10, y + 8);
+      ctx.fillText(String(levelId), x + 12, y + 10);
 
-      // Lock icon centered
-      drawIcon(ctx, 'lock', x + w / 2, y + faceH / 2 + 4, 30, '#8E879E');
+      // Enlarged center Lock icon (~40% larger: size 42)
+      drawIcon(ctx, 'lock', x + w / 2, y + faceH / 2 + 8, 42, COLORS.disabledText);
       ctx.restore();
     }
 
@@ -644,24 +644,22 @@ export class LevelSelectScene implements Scene {
 
   private getCategoryVisuals(cat: LevelCategory): {
     icon: string;
-    faceColor: string;
-    shadowColor: string;
   } {
     switch (cat) {
       case 'tutorial':
-        return { icon: '🌱', faceColor: '#E8FAF0', shadowColor: '#B2E2C8' };
+        return { icon: '🌱' };
       case 'basic_shapes':
-        return { icon: '🔷', faceColor: '#E8F7FF', shadowColor: '#B5E1FA' };
+        return { icon: '🔷' };
       case 'simple_objects':
-        return { icon: '🧸', faceColor: '#FFFBE5', shadowColor: '#E8DC99' };
+        return { icon: '🧸' };
       case 'animals':
-        return { icon: '🐱', faceColor: '#FFEBF0', shadowColor: '#ECC4CF' };
+        return { icon: '🐱' };
       case 'nature':
-        return { icon: '🌸', faceColor: '#EAFBEA', shadowColor: '#C4E8C4' };
+        return { icon: '🌸' };
       case 'scenes':
-        return { icon: '🏰', faceColor: '#F3EEFB', shadowColor: '#D3C3E8' };
+        return { icon: '🏰' };
       case 'master':
-        return { icon: '👑', faceColor: '#FFF3DB', shadowColor: '#ECD29E' };
+        return { icon: '👑' };
     }
   }
 

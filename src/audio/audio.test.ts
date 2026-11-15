@@ -31,6 +31,14 @@ class MockBiquadFilterNode extends MockAudioNode {
   type = 'lowpass';
 }
 
+class MockDynamicsCompressorNode extends MockAudioNode {
+  threshold = new MockAudioParam();
+  knee = new MockAudioParam();
+  ratio = new MockAudioParam();
+  attack = new MockAudioParam();
+  release = new MockAudioParam();
+}
+
 class MockOscillatorNode extends MockAudioNode {
   type = 'sine';
   frequency = new MockAudioParam();
@@ -71,6 +79,7 @@ class MockAudioContext {
   destination = new MockAudioNode();
 
   createGain() { return new MockGainNode(); }
+  createDynamicsCompressor() { return new MockDynamicsCompressorNode(); }
   createOscillator() { return new MockOscillatorNode(); }
   createBiquadFilter() { return new MockBiquadFilterNode(); }
   createBufferSource() { return new MockAudioBufferSourceNode(); }
@@ -167,6 +176,13 @@ describe('Audio Subsystem (Agent A5)', () => {
     it('plays clear rewind sound without error', () => {
       expect(() => playClear()).not.toThrow();
       expect(() => soundEffects.playClear(0.8)).not.toThrow();
+    });
+
+    it('plays next level marimba transition pop and stops active fanfare without error', () => {
+      expect(() => soundEffects.playLevelComplete(3)).not.toThrow();
+      expect(() => soundEffects.stopCelebration()).not.toThrow();
+      expect(() => soundEffects.playNextLevel(0.9)).not.toThrow();
+      expect(() => audioManager.playNextLevel()).not.toThrow();
     });
 
     it('manages volume and mute state correctly', () => {

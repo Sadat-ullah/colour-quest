@@ -15,12 +15,19 @@ import {
   drawRoundedRect,
   drawStar,
   drawSparkle,
+  drawTicketCard,
+  draw3DGoldenStar,
+  drawGlossyBubbleButton,
+  drawGlossyGreenButton,
+  draw3DReplayButton,
+  draw3DLevelsButton,
   isPointInButton,
   type ButtonOptions,
 } from '../ui/components';
 import { eventBus } from '../shared/eventBus';
 import { saveManager } from '../game/saveManager';
 import { sceneManager, type Scene } from '../core/sceneManager';
+import { audioManager } from '../audio/audioManager';
 import { DESIGN_WIDTH, DESIGN_HEIGHT, TOTAL_LEVELS } from '../shared/constants';
 import type { ScoringResult, SceneName } from '../shared/contracts';
 
@@ -64,6 +71,8 @@ export class ResultsModal implements Scene {
   private starPopped: [boolean, boolean, boolean] = [false, false, false];
 
   private pressedBtnId: string | null = null;
+  private viewportWidth: number = DESIGN_WIDTH;
+  private viewportHeight: number = DESIGN_HEIGHT;
 
   // Layout rectangles
   private nextBtnRect = { x: 0, y: 0, w: 220, h: 64 };
@@ -133,22 +142,25 @@ export class ResultsModal implements Scene {
       COLORS.sunnyYellow,
       COLORS.brightCyan,
       COLORS.mintGreen,
-      COLORS.purpleJoy,
       COLORS.softOrange,
+      COLORS.spruceVelvet,
+      COLORS.starGold,
     ];
 
     this.confetti = [];
-    for (let i = 0; i < 45; i++) {
+    // Full-screen celebratory confetti showering across full width & height
+    const count = 90;
+    for (let i = 0; i < count; i++) {
       this.confetti.push({
-        x: DESIGN_WIDTH * 0.2 + Math.random() * (DESIGN_WIDTH * 0.6),
-        y: -20 - Math.random() * 200,
-        w: 10 + Math.random() * 8,
-        h: 6 + Math.random() * 6,
+        x: Math.random() * this.viewportWidth,
+        y: -30 - Math.random() * (this.viewportHeight * 0.7),
+        w: 12 + Math.random() * 10,
+        h: 8 + Math.random() * 8,
         color: palette[i % palette.length],
-        speedY: 2 + Math.random() * 3.5,
-        speedX: (Math.random() - 0.5) * 2,
+        speedY: 2.2 + Math.random() * 4.2,
+        speedX: (Math.random() - 0.5) * 2.5,
         rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.2,
+        rotSpeed: (Math.random() - 0.5) * 0.25,
       });
     }
   }
@@ -189,14 +201,14 @@ export class ResultsModal implements Scene {
       this.starPopped[2] = true;
     }
 
-    // Update Confetti
+    // Update Full-Screen Confetti
     for (const c of this.confetti) {
       c.y += c.speedY * (dt / 16);
       c.x += c.speedX * (dt / 16);
       c.rotation += c.rotSpeed * (dt / 16);
-      if (c.y > DESIGN_HEIGHT + 20) {
-        c.y = -20;
-        c.x = Math.random() * DESIGN_WIDTH;
+      if (c.y > this.viewportHeight + 30) {
+        c.y = -30;
+        c.x = Math.random() * this.viewportWidth;
       }
     }
 
@@ -220,69 +232,77 @@ export class ResultsModal implements Scene {
   ): void {
     if (!this.isVisible) return;
 
+    this.viewportWidth = width;
+    this.viewportHeight = height;
+
     const isPortrait = height > width;
 
     ctx.save();
 
-    // 1. Semi-transparent Dark Plum / Purple Backdrop
+    // 1. Semi-transparent Spruce Velvet Backdrop
     ctx.fillStyle = COLORS.modalBackdrop;
     ctx.fillRect(0, 0, width, height);
 
-    // 2. Celebratory Confetti Flakes Falling
+    // 2. Full-Screen Celebratory Confetti Flakes Falling
     this.renderConfetti(ctx);
 
-    // 3. Central Modal Dialog Card with bounce entry
+    // 3. Central Modal Dialog Card (enlarged for mobile portrait: 88%-90% width, 60%-68% height)
     const entryProgress = Math.min(1, this.animTimer / 280);
     // Elastic overshoot bounce
     const scale = this.easeOutBack(entryProgress);
 
-    const dialogW = isPortrait ? Math.min(width - 40, 380) : 560;
-    const dialogH = isPortrait ? 520 : 470;
+    const dialogW = isPortrait ? Math.round(width * 0.89) : Math.min(width - 80, 580);
+    const dialogH = isPortrait ? Math.round(height * 0.66) : Math.min(height - 80, 540);
     const dialogX = (width - dialogW) / 2;
     const dialogY = (height - dialogH) / 2;
+    const dividerY = isPortrait ? (dialogY + dialogH - 180) : (dialogY + dialogH - 164);
 
     ctx.save();
     ctx.translate(width / 2, height / 2);
     ctx.scale(scale, scale);
     ctx.translate(-width / 2, -height / 2);
 
-    // Dialog card shadow
-    drawRoundedRect(
+    // Ticket Card Shadow (scalloped bottom edge & side bite notches)
+    drawTicketCard(
       ctx,
       dialogX,
       dialogY + 12,
       dialogW,
       dialogH,
-      DIMENSIONS.borderRadiusLg,
-      'rgba(0, 0, 0, 0.25)',
+      28,
+      'rgba(27, 69, 50, 0.22)',
       undefined,
-      0
+      0,
+      dividerY,
+      18
     );
 
-    // Dialog card face
-    drawRoundedRect(
+    // Ticket Card Face in Warm Clotted Cream (#FAF5EC) with biscuit outline (#D0C2A8)
+    drawTicketCard(
       ctx,
       dialogX,
       dialogY,
       dialogW,
       dialogH,
-      DIMENSIONS.borderRadiusLg,
-      COLORS.creamWhite,
-      COLORS.outlineDark,
-      DIMENSIONS.outlineWidthThick
+      28,
+      '#FAF5EC',
+      '#D0C2A8',
+      3.5,
+      dividerY,
+      18
     );
 
-    // Header Banner ("Splendid!", "Awesome!", "Super Job!")
+    // Header: Top Curved Red Ribbon Banner ("Splendid! 🎉")
     this.renderBanner(ctx, dialogX, dialogY, dialogW, isPortrait);
 
-    // 3 Animated Stars with Staggered Bounce & Shine
+    // 3D Golden Stars in Arched Layout
     this.renderStars(ctx, dialogX, dialogY, dialogW, isPortrait);
 
-    // Accuracy Percentage Display
+    // 3D Heading Text ("100% Match!") & Two-Line Subtext
     this.renderAccuracy(ctx, dialogX, dialogY, dialogW, isPortrait);
 
-    // Action Buttons ("Next Level ➔", "Replay ↺", "Level Select ☰")
-    this.renderActionButtons(ctx, dialogX, dialogY, dialogW, dialogH, isPortrait);
+    // Dashed Divider & 3D Glossy Bubble Action Buttons
+    this.renderActionButtons(ctx, dialogX, dialogY, dialogW, dialogH, isPortrait, dividerY);
 
     ctx.restore();
 
@@ -312,62 +332,66 @@ export class ResultsModal implements Scene {
     dw: number,
     isPortrait: boolean
   ): void {
-    let bannerText = 'Awesome!';
-    let bannerColor: string = COLORS.brightCyan;
-    let bannerShadow: string = COLORS.brightCyanShadow;
+    // Top Curved Red Ribbon / Banner overlapping the top border of the card
+    const ribbonW = Math.min(dw - 40, isPortrait ? 310 : 360);
+    const ribbonH = 64;
+    const rx = dx + (dw - ribbonW) / 2;
+    const ry = dy - ribbonH / 2;
+    const tailW = 22;
 
-    if (this.result.stars === 3 || this.result.accuracy >= 0.99) {
-      bannerText = 'Splendid! 🎉';
-      bannerColor = COLORS.candyPink;
-      bannerShadow = COLORS.candyPinkShadow;
-    } else if (this.result.stars === 2) {
-      bannerText = 'Super Job! 🌟';
-      bannerColor = COLORS.softOrange;
-      bannerShadow = COLORS.softOrangeShadow;
-    } else {
-      bannerText = 'Great Try! 👍';
-      bannerColor = COLORS.sunnyYellow;
-      bannerShadow = COLORS.sunnyYellowShadow;
-    }
-
-    const bannerW = Math.min(dw - 60, isPortrait ? 300 : 380);
-    const bannerH = 62;
-    const bannerX = dx + (dw - bannerW) / 2;
-    const bannerY = dy - bannerH / 2;
-
-    // 3D Banner Pill
-    drawRoundedRect(
-      ctx,
-      bannerX,
-      bannerY + 6,
-      bannerW,
-      bannerH,
-      DIMENSIONS.borderRadiusPill,
-      bannerShadow,
-      COLORS.outlineDark,
-      4
-    );
-
-    drawRoundedRect(
-      ctx,
-      bannerX,
-      bannerY,
-      bannerW,
-      bannerH,
-      DIMENSIONS.borderRadiusPill,
-      bannerColor,
-      COLORS.outlineDark,
-      4
-    );
-
-    // Banner Text
     ctx.save();
-    ctx.font = getFont(isPortrait ? 26 : 32, 'extraBold');
+
+    // 1. Folded Ribbon Tails in dark crimson
+    ctx.fillStyle = '#660708';
+    // Left tail
+    ctx.beginPath();
+    ctx.moveTo(rx - 4, ry + 16);
+    ctx.lineTo(rx - tailW - 8, ry + 24);
+    ctx.lineTo(rx - 4, ry + ribbonH + 8);
+    ctx.closePath();
+    ctx.fill();
+
+    // Right tail
+    ctx.beginPath();
+    ctx.moveTo(rx + ribbonW + 4, ry + 16);
+    ctx.lineTo(rx + ribbonW + tailW + 8, ry + 24);
+    ctx.lineTo(rx + ribbonW + 4, ry + ribbonH + 8);
+    ctx.closePath();
+    ctx.fill();
+
+    // 2. Main curved red banner body with 3D bottom bevel
+    drawRoundedRect(ctx, rx, ry + 6, ribbonW, ribbonH, 20, '#A4161A', '#1B4532', 3.5);
+
+    // Vibrant red gradient face
+    const redGrad = ctx.createLinearGradient(rx, ry, rx, ry + ribbonH);
+    redGrad.addColorStop(0, '#FF4D6D');
+    redGrad.addColorStop(0.3, '#E63946');
+    redGrad.addColorStop(1, '#C9184A');
+
+    drawRoundedRect(ctx, rx, ry, ribbonW, ribbonH, 20, redGrad as unknown as string, '#1B4532', 3.5);
+
+    // Gloss highlight on ribbon top
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+    ctx.beginPath();
+    if (typeof ctx.ellipse === 'function') {
+      ctx.ellipse(rx + ribbonW / 2, ry + 12, ribbonW * 0.42, 7, 0, 0, Math.PI * 2);
+    } else {
+      ctx.arc(rx + ribbonW / 2, ry + 12, 10, 0, Math.PI * 2);
+    }
+    ctx.fill();
+
+    // Banner Text: 'Splendid! 🎉'
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    ctx.font = getFont(isPortrait ? 28 : 32, 'extraBold');
 
-    ctx.fillStyle = COLORS.creamWhite;
-    ctx.fillText(bannerText, bannerX + bannerW / 2, bannerY + bannerH / 2 + 1);
+    // Text drop shadow
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2 + 2);
+
+    // Text white face
+    ctx.fillStyle = '#FAF5EC';
+    ctx.fillText('Splendid! 🎉', rx + ribbonW / 2, ry + ribbonH / 2);
     ctx.restore();
   }
 
@@ -378,16 +402,17 @@ export class ResultsModal implements Scene {
     dw: number,
     isPortrait: boolean
   ): void {
-    const starAreaY = dy + (isPortrait ? 88 : 95);
-    const starSpacing = isPortrait ? 74 : 95;
+    const starAreaY = dy + (isPortrait ? 96 : 94);
+    const starSpacing = isPortrait ? 96 : 95;
     const centerX = dx + dw / 2;
-    const outerR = isPortrait ? 32 : 40;
-    const innerR = outerR * 0.48;
+    const sideR = isPortrait ? 38 : 36;
+    const centerR = Math.round(sideR * 1.25); // ~25% larger center star!
 
+    // Arched layout: center star positioned slightly higher (-10px) than left and right side stars (+14px)
     const starConfigs = [
-      { delay: 300, earned: this.result.stars >= 1, x: centerX - starSpacing, y: starAreaY + 12 },
-      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 8 },
-      { delay: 900, earned: this.result.stars >= 3, x: centerX + starSpacing, y: starAreaY + 12 },
+      { delay: 300, earned: this.result.stars >= 1, x: centerX - starSpacing, y: starAreaY + 14, r: sideR },
+      { delay: 600, earned: this.result.stars >= 2, x: centerX, y: starAreaY - 10, r: centerR },
+      { delay: 900, earned: this.result.stars >= 3, x: centerX + starSpacing, y: starAreaY + 14, r: sideR },
     ];
 
     for (let i = 0; i < 3; i++) {
@@ -411,17 +436,15 @@ export class ResultsModal implements Scene {
             this.spawnStarBurst(cfg.x, cfg.y);
           }
         } else {
-          // Hasn't popped yet: show empty star ready to pop
           isFilled = false;
         }
       } else {
-        // Star not earned: inactive gray/lavender star
         isFilled = false;
       }
 
       ctx.translate(cfg.x, cfg.y);
       ctx.scale(starScale, starScale);
-      drawStar(ctx, 0, 0, 5, outerR, innerR, isFilled, hasGlow);
+      draw3DGoldenStar(ctx, 0, 0, cfg.r, isFilled, hasGlow);
       ctx.restore();
     }
   }
@@ -433,7 +456,7 @@ export class ResultsModal implements Scene {
     dw: number,
     isPortrait: boolean
   ): void {
-    const startY = dy + (isPortrait ? 200 : 210);
+    const startY = dy + (isPortrait ? 228 : 208);
     const centerX = dx + dw / 2;
     const pct = Math.round(this.result.accuracy * 100);
 
@@ -441,38 +464,55 @@ export class ResultsModal implements Scene {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // 1. Big Accuracy percentage text
-    ctx.font = getFont(isPortrait ? 38 : 46, 'extraBold');
-
-    // 3D outline & fill for percentage
+    // 1. 3D Heading Text ('100% Match!'): Bubbly 3D-style bright green font with thick dark green outline
+    ctx.font = getFont(isPortrait ? 46 : 44, 'extraBold');
     const matchText = `${pct}% Match!`;
-    ctx.strokeStyle = COLORS.outlineDark;
-    ctx.lineWidth = 6;
+
+    // Subtle bottom extrusion shadow
+    ctx.fillStyle = '#0D281E';
+    ctx.fillText(matchText, centerX, startY + 5);
+
+    // Thick dark green outline (#1B4532)
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 8;
+    ctx.lineJoin = 'round';
     ctx.strokeText(matchText, centerX, startY);
 
-    ctx.fillStyle = pct >= 80 ? COLORS.mintGreen : pct >= 50 ? COLORS.sunnyYellow : COLORS.candyPink;
+    // Bright green 3D face gradient
+    const greenGrad = ctx.createLinearGradient(centerX, startY - 24, centerX, startY + 24);
+    greenGrad.addColorStop(0, '#55EFC4');
+    greenGrad.addColorStop(0.4, '#2ECC71');
+    greenGrad.addColorStop(1, '#27AE60');
+    ctx.fillStyle = greenGrad;
     ctx.fillText(matchText, centerX, startY);
 
-    // 2. Subtitle detail
-    ctx.font = getFont(isPortrait ? 18 : 22, 'bold');
-    ctx.fillStyle = COLORS.darkPlum;
+    // 2. Subtitle detail ('3 of 3 shapes matched!') bold and centered directly below heading
+    ctx.font = getFont(isPortrait ? 21 : 20, 'bold');
+    ctx.fillStyle = COLORS.spruceVelvet;
     const detailText =
       this.result.totalRegions > 0
         ? `${this.result.correctRegions} of ${this.result.totalRegions} shapes matched!`
         : `Level ${this.levelId} Completed!`;
+    ctx.fillText(detailText, centerX, startY + 42);
 
-    ctx.fillText(detailText, centerX, startY + 40);
+    // 3. Subtext with 18px top padding, split across two centered lines
+    const starsEarned = this.result.stars;
+    let line1: string;
+    let line2: string;
 
-    // 3. Mini encouraging tip for kids
-    ctx.font = getFont(isPortrait ? 15 : 17, 'normal');
-    ctx.fillStyle = '#6E6780';
-    let tipText = 'Perfect coloring! Keep up the brilliant work!';
-    if (this.result.stars === 2) {
-      tipText = 'Almost perfect! Can you get all 3 stars?';
+    if (starsEarned === 3) {
+      line1 = 'Great! You have achieved all the stars,';
+      line2 = 'move to the next level!';
     } else {
-      tipText = 'Good effort! Try again to earn more stars!';
+      line1 = 'Good effort!';
+      line2 = 'Try again to earn more stars!';
     }
-    ctx.fillText(tipText, centerX, startY + 68);
+
+    ctx.font = getFont(isPortrait ? 18 : 17, 'bold');
+    ctx.fillStyle = COLORS.spruceVelvet;
+    const textBaseY = startY + 42 + 28; // padded down
+    ctx.fillText(line1, centerX, textBaseY);
+    ctx.fillText(line2, centerX, textBaseY + 24);
 
     ctx.restore();
   }
@@ -483,174 +523,89 @@ export class ResultsModal implements Scene {
     dy: number,
     dw: number,
     dh: number,
-    isPortrait: boolean
+    isPortrait: boolean,
+    dividerY: number
   ): void {
-    const centerX = dx + dw / 2;
     const hasNextLevel = this.levelId < TOTAL_LEVELS && this.result.stars > 0;
 
-    if (isPortrait) {
-      // Portrait layout: Next Level button on top, Replay and Level Select underneath
-      const btnH = 62;
-      const nextBtnW = dw - 48;
-      const nextBtnX = dx + 24;
-      const nextBtnY = dy + dh - 150;
+    // 1. Dashed horizontal divider line connecting across the bite notches
+    ctx.save();
+    if (typeof ctx.setLineDash === 'function') {
+      ctx.setLineDash([10, 8]);
+    }
+    ctx.strokeStyle = '#D0C2A8';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(dx + 20, dividerY);
+    ctx.lineTo(dx + dw - 20, dividerY);
+    ctx.stroke();
+    ctx.restore();
 
-      this.nextBtnRect = {
-        x: nextBtnX,
-        y: nextBtnY,
-        w: nextBtnW,
-        h: btnH,
-      };
+    // 2. 3D Glossy Buttons matching reference image
+    // Wide full-width Next Level Button directly below dashed line
+    const nextBtnW = dw - 48;
+    const nextBtnH = isPortrait ? 68 : 60;
+    const nextBtnX = dx + 24;
+    const nextBtnY = dividerY + 14;
 
-      if (hasNextLevel) {
-        drawButton(ctx, {
-          x: this.nextBtnRect.x,
-          y: this.nextBtnRect.y,
-          w: this.nextBtnRect.w,
-          h: this.nextBtnRect.h,
-          text: 'Next Level ➔',
-          color: COLORS.mintGreen,
-          shadowColor: COLORS.mintGreenShadow,
-          textColor: COLORS.creamWhite,
-          fontSize: 24,
-          radius: DIMENSIONS.borderRadiusMd,
-          shadowDepth: 6,
-          isPressed: this.pressedBtnId === 'next',
-        });
-      }
+    this.nextBtnRect = {
+      x: nextBtnX,
+      y: nextBtnY,
+      w: nextBtnW,
+      h: nextBtnH,
+    };
 
-      // Replay & Menu row
-      const subRowY = dy + dh - 76;
-      const subBtnW = (dw - 48 - 12) / 2;
-
-      this.replayBtnRect = {
-        x: dx + 24,
-        y: subRowY,
-        w: subBtnW,
-        h: btnH - 6,
-      };
-
-      drawButton(ctx, {
-        x: this.replayBtnRect.x,
-        y: this.replayBtnRect.y,
-        w: this.replayBtnRect.w,
-        h: this.replayBtnRect.h,
-        icon: 'replay',
-        text: 'Replay',
-        color: COLORS.softOrange,
-        shadowColor: COLORS.softOrangeShadow,
-        textColor: COLORS.creamWhite,
-        fontSize: 18,
-        radius: DIMENSIONS.borderRadiusMd,
-        shadowDepth: 5,
-        isPressed: this.pressedBtnId === 'replay',
-      });
-
-      this.levelSelectBtnRect = {
-        x: dx + 24 + subBtnW + 12,
-        y: subRowY,
-        w: subBtnW,
-        h: btnH - 6,
-      };
-
-      drawButton(ctx, {
-        x: this.levelSelectBtnRect.x,
-        y: this.levelSelectBtnRect.y,
-        w: this.levelSelectBtnRect.w,
-        h: this.levelSelectBtnRect.h,
-        icon: 'menu',
-        text: 'Levels',
-        color: COLORS.brightCyan,
-        shadowColor: COLORS.brightCyanShadow,
-        textColor: COLORS.creamWhite,
-        fontSize: 18,
-        radius: DIMENSIONS.borderRadiusMd,
-        shadowDepth: 5,
-        isPressed: this.pressedBtnId === 'levelSelect',
-      });
-    } else {
-      // Landscape layout: 3 buttons side-by-side or Next Level prominent
-      const btnH = 64;
-      const bottomY = dy + dh - 92;
-
-      const subW = 145;
-      const nextW = 205;
-      const gap = 14;
-      const totalButtonsW = nextW + subW * 2 + gap * 2;
-      const startX = centerX - totalButtonsW / 2;
-
-      // 1. Level Select ☰
-      this.levelSelectBtnRect = {
-        x: startX,
-        y: bottomY,
-        w: subW,
-        h: btnH,
-      };
-
-      drawButton(ctx, {
-        x: this.levelSelectBtnRect.x,
-        y: this.levelSelectBtnRect.y,
-        w: this.levelSelectBtnRect.w,
-        h: this.levelSelectBtnRect.h,
-        icon: 'menu',
-        text: 'Levels',
-        color: COLORS.brightCyan,
-        shadowColor: COLORS.brightCyanShadow,
-        textColor: COLORS.creamWhite,
-        fontSize: 20,
-        radius: DIMENSIONS.borderRadiusMd,
-        shadowDepth: 6,
-        isPressed: this.pressedBtnId === 'levelSelect',
-      });
-
-      // 2. Replay ↺
-      this.replayBtnRect = {
-        x: startX + subW + gap,
-        y: bottomY,
-        w: subW,
-        h: btnH,
-      };
-
-      drawButton(ctx, {
-        x: this.replayBtnRect.x,
-        y: this.replayBtnRect.y,
-        w: this.replayBtnRect.w,
-        h: this.replayBtnRect.h,
-        icon: 'replay',
-        text: 'Replay',
-        color: COLORS.softOrange,
-        shadowColor: COLORS.softOrangeShadow,
-        textColor: COLORS.creamWhite,
-        fontSize: 20,
-        radius: DIMENSIONS.borderRadiusMd,
-        shadowDepth: 6,
-        isPressed: this.pressedBtnId === 'replay',
-      });
-
-      // 3. Next Level ➔ (large prominent button)
-      this.nextBtnRect = {
-        x: startX + subW * 2 + gap * 2,
-        y: bottomY,
-        w: nextW,
-        h: btnH,
-      };
-
-      drawButton(ctx, {
+    if (hasNextLevel) {
+      drawGlossyGreenButton(ctx, {
         x: this.nextBtnRect.x,
         y: this.nextBtnRect.y,
         w: this.nextBtnRect.w,
         h: this.nextBtnRect.h,
         text: 'Next Level ➔',
-        color: hasNextLevel ? COLORS.mintGreen : COLORS.disabledBg,
-        shadowColor: hasNextLevel ? COLORS.mintGreenShadow : COLORS.disabledShadow,
-        textColor: hasNextLevel ? COLORS.creamWhite : COLORS.disabledText,
-        isDisabled: !hasNextLevel,
-        fontSize: 22,
-        radius: DIMENSIONS.borderRadiusMd,
-        shadowDepth: 6,
+        fontSize: isPortrait ? 26 : 24,
+        radius: 22,
         isPressed: this.pressedBtnId === 'next',
       });
     }
+
+    // Side-by-side Replay & Levels buttons below Next Level
+    const subRowY = nextBtnY + nextBtnH + 12;
+    const subBtnW = (dw - 48 - 14) / 2;
+    const subBtnH = isPortrait ? 62 : 54;
+
+    this.replayBtnRect = {
+      x: dx + 24,
+      y: subRowY,
+      w: subBtnW,
+      h: subBtnH,
+    };
+
+    draw3DReplayButton(ctx, {
+      x: this.replayBtnRect.x,
+      y: this.replayBtnRect.y,
+      w: this.replayBtnRect.w,
+      h: this.replayBtnRect.h,
+      fontSize: isPortrait ? 22 : 20,
+      radius: 20,
+      isPressed: this.pressedBtnId === 'replay',
+    });
+
+    this.levelSelectBtnRect = {
+      x: dx + 24 + subBtnW + 14,
+      y: subRowY,
+      w: subBtnW,
+      h: subBtnH,
+    };
+
+    draw3DLevelsButton(ctx, {
+      x: this.levelSelectBtnRect.x,
+      y: this.levelSelectBtnRect.y,
+      w: this.levelSelectBtnRect.w,
+      h: this.levelSelectBtnRect.h,
+      fontSize: isPortrait ? 22 : 20,
+      radius: 20,
+      isPressed: this.pressedBtnId === 'levelSelect',
+    });
   }
 
   private renderStarParticles(ctx: CanvasRenderingContext2D): void {
@@ -734,6 +689,7 @@ export class ResultsModal implements Scene {
   private onNextClicked(): void {
     const nextLevel = Math.min(TOTAL_LEVELS, this.levelId + 1);
     this.hide();
+    audioManager.playNextLevel();
     eventBus.emit('audio:unlock', {});
     saveManager.setCurrentLevel(nextLevel);
     eventBus.emit('level:start', { levelId: nextLevel });
@@ -742,6 +698,8 @@ export class ResultsModal implements Scene {
 
   private onReplayClicked(): void {
     this.hide();
+    audioManager.stopCelebration();
+    audioManager.playTap();
     eventBus.emit('audio:unlock', {});
     eventBus.emit('level:start', { levelId: this.levelId });
     sceneManager.switchTo('gameplay', { levelId: this.levelId });
@@ -749,6 +707,8 @@ export class ResultsModal implements Scene {
 
   private onLevelSelectClicked(): void {
     this.hide();
+    audioManager.stopCelebration();
+    audioManager.playTap();
     eventBus.emit('audio:unlock', {});
     sceneManager.switchTo('levelSelect');
   }

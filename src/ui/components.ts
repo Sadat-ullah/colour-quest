@@ -789,6 +789,7 @@ export function drawBubble(
   ctx.restore();
 }
 
+
 /**
  * Draws a 4-point sparkle star for particle celebrations & shiny objects
  */
@@ -817,5 +818,521 @@ export function drawSparkle(
   ctx.closePath();
   ctx.fill();
 
+  ctx.restore();
+}
+
+
+/**
+ * Builds a ticket-style path with rounded top corners, side inward circular notches, and a scalloped bottom edge.
+ */
+export function createTicketPath(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number = 28,
+  scallopRadius: number = 14,
+  notchY?: number,
+  notchRadius: number = 16
+): Path2D {
+  const path = new Path2D();
+  path.moveTo(x + r, y);
+  path.lineTo(x + w - r, y);
+  path.arcTo(x + w, y, x + w, y + r, r);
+
+  // Right edge with optional inward circular notch
+  if (notchY !== undefined && notchY > y + r && notchY < y + h - scallopRadius) {
+    path.lineTo(x + w, notchY - notchRadius);
+    path.arc(x + w, notchY, notchRadius, -Math.PI / 2, Math.PI / 2, true);
+  }
+  path.lineTo(x + w, y + h);
+
+  // Scalloped bottom edge: repeating tabs/waves from right to left
+  const diameter = scallopRadius * 2;
+  const numScallops = Math.max(5, Math.round(w / diameter));
+  const step = w / numScallops;
+  const actualRadius = step / 2;
+
+  for (let i = numScallops; i > 0; i--) {
+    const cx = x + (i - 0.5) * step;
+    const cy = y + h;
+    // Clockwise arc bulges gently downward to form rounded scallop lobes
+    path.arc(cx, cy, actualRadius, 0, Math.PI, false);
+  }
+
+  // Left edge with optional inward circular notch
+  if (notchY !== undefined && notchY > y + r && notchY < y + h - scallopRadius) {
+    path.lineTo(x, notchY + notchRadius);
+    path.arc(x, notchY, notchRadius, Math.PI / 2, -Math.PI / 2, true);
+  }
+
+  path.lineTo(x, y + r);
+  path.arcTo(x, y, x + r, y, r);
+  path.closePath();
+  return path;
+}
+
+/**
+ * Draws a ticket-style card with rounded top corners, side bite notches, scalloped bottom edge,
+ * and an optional inner contour frame matching the attached reference design.
+ */
+export function drawTicketCard(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number = 28,
+  fillColor: string = '#FAF5EC',
+  strokeColor: string = '#D0C2A8',
+  strokeWidth: number = 4,
+  notchY?: number,
+  notchRadius: number = 16
+): void {
+  const path = createTicketPath(x, y, w, h, r, 16, notchY, notchRadius);
+  ctx.save();
+
+  // Fill
+  ctx.fillStyle = fillColor;
+  ctx.fill(path);
+
+  // Outline
+  if (strokeColor && strokeWidth > 0) {
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke(path);
+  }
+
+  // Inner subtle contour frame (inset by 8px)
+  if (strokeColor && strokeWidth > 0 && w > 80 && h > 100) {
+    const innerPad = 10;
+    const innerPath = createTicketPath(
+      x + innerPad,
+      y + innerPad,
+      w - innerPad * 2,
+      h - innerPad * 2,
+      Math.max(12, r - innerPad),
+      14,
+      notchY !== undefined ? notchY : undefined,
+      Math.max(8, notchRadius - 3)
+    );
+    ctx.strokeStyle = 'rgba(208, 194, 168, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke(innerPath);
+  }
+
+  ctx.restore();
+}
+
+/**
+ * Draws a 3D-styled golden star with amber bevel, rich gold gradient, outline, and glossy highlight.
+ */
+export function draw3DGoldenStar(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  outerR: number,
+  isEarned: boolean,
+  glow: boolean = false
+): void {
+  const innerR = outerR * 0.48;
+  const points = 5;
+
+  const buildPath = (dx = 0, dy = 0) => {
+    ctx.beginPath();
+    const step = Math.PI / points;
+    let angle = -Math.PI / 2;
+    for (let i = 0; i < points * 2; i++) {
+      const r = i % 2 === 0 ? outerR : innerR;
+      const px = cx + dx + Math.cos(angle) * r;
+      const py = cy + dy + Math.sin(angle) * r;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+      angle += step;
+    }
+    ctx.closePath();
+  };
+
+  ctx.save();
+
+  if (isEarned) {
+    if (glow) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(255, 183, 3, 0.65)';
+      ctx.shadowBlur = 24;
+      ctx.fillStyle = '#FFB703';
+      buildPath(0, 0);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 1. 3D Bottom extrusion / bevel shadow in rich amber
+    ctx.fillStyle = '#C27803';
+    buildPath(0, Math.max(3, outerR * 0.12));
+    ctx.fill();
+
+    // 2. Warm 3D gold gradient face
+    const grad = ctx.createLinearGradient(cx, cy - outerR, cx, cy + outerR);
+    grad.addColorStop(0, '#FFF275');
+    grad.addColorStop(0.3, '#FFD100');
+    grad.addColorStop(0.7, '#FFAA00');
+    grad.addColorStop(1, '#E67E00');
+    ctx.fillStyle = grad;
+    buildPath(0, 0);
+    ctx.fill();
+
+    // 3. Crisp outline
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = Math.max(2.5, outerR * 0.1);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // 4. Glossy specular top shine
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    ctx.beginPath();
+    if (typeof ctx.ellipse === 'function') {
+      ctx.ellipse(cx - outerR * 0.22, cy - outerR * 0.32, outerR * 0.26, outerR * 0.14, -Math.PI / 6, 0, Math.PI * 2);
+    } else {
+      ctx.arc(cx - outerR * 0.22, cy - outerR * 0.32, outerR * 0.2, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    ctx.restore();
+  } else {
+    // Inactive star
+    ctx.fillStyle = '#E4D5BC';
+    buildPath(0, Math.max(2, outerR * 0.08));
+    ctx.fill();
+
+    ctx.fillStyle = '#FAF0DE';
+    buildPath(0, 0);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(27, 69, 50, 0.3)';
+    ctx.lineWidth = Math.max(2, outerR * 0.08);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+/**
+ * Draws a juicy 3D glossy green button with the signature "Let's Play" multi-stop gradient,
+ * dark spruce 3D lip, outline, and specular pill gloss highlight.
+ */
+export function drawGlossyGreenButton(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    text: string;
+    fontSize?: number;
+    radius?: number;
+    isPressed?: boolean;
+    isDisabled?: boolean;
+    strokeColor?: string;
+  }
+): void {
+  const {
+    x,
+    y,
+    w,
+    h,
+    text,
+    fontSize = 20,
+    radius = 18,
+    isPressed = false,
+    isDisabled = false,
+    strokeColor = '#1B4532',
+  } = opts;
+
+  ctx.save();
+  if (isDisabled) {
+    ctx.globalAlpha = 0.45;
+  }
+
+  const shadowDepth = Math.max(3, Math.min(6, Math.round(h * 0.1)));
+  const shiftY = isPressed && !isDisabled ? shadowDepth - 2 : 0;
+  const faceH = h - shadowDepth;
+
+  // 1. Bottom 3D Lip (Spruce Velvet Deep Lip)
+  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, '#0F5132', strokeColor, 3);
+
+  // 2. Main Face Linear Gradient
+  const grad = ctx.createLinearGradient(x, y + shiftY, x, y + shiftY + faceH);
+  grad.addColorStop(0, '#38E094');
+  grad.addColorStop(0.2, '#22C55E');
+  grad.addColorStop(0.7, '#16A34A');
+  grad.addColorStop(1, '#15803D');
+
+  drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, grad as unknown as string, strokeColor, 3);
+
+  // 3. Top Specular Pill Gloss Highlight
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+  ctx.beginPath();
+  const glossW = Math.max(16, w - radius * 1.3);
+  const glossH = Math.max(6, Math.round(faceH * 0.35));
+  const glossX = x + (w - glossW) / 2;
+  const glossY = y + shiftY + 3;
+  if (typeof ctx.ellipse === 'function') {
+    ctx.ellipse(glossX + glossW / 2, glossY + glossH / 2, glossW / 2, glossH / 2, 0, 0, Math.PI * 2);
+  } else {
+    ctx.arc(glossX + glossW / 2, glossY + glossH / 2, Math.min(glossW, glossH) / 2, 0, Math.PI * 2);
+  }
+  ctx.fill();
+  ctx.restore();
+
+  // 4. Button Text / Icon
+  ctx.save();
+  ctx.font = getFont(fontSize, 'extraBold');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Text shadow
+  ctx.fillStyle = 'rgba(11, 43, 27, 0.6)';
+  ctx.fillText(text, x + w / 2, y + shiftY + faceH / 2 + 2);
+
+  // Crisp White Text
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(text, x + w / 2, y + shiftY + faceH / 2);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/**
+ * Alias for backward compatibility
+ */
+export function drawGlossyBubbleButton(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    text: string;
+    bgColor?: string;
+    lipColor?: string;
+    textColor?: string;
+    fontSize?: number;
+    radius?: number;
+    isPressed?: boolean;
+    strokeColor?: string;
+  }
+): void {
+  drawGlossyGreenButton(ctx, opts);
+}
+
+/**
+ * Draws the 3D glossy golden-honey "Replay" button matching the results dialog image.
+ */
+export function draw3DReplayButton(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    isPressed?: boolean;
+    fontSize?: number;
+    radius?: number;
+  }
+): void {
+  const { x, y, w, h, isPressed = false, fontSize = 21, radius = 18 } = opts;
+  ctx.save();
+
+  const shadowDepth = Math.max(3, Math.min(6, Math.round(h * 0.1)));
+  const shiftY = isPressed ? shadowDepth - 2 : 0;
+  const faceH = h - shadowDepth;
+
+  // Bottom 3D Lip
+  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, '#D97706', '#92400E', 3);
+
+  // Honey Gold Gradient
+  const grad = ctx.createLinearGradient(x, y + shiftY, x, y + shiftY + faceH);
+  grad.addColorStop(0, '#FDE047');
+  grad.addColorStop(0.3, '#FBBF24');
+  grad.addColorStop(1, '#F59E0B');
+
+  drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, grad as unknown as string, '#92400E', 3);
+
+  // Specular Gloss
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+  ctx.beginPath();
+  const glossW = Math.max(16, w - radius * 1.3);
+  const glossH = Math.max(6, Math.round(faceH * 0.35));
+  const glossX = x + (w - glossW) / 2;
+  const glossY = y + shiftY + 3;
+  if (typeof ctx.ellipse === 'function') {
+    ctx.ellipse(glossX + glossW / 2, glossY + glossH / 2, glossW / 2, glossH / 2, 0, 0, Math.PI * 2);
+  } else {
+    ctx.arc(glossX + glossW / 2, glossY + glossH / 2, Math.min(glossW, glossH) / 2, 0, Math.PI * 2);
+  }
+  ctx.fill();
+  ctx.restore();
+
+  // Dark amber text: ↺ Replay
+  ctx.save();
+  ctx.font = getFont(fontSize, 'extraBold');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#78350F';
+  ctx.fillText('↺ Replay', x + w / 2, y + shiftY + faceH / 2);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/**
+ * Draws the 3D glossy sky-blue "Levels" button matching the results dialog image.
+ */
+export function draw3DLevelsButton(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    isPressed?: boolean;
+    fontSize?: number;
+    radius?: number;
+  }
+): void {
+  const { x, y, w, h, isPressed = false, fontSize = 21, radius = 18 } = opts;
+  ctx.save();
+
+  const shadowDepth = Math.max(3, Math.min(6, Math.round(h * 0.1)));
+  const shiftY = isPressed ? shadowDepth - 2 : 0;
+  const faceH = h - shadowDepth;
+
+  // Bottom 3D Lip
+  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, '#0284C7', '#075985', 3);
+
+  // Sky Blue Gradient
+  const grad = ctx.createLinearGradient(x, y + shiftY, x, y + shiftY + faceH);
+  grad.addColorStop(0, '#BAE6FD');
+  grad.addColorStop(0.3, '#7DD3FC');
+  grad.addColorStop(1, '#38BDF8');
+
+  drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, grad as unknown as string, '#075985', 3);
+
+  // Specular Gloss
+  ctx.save();
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+  ctx.beginPath();
+  const glossW = Math.max(16, w - radius * 1.3);
+  const glossH = Math.max(6, Math.round(faceH * 0.35));
+  const glossX = x + (w - glossW) / 2;
+  const glossY = y + shiftY + 3;
+  if (typeof ctx.ellipse === 'function') {
+    ctx.ellipse(glossX + glossW / 2, glossY + glossH / 2, glossW / 2, glossH / 2, 0, 0, Math.PI * 2);
+  } else {
+    ctx.arc(glossX + glossW / 2, glossY + glossH / 2, Math.min(glossW, glossH) / 2, 0, Math.PI * 2);
+  }
+  ctx.fill();
+  ctx.restore();
+
+  // Dark navy text: ☰ Levels
+  ctx.save();
+  ctx.font = getFont(fontSize, 'extraBold');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#0C4A6E';
+  ctx.fillText('☰ Levels', x + w / 2, y + shiftY + faceH / 2);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/**
+ * Draws the top-right Volume button with the "Let's Play" green gradient,
+ * sound waves when unmuted, and a clear diagonal slash (/) when muted/disabled.
+ */
+export function drawVolumeButton(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    isMuted: boolean;
+    isPressed?: boolean;
+    radius?: number;
+  }
+): void {
+  const { x, y, w, h, isMuted, isPressed = false, radius = 16 } = opts;
+  ctx.save();
+
+  // Draw base button with green gradient
+  drawGlossyGreenButton(ctx, {
+    x,
+    y,
+    w,
+    h,
+    text: '',
+    radius,
+    isPressed,
+    isDisabled: isMuted, // slightly dimmed when muted
+  });
+
+  const shadowDepth = Math.max(3, Math.min(6, Math.round(h * 0.1)));
+  const shiftY = isPressed ? shadowDepth - 2 : 0;
+  const centerY = y + shiftY + (h - shadowDepth) / 2;
+  const centerX = x + w / 2;
+
+  // Draw clean vector speaker icon
+  ctx.save();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const spkX = centerX - (isMuted ? 0 : 5);
+  const spkW = 7;
+  const spkH = 12;
+
+  // Speaker body
+  ctx.beginPath();
+  ctx.rect(spkX - spkW, centerY - spkH / 3, spkW * 0.6, (spkH * 2) / 3);
+  ctx.fill();
+
+  // Speaker cone
+  ctx.beginPath();
+  ctx.moveTo(spkX - spkW * 0.4, centerY - spkH / 3);
+  ctx.lineTo(spkX + 2, centerY - spkH / 2);
+  ctx.lineTo(spkX + 2, centerY + spkH / 2);
+  ctx.lineTo(spkX - spkW * 0.4, centerY + spkH / 3);
+  ctx.closePath();
+  ctx.fill();
+
+  if (!isMuted) {
+    // Sound Waves
+    ctx.beginPath();
+    ctx.arc(spkX + 2, centerY, 6, -Math.PI / 3, Math.PI / 3, false);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(spkX + 2, centerY, 11, -Math.PI / 3, Math.PI / 3, false);
+    ctx.stroke();
+  } else {
+    // Crisp diagonal slash line (/) across the button and speaker
+    ctx.strokeStyle = '#FF4D6D';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    const slashR = Math.min(w, h) * 0.32;
+    ctx.moveTo(centerX - slashR, centerY + slashR);
+    ctx.lineTo(centerX + slashR, centerY - slashR);
+    ctx.stroke();
+  }
+
+  ctx.restore();
   ctx.restore();
 }

@@ -10,7 +10,7 @@ export interface Scene {
   enter(params?: Record<string, unknown>): void;
   exit(): void;
   update(dt: number): void;
-  render(ctx: CanvasRenderingContext2D): void;
+  render(ctx: CanvasRenderingContext2D, width?: number, height?: number): void;
   onTap(x: number, y: number): void;
 }
 
@@ -57,9 +57,9 @@ export class SceneManager {
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  public render(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
     if (this.currentScene) {
-      this.currentScene.render(ctx);
+      this.currentScene.render(ctx, width, height);
     }
   }
 

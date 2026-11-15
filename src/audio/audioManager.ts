@@ -19,6 +19,8 @@ import {
   playLevelComplete,
   playMismatch,
   playClear,
+  playNextLevel,
+  stopCelebration,
 } from './soundEffects';
 import { unlockAudio, isAudioUnlocked, initMobileUnlock, getAudioContext } from './mobileUnlock';
 
@@ -218,12 +220,25 @@ export class AudioManager {
     soundEffects.playClear(vol);
   }
 
+  public playNextLevel(vol?: number): void {
+    soundEffects.playNextLevel(vol);
+  }
+
+  public stopCelebration(): void {
+    soundEffects.stopCelebration();
+  }
+
   /**
    * Universal sound dispatcher for scenes and UI hooks (e.g. gameplayScene.onPlaySound)
    */
   public playSound(sound: string, ...args: unknown[]): void {
     const key = sound.toLowerCase().trim();
     switch (key) {
+      case 'nextlevel':
+      case 'next_level':
+      case 'next':
+        this.playNextLevel(typeof args[0] === 'number' ? args[0] : undefined);
+        break;
       case 'tap':
       case 'click':
       case 'button':
@@ -304,6 +319,8 @@ export {
   playLevelComplete,
   playMismatch,
   playClear,
+  playNextLevel,
+  stopCelebration,
   unlockAudio,
   isAudioUnlocked,
   initMobileUnlock,
