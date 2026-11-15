@@ -662,20 +662,20 @@ export class GameplayScene implements Scene {
     ctx.fillText(promptText, x + w / 2, y + labelTopPad);
     ctx.restore();
 
-    // Full-Space Tight Grid: Color blocks expand to fill the entire interior width and available height
+    // Spacious Palette Grid: Color blocks with comfortable spacing and white glowing highlights
     this.swatchRects = [];
     const colors = level.palette;
 
-    const innerPad = 12;
+    const innerPad = isPortrait ? 14 : 16;
     const gridX = x + innerPad;
-    const gridY = y + labelH + 8;
+    const gridY = y + labelH + (isPortrait ? 8 : 10);
     const availW = w - innerPad * 2;
-    const availH = h - (labelH + 8) - innerPad;
+    const availH = h - (labelH + (isPortrait ? 8 : 10)) - innerPad;
 
-    const gap = 10;
+    const gap = isPortrait ? (colors.length <= 4 ? 14 : 12) : 16;
 
     if (isPortrait) {
-      // Mobile Portrait: Tight grid occupying 100% of available space below label
+      // Mobile Portrait: Spacious grid below label
       if (colors.length <= 4) {
         // 1 row
         const swatchW = Math.floor((availW - (colors.length - 1) * gap) / colors.length);
@@ -696,7 +696,7 @@ export class GameplayScene implements Scene {
           this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
         }
       } else {
-        // 2 rows tight grid (e.g. 2 rows of 4 for 8-colour levels)
+        // 2 rows grid (e.g. 2 rows of 4 for 8-colour levels)
         const cols = Math.ceil(colors.length / 2);
         const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
         const swatchH = Math.floor((availH - gap) / 2);
@@ -719,7 +719,7 @@ export class GameplayScene implements Scene {
         }
       }
     } else {
-      // Landscape: Vertical tight 2-column grid
+      // Landscape: Vertical 2-column grid with generous spacing
       const cols = 2;
       const rows = Math.ceil(colors.length / cols);
       const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
@@ -758,12 +758,12 @@ export class GameplayScene implements Scene {
 
     ctx.save();
 
-    // Clean, stable highlight when container is selected (zero continuous motion/scaling)
+    // Radiant glowing effect when active (zero continuous movement, clean luminous highlight)
     if (isHinted) {
-      // Clean golden highlight halo for hinted color
+      // Golden luminous aura for hinted color
       ctx.save();
-      ctx.shadowColor = 'rgba(242, 201, 76, 0.6)';
-      ctx.shadowBlur = 14;
+      ctx.shadowColor = 'rgba(242, 201, 76, 0.9)';
+      ctx.shadowBlur = 18;
       this.drawRoundedRect(
         ctx,
         sx - 4,
@@ -771,25 +771,27 @@ export class GameplayScene implements Scene {
         sw + 8,
         sh + 8,
         18,
-        'rgba(242, 201, 76, 0.35)',
+        'rgba(242, 201, 76, 0.4)',
         '#F2C94C',
         3.5
       );
       ctx.restore();
     } else if (hasSelection) {
-      // Clean Spruce Velvet highlight halo indicating color swatches are active and ready to tap
+      // Radiant white glowing aura around active swatches
       ctx.save();
-      ctx.shadowColor = 'rgba(27, 69, 50, 0.35)';
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
       this.drawRoundedRect(
         ctx,
-        sx - 3,
-        sy - 3,
-        sw + 6,
-        sh + 6,
-        17,
-        'rgba(27, 69, 50, 0.12)',
-        COLORS.spruceVelvet,
+        sx - 4,
+        sy - 4,
+        sw + 8,
+        sh + 8,
+        18,
+        'rgba(255, 255, 255, 0.65)',
+        '#FFFFFF',
         2.5
       );
       ctx.restore();
@@ -798,7 +800,7 @@ export class GameplayScene implements Scene {
     // 3D bottom bevel/shadow
     this.drawRoundedRect(ctx, sx, sy + 4, sw, sh, 14, COLORS.clottedCreamDark);
 
-    // Rounded rectangle swatch face occupying 100% of space
+    // Rounded rectangle swatch face with clean border
     this.drawRoundedRect(
       ctx,
       sx,
@@ -807,12 +809,12 @@ export class GameplayScene implements Scene {
       sh,
       14,
       color,
-      isHinted ? '#F2C94C' : hasSelection ? COLORS.spruceVelvet : '#FFFDF7',
+      isHinted ? '#F2C94C' : hasSelection ? '#FFFFFF' : '#DFD2BD',
       isHinted ? 4.5 : hasSelection ? 3.5 : 2
     );
 
     // Inner gloss
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
     ctx.beginPath();
     if (typeof ctx.ellipse === 'function') {
       ctx.ellipse(sx + sw / 2, sy + Math.min(14, sh * 0.25), sw * 0.38, Math.min(8, sh * 0.15), 0, 0, Math.PI * 2);
