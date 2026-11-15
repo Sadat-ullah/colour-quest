@@ -206,7 +206,7 @@ export class ColoringEngine {
     this.fillHistory = [];
     this.selectedRegionId = null;
     this.selectedColor = null;
-    this.hintUsed = false;
+    // Preserves single-use hint status within the same level; Clear only clears painted shapes
     this.hintedColor = null;
   }
 

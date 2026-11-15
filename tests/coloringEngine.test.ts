@@ -317,16 +317,17 @@ describe('ColoringEngine Tests', () => {
       expect(engine.isHintUsed()).toBe(true);
     });
 
-    it('resets hint state when level is reset or reloaded', () => {
+    it('preserves hintUsed when level is cleared, only resets on level reload', () => {
       engine.selectRegion('r_circle_1');
       engine.requestHint();
       expect(engine.isHintUsed()).toBe(true);
 
+      // Clearing the level must NOT re-enable the hint for the same level attempt
       engine.resetCurrentLevel();
-      expect(engine.isHintUsed()).toBe(false);
+      expect(engine.isHintUsed()).toBe(true);
       expect(engine.getHintedColor()).toBeNull();
 
-      // Reloading level also resets hint
+      // Only loading / starting a new level resets hint
       engine.loadLevel(mockLevel);
       expect(engine.isHintUsed()).toBe(false);
       expect(engine.getHintedColor()).toBeNull();
