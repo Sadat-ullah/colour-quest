@@ -461,7 +461,7 @@ export class TitleScene implements Scene {
       color: COLORS.clottedCreamCard,
       shadowColor: COLORS.clottedCreamDark,
       textColor: COLORS.spruceVelvet,
-      fontSize: 24,
+      fontSize: 22,
       radius: DIMENSIONS.borderRadiusLg,
       shadowDepth: 7,
       isPressed: this.pressedButtonId === 'levelSelect',

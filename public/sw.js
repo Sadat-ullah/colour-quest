@@ -5,7 +5,7 @@
  *  - Cache-First with Network Fallback for static assets
  * ───────────────────────────────────────────────────────────── */
 
-const CACHE_NAME = 'colour-quest-v1';
+const CACHE_NAME = 'colour-quest-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',

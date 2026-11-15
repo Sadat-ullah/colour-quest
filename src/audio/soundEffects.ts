@@ -737,6 +737,11 @@ export class SoundEffects {
    * Fundamental + two quiet, faster-decaying overtones, smooth attack,
    * exponential decay to near silence (no clicks), gentle lowpass.
    */
+  /**
+   * Shared helper: one soft, glassy "bell/pluck" note.
+   * Fundamental + two quiet, faster-decaying overtones, smooth attack,
+   * exponential decay to near silence (no clicks), gentle lowpass.
+   */
   private playBellNote(
     ctx: AudioContext,
     dest: AudioNode,
@@ -751,10 +756,12 @@ export class SoundEffects {
       { ratio: 3, amp: 0.07, decay: 0.35 },
     ];
 
+    const safeStart = Math.max(startTime, ctx.currentTime);
+
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(3800, startTime);
-    filter.Q.setValueAtTime(0.5, startTime);
+    filter.frequency.setValueAtTime(3800, safeStart);
+    filter.Q.setValueAtTime(0.5, safeStart);
     filter.connect(dest);
 
     const oscs: OscillatorNode[] = [];
@@ -766,16 +773,16 @@ export class SoundEffects {
       const d = dur * decay;
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq * ratio, startTime);
+      osc.frequency.setValueAtTime(freq * ratio, safeStart);
 
-      gain.gain.setValueAtTime(0.0001, startTime);
-      gain.gain.linearRampToValueAtTime(peak * amp, startTime + 0.008); // soft attack
-      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + d);    // smooth tail
+      gain.gain.setValueAtTime(0.0001, safeStart);
+      gain.gain.linearRampToValueAtTime(peak * amp, safeStart + 0.004); // ultra-fast responsive 4ms attack
+      gain.gain.exponentialRampToValueAtTime(0.0001, safeStart + d);    // smooth tail
 
       osc.connect(gain);
       gain.connect(filter);
-      osc.start(startTime);
-      osc.stop(startTime + d + 0.03);
+      osc.start(safeStart);
+      osc.stop(safeStart + d + 0.03);
 
       oscs.push(osc);
       gains.push(gain);

@@ -237,7 +237,14 @@ export function drawButton(ctx: CanvasRenderingContext2D, opts: ButtonOptions): 
     const iconSize = Math.min(w * 0.55, faceHeight * 0.55, fontSize * 1.4);
     drawIcon(ctx, icon, x + w / 2, centerY, iconSize, finalTextColor);
   } else if (text) {
-    // Text only (explicitly centered natively by canvas)
+    // Text only: Auto-fit font size to ensure it never exceeds button boundaries
+    let curFontSize = fontSize;
+    ctx.font = getFont(curFontSize, 'bold');
+    while (ctx.measureText(text).width > w - 32 && curFontSize > 14) {
+      curFontSize -= 1;
+      ctx.font = getFont(curFontSize, 'bold');
+    }
+    // Explicitly guarantee centered canvas alignment
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, x + w / 2, centerY + 1);

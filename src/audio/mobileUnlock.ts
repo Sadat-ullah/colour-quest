@@ -86,6 +86,22 @@ export async function unlockAudio(): Promise<boolean> {
       } catch {
         // Ignore if buffer source fails
       }
+
+      // Start continuous silent keep-alive generator to prevent Safari from putting
+      // CoreAudio HAL / RemoteIO audio unit to sleep (eliminates Safari 80-150ms cold-start delay)
+      try {
+        const keepAliveBuffer = ctx.createBuffer(1, 1, 22050);
+        const keepAliveSource = ctx.createBufferSource();
+        keepAliveSource.buffer = keepAliveBuffer;
+        keepAliveSource.loop = true;
+        const keepAliveGain = ctx.createGain();
+        keepAliveGain.gain.setValueAtTime(0.00001, 0); // practically zero/inaudible
+        keepAliveSource.connect(keepAliveGain);
+        keepAliveGain.connect(ctx.destination);
+        keepAliveSource.start(0);
+      } catch {
+        // Ignore if keep-alive buffer fails in mock environment
+      }
     }
 
     // Unlock Howler context if present
@@ -112,6 +128,10 @@ export async function unlockAudio(): Promise<boolean> {
 }
 
 function handleFirstInteraction(): void {
+  const ctx = getAudioContext();
+  if (ctx && ctx.state === 'suspended') {
+    ctx.resume().catch(() => {});
+  }
   void unlockAudio();
 }
 
