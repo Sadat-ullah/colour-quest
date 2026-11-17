@@ -69,20 +69,23 @@ export class ColoringEngine {
     }
 
     // Identify first unpainted region or first incorrectly filled region
-    const targetRegion =
-      this.level.regions.find((r) => !this.filledColors.has(r.id)) ||
-      this.level.regions.find(
-        (r) => this.filledColors.get(r.id)?.toLowerCase() !== r.targetColor.toLowerCase()
-      ) ||
-      this.level.regions[0];
-
+    let targetRegion = this.level.regions.find((r) => !this.filledColors.has(r.id));
     if (!targetRegion) {
-      return { success: false, reason: 'invalid_region' };
+      targetRegion = this.level.regions.find(
+        (r) => this.filledColors.get(r.id)?.toLowerCase() !== r.targetColor.toLowerCase()
+      );
+    }
+    if (!targetRegion) {
+      targetRegion = this.level.regions[0];
     }
 
     this.hintUsed = true;
     this.hintedColor = targetRegion.targetColor;
     this.hintedRegionId = targetRegion.id;
+    // Automatically equip the target crayon so hint is fully armed & ready to paint
+    this.selectedColor = targetRegion.targetColor;
+    eventBus.emit('color:selected', { color: targetRegion.targetColor });
+
     return { success: true, targetColor: targetRegion.targetColor, regionId: targetRegion.id };
   }
 
@@ -104,7 +107,7 @@ export class ColoringEngine {
 
   /**
    * Step 1: Pick / Equip a Crayon Colour (Colour-First Flow)
-   * Tapping a crayon equips it so multiple shapes can be painted consecutively.
+   * Tapping a crayon equips it for colouring the next shape.
    */
   public selectColor(color: string): { equipped: boolean; color: string } {
     this.selectedColor = color;
@@ -122,8 +125,9 @@ export class ColoringEngine {
 
   /**
    * Step 2: Tap Shape / Region on Canvas
-   * If a crayon is equipped, immediately paints the shape and leaves the crayon equipped.
-   * If no crayon is equipped, registers the tap and returns filled: false.
+   * If a crayon is equipped, immediately paints the shape.
+   * Immediately after colouring, removes focus from the crayon so the user taps a crayon again.
+   * If no crayon is equipped, returns filled: false with reason: 'no_color'.
    */
   public selectRegion(regionId: string): {
     filled: boolean;
@@ -141,11 +145,20 @@ export class ColoringEngine {
 
     // If a crayon is equipped, immediately paint the shape!
     if (this.selectedColor) {
-      const fillRes = this.fillRegion(regionId, this.selectedColor);
+      const colorFilled = this.selectedColor;
+      const fillRes = this.fillRegion(regionId, colorFilled);
+
+      // Focus removal rule: After shape is coloured, remove focus from crayon
+      this.selectedColor = null;
+      this.selectedRegionId = null;
+      this.hintedColor = null;
+      this.hintedRegionId = null;
+      eventBus.emit('color:selected', { color: '' });
+
       return {
         filled: fillRes.success,
         regionId,
-        color: this.selectedColor,
+        color: colorFilled,
         correct: fillRes.correct,
       };
     }

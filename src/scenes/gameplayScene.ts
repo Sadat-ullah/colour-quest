@@ -581,14 +581,50 @@ export class GameplayScene implements Scene {
         offsetY,
         scale,
         fillColor: filledColor,
-        strokeColor: isHinted ? '#F2C94C' : isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
-        strokeWidth,
+        strokeColor: isHinted ? '#FFD700' : isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
+        strokeWidth: isHinted ? 5.5 : strokeWidth,
         isHighlighted,
-        highlightColor,
+        highlightColor: isHinted ? '#FFD700' : COLORS.spruceVelvet,
         glow: isGlow,
-        glowBlur,
+        glowBlur: isHinted ? 26 : glowBlur,
         pulseScale,
       });
+    }
+
+    // Render prominent floating animated hint marker over the target shape
+    if (hintedRegionId) {
+      const hintedRegion = level.regions.find((r) => r.id === hintedRegionId);
+      if (hintedRegion) {
+        const center = ShapeRenderer.getRegionCenter(hintedRegion);
+        const hx = offsetX + center.x * scale;
+        const hy = offsetY + center.y * scale + Math.sin(this.pulseTimer * 0.007) * 6;
+
+        ctx.save();
+        // Pulsing outer gold ring
+        const ringR = 26 + Math.sin(this.pulseTimer * 0.008) * 5;
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 3.5;
+        ctx.shadowColor = '#FFD700';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(hx, hy, ringR, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Cream & gold lightbulb badge
+        ctx.fillStyle = '#FAF5EC';
+        ctx.strokeStyle = '#1B4532';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(hx, hy, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = '18px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('💡', hx, hy + 1);
+        ctx.restore();
+      }
     }
   }
 
@@ -962,11 +998,35 @@ export class GameplayScene implements Scene {
         return;
       }
 
-      // Step 2 & 3: Highlight Target Colour & Target Shape
+      // Step 2 & 3: Highlight Target Colour & Target Shape and auto-equip crayon
       const res = coloringEngine.requestHint();
-      if (res.success && res.targetColor) {
-        this.showToast('✨ Pick the glowing crayon to paint the matching shape!', 2600);
+      if (res.success && res.targetColor && res.regionId) {
+        this.showToast('✨ Crayon equipped! Tap the glowing shape!', 2800);
         this.onPlaySound?.('correct');
+
+        // Spawn sparkles on the hinted crayon and the target shape
+        const hintedSwatch = this.swatchRects.find(
+          (s) => s.color.toLowerCase() === res.targetColor!.toLowerCase()
+        );
+        if (hintedSwatch) {
+          this.onSpawnSparkles?.(
+            hintedSwatch.x + hintedSwatch.w / 2,
+            hintedSwatch.y + hintedSwatch.h / 2,
+            res.targetColor
+          );
+        }
+
+        const currentLevel = coloringEngine.getLevel();
+        const targetRegion = currentLevel?.regions.find((r) => r.id === res.regionId);
+        if (targetRegion) {
+          const center = ShapeRenderer.getRegionCenter(targetRegion);
+          const { offsetX, offsetY, scale } = this.templateTransform;
+          this.onSpawnSparkles?.(
+            offsetX + center.x * scale,
+            offsetY + center.y * scale,
+            res.targetColor
+          );
+        }
       } else if (res.reason === 'already_used') {
         this.showToast('💡 Hint already used for this level!', 2200);
       }

@@ -1552,7 +1552,8 @@ export function draw3DPaintTube(
 
 /**
  * Derives dynamic crayon tints from any hex color code:
- * highlight sheen, shadow shading, pastel wrapper paper, dark stripe accents.
+ * highlight sheen, shadow shading, wrapper paper, dark tone-on-tone stripe accents.
+ * The entire crayon is completely of that specific colour!
  */
 export function deriveCrayonTints(hex: string): {
   base: string;
@@ -1581,9 +1582,9 @@ export function deriveCrayonTints(hex: string): {
       base: '#FDFBF7',
       highlight: '#FFFFFF',
       shadow: '#D5CBBB',
-      wrapper: '#EFE7DA',
-      stripe: '#7B4A23',
-      outline: 'rgba(27, 69, 50, 0.45)',
+      wrapper: '#FDFBF7',
+      stripe: '#B5A894',
+      outline: '#1B4532',
     };
   }
 
@@ -1593,31 +1594,27 @@ export function deriveCrayonTints(hex: string): {
       base: '#2D3139',
       highlight: '#585F6D',
       shadow: '#141619',
-      wrapper: '#D6D9E0',
-      stripe: '#5C381E',
-      outline: 'rgba(14, 16, 18, 0.6)',
+      wrapper: '#2D3139',
+      stripe: '#1A1C20',
+      outline: '#1B4532',
     };
   }
 
-  // Highlight: mixed with 42% white for smooth clay sheen
+  // Highlight: smooth clay sheen (mixed with 36% white)
   const highlight = rgbToHex(
-    r + (255 - r) * 0.42,
-    g + (255 - g) * 0.42,
-    b + (255 - b) * 0.42
+    r + (255 - r) * 0.36,
+    g + (255 - g) * 0.36,
+    b + (255 - b) * 0.36
   );
 
-  // Shadow: darkened by 28% for soft clay ambient shadow
-  const shadow = rgbToHex(r * 0.72, g * 0.72, b * 0.72);
+  // Shadow: rich shadow of the exact same colour (darkened by 26%)
+  const shadow = rgbToHex(r * 0.74, g * 0.74, b * 0.74);
 
-  // Wrapper: soft pastel paper tint (mixed with 74% white)
-  const wrapper = rgbToHex(
-    r + (255 - r) * 0.74,
-    g + (255 - g) * 0.74,
-    b + (255 - b) * 0.74
-  );
+  // Wrapper: completely of that specific colour!
+  const wrapper = hex;
 
-  // Stripe: rich warm dark-brown/sepia tone matching reference image
-  const stripe = '#7B4A23';
+  // Stripe: tone-on-tone deeper shade of that exact same colour
+  const stripe = rgbToHex(r * 0.58, g * 0.58, b * 0.58);
 
   // Outline: crisp Spruce Velvet
   const outline = '#1B4532';
@@ -1634,13 +1631,15 @@ export function deriveCrayonTints(hex: string): {
 
 /**
  * Draws a smooth, tactile 3D clay/matte wax crayon matching the reference design:
+ * - Completely rendered in that specific colour (tip, collar, wrapper, plug)
+ * - Increased chunky dimensions filling the palette slot
  * - Rounded conical wax tip with smooth rounded dome apex and soft clay lighting
  * - Stepped cylindrical wax collar
- * - Raised cylindrical matte paper sleeve in pastel tint with 2 top sepia bands and 2 bottom sepia bands
+ * - Raised cylindrical paper sleeve in matching rich colour with tone-on-tone double bands
  * - Rounded wax base plug protruding at bottom
  * - Soft 3D oval contact shadow
  * - Active / Equipped state: lifts upward (translateY(-10px)), scales 1.06x, luminous selection aura
- * - Hint state: golden pulse halo
+ * - Hint state: lifts upward (translateY(-12px)), scales 1.08x, radiant pulsing golden halo aura + lightbulb badge
  */
 export function draw3DWaxCrayon(
   ctx: CanvasRenderingContext2D,
@@ -1660,17 +1659,18 @@ export function draw3DWaxCrayon(
 
   ctx.save();
 
-  // 1. Interactive Lift & Elevation (translateY(-10px) and 1.06x scale when selected/equipped)
-  const isElevated = isSelected || isHighlighted;
-  const bounceY = isElevated ? -10 : 0;
-  const scaleFactor = isElevated ? 1.06 : 1.0;
+  // 1. Interactive Lift & Elevation (translateY(-10px) / -12px and scaling when equipped or hinted)
+  const isElevated = isSelected || isHighlighted || isHinted;
+  const bounceY = isElevated ? (isHinted ? -12 : -10) : 0;
+  const scaleFactor = isElevated ? (isHinted ? 1.08 : 1.06) : 1.0;
 
   const cx = x + w / 2;
   const cy = y + h / 2 + bounceY;
 
   // 2. 3D Contact Shadow on palette surface (anchored to slot bottom)
   const shadowY = y + h - 4;
-  const crayonW = Math.max(24, Math.min(w * 0.68, 54));
+  // Increased chunky size: up to 82px width
+  const crayonW = Math.max(32, Math.min(w * 0.84, 82));
   const shadowW = isElevated ? crayonW * 0.72 : crayonW * 0.92;
   const shadowH = isElevated ? 5 : 7.5;
 
@@ -1685,14 +1685,16 @@ export function draw3DWaxCrayon(
   ctx.fill();
   ctx.restore();
 
-  // 3. Transformation for Equipped Lift & Scale
+  // 3. Transformation for Equipped / Hint Lift & Scale
   ctx.save();
   ctx.translate(cx, cy);
   if (scaleFactor !== 1.0) {
     ctx.scale(scaleFactor, scaleFactor);
   }
 
-  const crayonH = Math.max(52, Math.min(h - 16, crayonW * 2.85));
+  // Increased crayon height proportion filling the available slot
+  const maxAllowedH = h - (isElevated ? 14 : 10);
+  const crayonH = Math.max(62, Math.min(maxAllowedH, Math.round(crayonW * 3.1)));
   const halfH = crayonH / 2;
   const halfW = crayonW / 2;
 
@@ -1715,18 +1717,22 @@ export function draw3DWaxCrayon(
   // 4. Hint Aura or Active Selection Halo
   if (isHinted) {
     ctx.save();
-    ctx.shadowColor = 'rgba(255, 208, 0, 0.95)';
-    ctx.shadowBlur = 18;
-    ctx.fillStyle = 'rgba(255, 208, 0, 0.38)';
-    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW, collarW / 2, plugW / 2);
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 26;
+    ctx.fillStyle = 'rgba(255, 215, 0, 0.50)';
+    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW + 4, collarW / 2 + 4, plugW / 2 + 4);
     ctx.fill();
+
+    ctx.strokeStyle = '#FFD700';
+    ctx.lineWidth = 3;
+    ctx.stroke();
     ctx.restore();
   } else if (isSelected) {
     ctx.save();
     ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
-    ctx.shadowBlur = 16;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.42)';
-    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW, collarW / 2, plugW / 2);
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW + 3, collarW / 2 + 3, plugW / 2 + 3);
     ctx.fill();
     ctx.restore();
   }
@@ -1734,16 +1740,16 @@ export function draw3DWaxCrayon(
   // Helper for cylindrical clay shading
   const applyCylindricalShade = (left: number, right: number) => {
     const grad = ctx.createLinearGradient(left, 0, right, 0);
-    grad.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
-    grad.addColorStop(0.20, 'rgba(255, 255, 255, 0.42)');
+    grad.addColorStop(0, 'rgba(0, 0, 0, 0.20)');
+    grad.addColorStop(0.20, 'rgba(255, 255, 255, 0.40)');
     grad.addColorStop(0.50, 'rgba(255, 255, 255, 0.04)');
     grad.addColorStop(0.82, 'rgba(0, 0, 0, 0.12)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0.30)');
     ctx.fillStyle = grad;
     ctx.fill();
   };
 
-  // 5. Rounded Wax Base Plug (protruding at bottom)
+  // 5. Rounded Wax Base Plug (protruding at bottom) - Completely in specific colour
   ctx.save();
   const plugHalfW = plugW / 2;
   const plugR = Math.min(8, plugHalfW);
@@ -1760,13 +1766,13 @@ export function draw3DWaxCrayon(
   ctx.fill();
   applyCylindricalShade(-plugHalfW, plugHalfW);
 
-  // Soft bottom ambient occlusion
+  // Soft bottom outline
   ctx.strokeStyle = tints.outline;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.6;
   ctx.stroke();
   ctx.restore();
 
-  // 6. Stepped Cylindrical Wax Collar (between tip and paper wrapper)
+  // 6. Stepped Cylindrical Wax Collar (between tip and paper wrapper) - Completely in specific colour
   ctx.save();
   const collarHalfW = collarW / 2;
   ctx.beginPath();
@@ -1777,11 +1783,11 @@ export function draw3DWaxCrayon(
 
   // Subtle line separator
   ctx.strokeStyle = tints.outline;
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.6;
   ctx.stroke();
   ctx.restore();
 
-  // 7. Rounded Tapered Wax Tip (Conical with smooth domed apex)
+  // 7. Rounded Tapered Wax Tip (Conical with smooth domed apex) - Completely in specific colour
   ctx.save();
   const apexW = Math.max(6, Math.round(crayonW * 0.26));
   const apexHalfW = apexW / 2;
@@ -1801,11 +1807,11 @@ export function draw3DWaxCrayon(
   ctx.save();
   ctx.clip();
   const tipShade = ctx.createLinearGradient(-collarHalfW, collarTop, collarHalfW, collarTop);
-  tipShade.addColorStop(0, 'rgba(0, 0, 0, 0.16)');
-  tipShade.addColorStop(0.24, 'rgba(255, 255, 255, 0.50)');
+  tipShade.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
+  tipShade.addColorStop(0.24, 'rgba(255, 255, 255, 0.52)');
   tipShade.addColorStop(0.55, 'rgba(255, 255, 255, 0.05)');
   tipShade.addColorStop(0.85, 'rgba(0, 0, 0, 0.14)');
-  tipShade.addColorStop(1, 'rgba(0, 0, 0, 0.26)');
+  tipShade.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
   ctx.fillStyle = tipShade;
   ctx.fill();
   ctx.restore();
@@ -1815,10 +1821,9 @@ export function draw3DWaxCrayon(
   ctx.stroke();
   ctx.restore();
 
-  // 8. Matte Paper Sleeve (Raised Cylindrical Wrapper with Double Bands)
+  // 8. Matte Paper Sleeve (Raised Cylindrical Wrapper) - Completely in that specific colour!
   ctx.save();
   const sleeveHalfW = sleeveW / 2;
-  const sleeveRadius = 3;
 
   // Sleeve base body
   ctx.beginPath();
@@ -1847,7 +1852,7 @@ export function draw3DWaxCrayon(
   ctx.fillRect(-plugHalfW, sleeveBottom, plugW, 2.5);
   ctx.restore();
 
-  // 9. Two Clean Dark-Brown/Sepia Parallel Bands Near Top & Two Near Bottom
+  // 9. Two Tone-on-Tone Bands Near Top & Two Near Bottom (deeper tone of that same colour)
   const bandH = Math.max(3.5, Math.round(sleeveH * 0.052));
   const bandSep = Math.max(3.5, Math.round(sleeveH * 0.045));
 
@@ -1867,7 +1872,7 @@ export function draw3DWaxCrayon(
     // Wrap cylindrical shading over band
     const bandShade = ctx.createLinearGradient(-sleeveHalfW, 0, sleeveHalfW, 0);
     bandShade.addColorStop(0, 'rgba(0, 0, 0, 0.22)');
-    bandShade.addColorStop(0.20, 'rgba(255, 255, 255, 0.35)');
+    bandShade.addColorStop(0.20, 'rgba(255, 255, 255, 0.32)');
     bandShade.addColorStop(0.50, 'rgba(255, 255, 255, 0.0)');
     bandShade.addColorStop(0.85, 'rgba(0, 0, 0, 0.18)');
     bandShade.addColorStop(1, 'rgba(0, 0, 0, 0.36)');
@@ -1893,26 +1898,45 @@ export function draw3DWaxCrayon(
 
   ctx.restore(); // end wrapper save
 
-  // 10. Equipped Indicator Badge (Glowing Checkmark / Ring at Tip)
-  if (isSelected) {
+  // 10. Equipped / Hint Indicator Badge
+  if (isHinted) {
     ctx.save();
-    const badgeY = tipTop - 8;
+    const badgeY = tipTop - 12;
+    // Glowing golden lightbulb pill badge
+    ctx.shadowColor = '#FFD700';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = '#FFD700';
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(0, badgeY, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('💡', 0, badgeY + 1);
+    ctx.restore();
+  } else if (isSelected) {
+    ctx.save();
+    const badgeY = tipTop - 10;
     ctx.fillStyle = '#FAF5EC';
     ctx.strokeStyle = '#1B4532';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.arc(0, badgeY, 8.5, 0, Math.PI * 2);
+    ctx.arc(0, badgeY, 9.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.strokeStyle = '#1B4532';
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2.4;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.beginPath();
-    ctx.moveTo(-3.5, badgeY);
-    ctx.lineTo(-0.8, badgeY + 3);
-    ctx.lineTo(4, badgeY - 3);
+    ctx.moveTo(-4, badgeY);
+    ctx.lineTo(-1, badgeY + 3.5);
+    ctx.lineTo(4.5, badgeY - 3.5);
     ctx.stroke();
     ctx.restore();
   }

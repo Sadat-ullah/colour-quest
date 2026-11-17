@@ -99,7 +99,7 @@ describe('ColoringEngine Tests', () => {
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
     });
 
-    it('crayon remains equipped after painting a shape so multiple shapes can be painted consecutively', () => {
+    it('focus is removed from crayon after colouring a shape and user must tap crayon again', () => {
       engine.selectColor('#FF5722');
       expect(engine.getSelectedColor()).toBe('#FF5722');
 
@@ -107,14 +107,22 @@ describe('ColoringEngine Tests', () => {
       const fill1 = engine.selectRegion('r_circle_1');
       expect(fill1.filled).toBe(true);
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
-      // Crucial: Crayon remains armed and equipped
-      expect(engine.getSelectedColor()).toBe('#FF5722');
+      // Crucial: Focus is immediately removed from the crayon
+      expect(engine.getSelectedColor()).toBeNull();
 
-      // 2nd shape painted immediately with the same armed crayon
+      // Tapping 2nd shape without selecting crayon first does NOT fill
       const fill2 = engine.selectRegion('r_circle_2');
-      expect(fill2.filled).toBe(true);
-      expect(engine.getFilledColor('r_circle_2')).toBe('#FF5722');
-      expect(engine.getSelectedColor()).toBe('#FF5722');
+      expect(fill2.filled).toBe(false);
+      expect(fill2.reason).toBe('no_color');
+      expect(engine.getFilledColor('r_circle_2')).toBeNull();
+
+      // User taps crayon again to colour 2nd shape
+      engine.selectColor('#4CAF50');
+      expect(engine.getSelectedColor()).toBe('#4CAF50');
+      const fill3 = engine.selectRegion('r_circle_2');
+      expect(fill3.filled).toBe(true);
+      expect(engine.getFilledColor('r_circle_2')).toBe('#4CAF50');
+      expect(engine.getSelectedColor()).toBeNull();
     });
 
     it('clears selection via clearSelection()', () => {
@@ -252,15 +260,12 @@ describe('ColoringEngine Tests', () => {
       expect(engine.undo()).toBe(false);
     });
 
-    it('undo preserves the currently equipped crayon color', () => {
-      engine.selectColor('#FF5722');
-      engine.selectRegion('r_circle_1');
+    it('undo restores filled region to previous state', () => {
+      engine.fillRegion('r_circle_1', '#FF5722');
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
 
       engine.undo();
       expect(engine.getFilledColor('r_circle_1')).toBeNull();
-      // Crucial: equipped crayon remains active after undo
-      expect(engine.getSelectedColor()).toBe('#FF5722');
     });
 
     it('resetCurrentLevel clears filled colors and history', () => {
