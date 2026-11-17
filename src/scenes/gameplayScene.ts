@@ -590,42 +590,6 @@ export class GameplayScene implements Scene {
         pulseScale,
       });
     }
-
-    // Render prominent floating animated hint marker over the target shape
-    if (hintedRegionId) {
-      const hintedRegion = level.regions.find((r) => r.id === hintedRegionId);
-      if (hintedRegion) {
-        const center = ShapeRenderer.getRegionCenter(hintedRegion);
-        const hx = offsetX + center.x * scale;
-        const hy = offsetY + center.y * scale + Math.sin(this.pulseTimer * 0.007) * 6;
-
-        ctx.save();
-        // Pulsing outer gold ring
-        const ringR = 26 + Math.sin(this.pulseTimer * 0.008) * 5;
-        ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 3.5;
-        ctx.shadowColor = '#FFD700';
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(hx, hy, ringR, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Cream & gold lightbulb badge
-        ctx.fillStyle = '#FAF5EC';
-        ctx.strokeStyle = '#1B4532';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.arc(hx, hy, 18, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.font = '18px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('💡', hx, hy + 1);
-        ctx.restore();
-      }
-    }
   }
 
   private renderReference(ctx: CanvasRenderingContext2D, level: LevelData): void {
