@@ -14,7 +14,7 @@ import { audioManager } from '../audio/audioManager';
 import { DESIGN_WIDTH, DESIGN_HEIGHT } from '../shared/constants';
 import type { LevelData } from '../shared/contracts';
 import { COLORS, getFont } from '../ui/tokens';
-import { drawGlossyGreenButton, drawVolumeButton, draw3DPaintTube } from '../ui/components';
+import { drawGlossyGreenButton, drawVolumeButton, draw3DWaxCrayon } from '../ui/components';
 import { backgroundRenderer } from '../ui/backgroundRenderer';
 
 export class GameplayScene implements Scene {
@@ -764,9 +764,10 @@ export class GameplayScene implements Scene {
     const gap = isPortrait ? (colors.length <= 4 ? 14 : 12) : 16;
 
     if (isPortrait) {
-      // Mobile Portrait: Spacious grid below label
-      if (colors.length <= 4) {
+      // Mobile Portrait: Spacious grid below label (1 row for 3-5 crayons, 2 rows for 6-8 crayons)
+      if (colors.length <= 5) {
         // 1 row
+        const gap = colors.length <= 4 ? 14 : 10;
         const swatchW = Math.floor((availW - (colors.length - 1) * gap) / colors.length);
         const swatchH = Math.floor(availH);
 
@@ -785,8 +786,9 @@ export class GameplayScene implements Scene {
           this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
         }
       } else {
-        // 2 rows grid (e.g. 2 rows of 4 for 8-colour levels)
+        // 2 rows grid (e.g. 2 rows of 3-4 for 6 to 8-colour levels)
         const cols = Math.ceil(colors.length / 2);
+        const gap = 10;
         const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
         const swatchH = Math.floor((availH - gap) / 2);
 
@@ -808,9 +810,10 @@ export class GameplayScene implements Scene {
         }
       }
     } else {
-      // Landscape: Vertical 2-column grid with generous spacing
+      // Landscape: Vertical 2-column grid with generous spacing (scales dynamically for up to 8 crayons)
       const cols = 2;
       const rows = Math.ceil(colors.length / cols);
+      const gap = Math.max(8, Math.min(16, Math.floor((availH - rows * 76) / Math.max(1, rows - 1))));
       const swatchW = Math.floor((availW - (cols - 1) * gap) / cols);
       const swatchH = Math.floor((availH - (rows - 1) * gap) / rows);
 
@@ -845,8 +848,8 @@ export class GameplayScene implements Scene {
     const hintedColor = coloringEngine.getHintedColor();
     const isHinted = hintedColor !== null && hintedColor.toLowerCase() === color.toLowerCase();
 
-    // 3D cylindrical paint tube swatch with top/bottom rim highlights and pigment shading
-    draw3DPaintTube(ctx, {
+    // Chunky, tactile 3D wax crayon with tapered tip, wrapper band, wavy stripes and emblem
+    draw3DWaxCrayon(ctx, {
       x: sx,
       y: sy,
       w: sw,

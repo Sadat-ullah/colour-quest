@@ -13,6 +13,8 @@ import {
   drawButton,
   drawGlossyGreenButton,
   drawColorSwatch,
+  draw3DWaxCrayon,
+  deriveCrayonTints,
   drawStar,
   drawProgressBar,
   drawIcon,
@@ -235,6 +237,56 @@ describe('UI Drawing Components (/src/ui/components.ts)', () => {
     expect(() => drawColorSwatch(ctx, 20, 20, 64, '#FF4B72', false, false)).not.toThrow();
     // Selected state (draws checkmark)
     expect(() => drawColorSwatch(ctx, 20, 20, 64, '#00C4FF', true, true)).not.toThrow();
+  });
+
+  it('deriveCrayonTints dynamically computes highlight, shadow, pastel wrapper and stripe tints', () => {
+    const tints = deriveCrayonTints('#FF0000');
+    expect(tints.base).toBe('#FF0000');
+    expect(tints.highlight).toBeDefined();
+    expect(tints.shadow).toBeDefined();
+    expect(tints.wrapper).toBeDefined();
+    expect(tints.stripe).toBeDefined();
+    expect(tints.outline).toBe('#1B4532');
+  });
+
+  it('draw3DWaxCrayon renders 3D wax crayons in normal, selected, and hinted states without throwing', () => {
+    expect(() =>
+      draw3DWaxCrayon(ctx, {
+        x: 40,
+        y: 40,
+        w: 80,
+        h: 120,
+        color: '#FF4B72',
+        isSelected: false,
+        isHinted: false,
+      })
+    ).not.toThrow();
+
+    // Selected state with spring bounce translateY(-6px) and checkmark
+    expect(() =>
+      draw3DWaxCrayon(ctx, {
+        x: 40,
+        y: 40,
+        w: 80,
+        h: 120,
+        color: '#00C4FF',
+        isSelected: true,
+        isHinted: false,
+      })
+    ).not.toThrow();
+
+    // Hinted state with golden aura
+    expect(() =>
+      draw3DWaxCrayon(ctx, {
+        x: 40,
+        y: 40,
+        w: 80,
+        h: 120,
+        color: '#FFD000',
+        isSelected: false,
+        isHinted: true,
+      })
+    ).not.toThrow();
   });
 
   it('drawStar draws filled and unfilled 5-point stars with glow', () => {

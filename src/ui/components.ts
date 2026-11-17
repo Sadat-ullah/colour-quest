@@ -1549,3 +1549,368 @@ export function draw3DPaintTube(
 
   ctx.restore();
 }
+
+/**
+ * Derives dynamic crayon tints from any hex color code:
+ * highlight sheen, shadow shading, pastel wrapper paper, dark stripe/emblem accents.
+ */
+export function deriveCrayonTints(hex: string): {
+  base: string;
+  highlight: string;
+  shadow: string;
+  wrapper: string;
+  stripe: string;
+  outline: string;
+} {
+  let clean = hex.replace('#', '').trim();
+  if (clean.length === 3) {
+    clean = clean.split('').map((c) => c + c).join('');
+  }
+  const num = parseInt(clean, 16);
+  const r = isNaN(num) ? 128 : (num >> 16) & 255;
+  const g = isNaN(num) ? 128 : (num >> 8) & 255;
+  const b = isNaN(num) ? 128 : num & 255;
+
+  const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
+  const toHex = (v: number) => clamp(v).toString(16).padStart(2, '0');
+  const rgbToHex = (cr: number, cg: number, cb: number) => `#${toHex(cr)}${toHex(cg)}${toHex(cb)}`;
+
+  // Handle white / light colors
+  if (r > 235 && g > 235 && b > 235) {
+    return {
+      base: '#FDFBF7',
+      highlight: '#FFFFFF',
+      shadow: '#D5CBBB',
+      wrapper: '#EFE7DA',
+      stripe: '#8C7E68',
+      outline: '#1B4532',
+    };
+  }
+
+  // Handle black / dark colors
+  if (r < 30 && g < 30 && b < 30) {
+    return {
+      base: '#2D3139',
+      highlight: '#585F6D',
+      shadow: '#141619',
+      wrapper: '#D6D9E0',
+      stripe: '#1A1C20',
+      outline: '#0E1012',
+    };
+  }
+
+  // Highlight: mixed with 45% white
+  const highlight = rgbToHex(
+    r + (255 - r) * 0.45,
+    g + (255 - g) * 0.45,
+    b + (255 - b) * 0.45
+  );
+
+  // Shadow: darkened by 32%
+  const shadow = rgbToHex(r * 0.68, g * 0.68, b * 0.68);
+
+  // Wrapper: soft pastel paper tint (mixed with 76% white)
+  const wrapper = rgbToHex(
+    r + (255 - r) * 0.76,
+    g + (255 - g) * 0.76,
+    b + (255 - b) * 0.76
+  );
+
+  // Stripe & emblem: rich dark pigment accent
+  const stripe = rgbToHex(r * 0.45, g * 0.45, b * 0.45);
+
+  return {
+    base: hex,
+    highlight,
+    shadow,
+    wrapper,
+    stripe,
+    outline: '#1B4532',
+  };
+}
+
+/**
+ * Draws a chunky, tactile 3D illustrated wax crayon matching the reference design:
+ * - Tapered conical wax tip with rounded apex and glossy white highlight streak
+ * - Cylindrical wax body with matching lighter pastel paper band
+ * - Two dark wavy stripes and cute central swirl emblem
+ * - 3D contact shadow directly beneath crayon base
+ * - Spring bounce translateY(-6px) when tapped/selected
+ * - Golden hint aura pulse when hinted
+ */
+export function draw3DWaxCrayon(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    color: string;
+    isSelected?: boolean;
+    isHinted?: boolean;
+    isHighlighted?: boolean;
+  }
+): void {
+  const { x, y, w, h, color, isSelected = false, isHinted = false, isHighlighted = false } = opts;
+  const tints = deriveCrayonTints(color);
+
+  ctx.save();
+
+  // 1. Interactive Bounce (translateY(-6px) when selected or tapped)
+  const isElevated = isSelected || isHighlighted;
+  const bounceY = isElevated ? -6 : 0;
+  const drawY = y + bounceY;
+
+  // 2. 3D Contact Shadow on palette surface (stays anchored to slot bottom)
+  const shadowY = y + h - 4;
+  const cx = x + w / 2;
+  const crayonW = Math.max(26, Math.min(w * 0.72, 60));
+  const shadowW = isElevated ? crayonW * 0.75 : crayonW * 0.9;
+  const shadowH = isElevated ? 5 : 7;
+
+  ctx.save();
+  ctx.fillStyle = isElevated ? 'rgba(27, 69, 50, 0.14)' : 'rgba(27, 69, 50, 0.24)';
+  ctx.beginPath();
+  if (typeof ctx.ellipse === 'function') {
+    ctx.ellipse(cx, shadowY, shadowW / 2, shadowH / 2, 0, 0, Math.PI * 2);
+  } else {
+    ctx.arc(cx, shadowY, shadowH / 2, 0, Math.PI * 2);
+  }
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Hint Aura & Active Selection Glow
+  const crayonH = Math.max(46, Math.min(h - 10, crayonW * 2.85));
+  const crayonBottom = drawY + h - 8;
+  const tipTop = crayonBottom - crayonH;
+  const tipH = Math.round(crayonH * 0.28);
+  const shoulderY = tipTop + tipH;
+  const bodyH = crayonH - tipH;
+  const crayonLeft = cx - crayonW / 2;
+  const crayonRight = cx + crayonW / 2;
+  const baseRadius = 8;
+
+  if (isHinted) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(255, 208, 0, 0.95)';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = 'rgba(255, 208, 0, 0.35)';
+    drawCrayonSilhouettePath(ctx, cx, crayonLeft, crayonRight, tipTop, shoulderY, crayonBottom, baseRadius);
+    ctx.fill();
+    ctx.restore();
+  } else if (isSelected) {
+    ctx.save();
+    ctx.shadowColor = '#FFFFFF';
+    ctx.shadowBlur = 16;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    drawCrayonSilhouettePath(ctx, cx, crayonLeft, crayonRight, tipTop, shoulderY, crayonBottom, baseRadius);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 4. Tapered Wax Tip (Conical with rounded apex)
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(crayonLeft + 2, shoulderY);
+  ctx.quadraticCurveTo(crayonLeft + 4, tipTop + 8, cx - 2, tipTop + 3);
+  ctx.arcTo(cx, tipTop, cx + 2, tipTop + 3, 3);
+  ctx.quadraticCurveTo(crayonRight - 4, tipTop + 8, crayonRight - 2, shoulderY);
+  ctx.closePath();
+
+  // Base wax color for tip
+  ctx.fillStyle = tints.base;
+  ctx.fill();
+
+  // Tip cylindrical shading
+  ctx.save();
+  ctx.clip();
+  const tipShadeGrad = ctx.createLinearGradient(crayonLeft, shoulderY, crayonRight, shoulderY);
+  tipShadeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+  tipShadeGrad.addColorStop(0.35, 'rgba(255, 255, 255, 0.1)');
+  tipShadeGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.05)');
+  tipShadeGrad.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
+  ctx.fillStyle = tipShadeGrad;
+  ctx.fill();
+
+  // Glossy white specular highlight streak along the left slope
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx - 3, tipTop + 5);
+  ctx.lineTo(crayonLeft + 5, shoulderY - 3);
+  ctx.stroke();
+  ctx.restore(); // end tip clip
+
+  // Outline for tip
+  ctx.strokeStyle = tints.outline;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+
+  // 5. Cylindrical Body & Exposed Wax
+  const wrapperPad = Math.round(bodyH * 0.14);
+  const wrapperTop = shoulderY + wrapperPad;
+  const wrapperBottom = crayonBottom - wrapperPad;
+  const wrapperH = wrapperBottom - wrapperTop;
+
+  // Complete body wax fill
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(crayonLeft, shoulderY);
+  ctx.lineTo(crayonRight, shoulderY);
+  ctx.lineTo(crayonRight, crayonBottom - baseRadius);
+  ctx.arcTo(crayonRight, crayonBottom, crayonRight - baseRadius, crayonBottom, baseRadius);
+  ctx.lineTo(crayonLeft + baseRadius, crayonBottom);
+  ctx.arcTo(crayonLeft, crayonBottom, crayonLeft, crayonBottom - baseRadius, baseRadius);
+  ctx.closePath();
+
+  ctx.fillStyle = tints.base;
+  ctx.fill();
+
+  // Cylindrical body sheen
+  const bodySheen = ctx.createLinearGradient(crayonLeft, 0, crayonRight, 0);
+  bodySheen.addColorStop(0, 'rgba(0, 0, 0, 0.22)');
+  bodySheen.addColorStop(0.2, 'rgba(255, 255, 255, 0.45)');
+  bodySheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
+  bodySheen.addColorStop(0.85, 'rgba(0, 0, 0, 0.15)');
+  bodySheen.addColorStop(1, 'rgba(0, 0, 0, 0.32)');
+  ctx.fillStyle = bodySheen;
+  ctx.fill();
+
+  ctx.strokeStyle = tints.outline;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.restore();
+
+  // 6. Paper Wrapper (Middle Band)
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(crayonLeft, wrapperTop, crayonW, wrapperH);
+  ctx.fillStyle = tints.wrapper;
+  ctx.fill();
+
+  // Cylindrical lighting sheen over wrapper paper
+  const wrapperSheen = ctx.createLinearGradient(crayonLeft, 0, crayonRight, 0);
+  wrapperSheen.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
+  wrapperSheen.addColorStop(0.22, 'rgba(255, 255, 255, 0.55)');
+  wrapperSheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.12)');
+  wrapperSheen.addColorStop(0.85, 'rgba(0, 0, 0, 0.10)');
+  wrapperSheen.addColorStop(1, 'rgba(0, 0, 0, 0.22)');
+  ctx.fillStyle = wrapperSheen;
+  ctx.fill();
+
+  // Wrapper top and bottom borders
+  ctx.strokeStyle = tints.outline;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(crayonLeft, wrapperTop);
+  ctx.lineTo(crayonRight, wrapperTop);
+  ctx.moveTo(crayonLeft, wrapperBottom);
+  ctx.lineTo(crayonRight, wrapperBottom);
+  ctx.stroke();
+
+  // Two decorative wavy stripes (near top and bottom of wrapper)
+  const drawWavyStripe = (sy: number) => {
+    ctx.save();
+    ctx.strokeStyle = tints.stripe;
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    const waves = 4;
+    const waveW = crayonW / waves;
+    ctx.moveTo(crayonLeft + 2, sy);
+    for (let i = 0; i < waves; i++) {
+      const wx1 = crayonLeft + i * waveW + waveW * 0.25;
+      const wx2 = crayonLeft + i * waveW + waveW * 0.75;
+      const wx3 = crayonLeft + (i + 1) * waveW;
+      ctx.quadraticCurveTo(wx1, sy - 2.5, wx2, sy + 2.5);
+      ctx.quadraticCurveTo(wx2 + waveW * 0.12, sy, wx3, sy);
+    }
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  drawWavyStripe(wrapperTop + 7);
+  drawWavyStripe(wrapperBottom - 7);
+
+  // Cute Central Spiral / Swirl Emblem
+  const emblemY = (wrapperTop + wrapperBottom) / 2;
+  const emblemR = Math.min(10, Math.round(crayonW * 0.20));
+
+  ctx.save();
+  ctx.fillStyle = '#FAF5EC';
+  ctx.strokeStyle = tints.stripe;
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.arc(cx, emblemY, emblemR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Spiral swirl inside emblem
+  ctx.strokeStyle = tints.stripe;
+  ctx.lineWidth = 1.6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  for (let a = 0; a < Math.PI * 3.2; a += 0.25) {
+    const sr = (a / (Math.PI * 3.2)) * (emblemR - 2.5);
+    const sx = cx + Math.cos(a) * sr;
+    const sy = emblemY + Math.sin(a) * sr;
+    if (a === 0) ctx.moveTo(sx, sy);
+    else ctx.lineTo(sx, sy);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.restore(); // end wrapper save
+
+  // 7. Selection Indicator on top of crayon when selected
+  if (isSelected) {
+    ctx.save();
+    const checkY = tipTop - 7;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(cx, checkY, 8.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - 3.5, checkY);
+    ctx.lineTo(cx - 0.8, checkY + 3);
+    ctx.lineTo(cx + 4, checkY - 3);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+function drawCrayonSilhouettePath(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  crayonLeft: number,
+  crayonRight: number,
+  tipTop: number,
+  shoulderY: number,
+  crayonBottom: number,
+  baseRadius: number
+): void {
+  ctx.beginPath();
+  ctx.moveTo(crayonLeft + 2, shoulderY);
+  ctx.quadraticCurveTo(crayonLeft + 4, tipTop + 8, cx - 2, tipTop + 3);
+  ctx.arcTo(cx, tipTop, cx + 2, tipTop + 3, 3);
+  ctx.quadraticCurveTo(crayonRight - 4, tipTop + 8, crayonRight - 2, shoulderY);
+  ctx.lineTo(crayonRight, crayonBottom - baseRadius);
+  ctx.arcTo(crayonRight, crayonBottom, crayonRight - baseRadius, crayonBottom, baseRadius);
+  ctx.lineTo(crayonLeft + baseRadius, crayonBottom);
+  ctx.arcTo(crayonLeft, crayonBottom, crayonLeft, crayonBottom - baseRadius, baseRadius);
+  ctx.closePath();
+}
