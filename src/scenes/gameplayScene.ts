@@ -14,7 +14,8 @@ import { audioManager } from '../audio/audioManager';
 import { DESIGN_WIDTH, DESIGN_HEIGHT } from '../shared/constants';
 import type { LevelData } from '../shared/contracts';
 import { COLORS, getFont } from '../ui/tokens';
-import { drawGlossyGreenButton, drawVolumeButton } from '../ui/components';
+import { drawGlossyGreenButton, drawVolumeButton, draw3DPaintTube } from '../ui/components';
+import { backgroundRenderer } from '../ui/backgroundRenderer';
 
 export class GameplayScene implements Scene {
   public name = 'gameplay' as const;
@@ -88,6 +89,7 @@ export class GameplayScene implements Scene {
 
   public update(dt: number): void {
     this.pulseTimer += dt;
+    backgroundRenderer.update(dt / 1000);
 
     // Update active fill impact animations
     for (const [regionId, anim] of this.activeFillAnims.entries()) {
@@ -140,13 +142,14 @@ export class GameplayScene implements Scene {
     // 1. Calculate responsive layout coordinates & auto-fit bounding box transforms
     this.calculateLayout(width, height, isPortrait, level);
 
-    // 2. Warm Clotted Cream Background (80% Dominant Surface)
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#FAF5EB');
-    bgGrad.addColorStop(0.5, '#EEE2CB');
-    bgGrad.addColorStop(1, '#E4D6BC');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
+    // 2. Warm British picture-book watercolor background with paper texture, washes, hills and corner critters
+    backgroundRenderer.render(ctx, width, height, {
+      showHills: true,
+      showFlora: true,
+      showCritters: true,
+      showWashes: true,
+      dimCenterArea: false,
+    });
 
     // 3. Render Header HUD (Dedicated Top AppBar)
     this.renderHeader(ctx, level, width, isPortrait);
@@ -514,6 +517,28 @@ export class GameplayScene implements Scene {
   private renderTemplate(ctx: CanvasRenderingContext2D, level: LevelData): void {
     const { x, y, w, h } = this.templateBounds;
 
+    // Cute botanical leaves peeking playfully from top-left border of canvas frame
+    ctx.save();
+    ctx.translate(x + 24, y - 6);
+    ctx.rotate(-0.25);
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.quadraticCurveTo(-3, 0, -6, -12);
+    ctx.stroke();
+    ctx.fillStyle = '#52B788';
+    ctx.beginPath();
+    if (typeof ctx.ellipse === 'function') {
+      ctx.ellipse(-8, -14, 11, 5, -0.4, 0, Math.PI * 2);
+    } else {
+      ctx.arc(-8, -14, 5, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
     // Main Middle Container Card Face in Clotted Cream light with Spruce Velvet border
     this.drawRoundedRect(ctx, x, y, w, h, 28, COLORS.clottedCreamLight, COLORS.spruceVelvet, 4);
 
@@ -651,6 +676,51 @@ export class GameplayScene implements Scene {
   ): void {
     const { x, y, w, h } = this.paletteArea;
 
+    // Cute pink/coral critter peeking from the corner of the palette frame
+    ctx.save();
+    const peekX = isPortrait ? x + w - 24 : x + 24;
+    const peekY = y - 8;
+    ctx.translate(peekX, peekY);
+    ctx.fillStyle = '#E26D7D';
+    ctx.beginPath();
+    if (typeof ctx.ellipse === 'function') {
+      ctx.ellipse(0, 0, 13, 15, 0, 0, Math.PI * 2);
+    } else {
+      ctx.arc(0, 0, 11, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Little ears
+    ctx.beginPath();
+    ctx.moveTo(-5, -10);
+    ctx.lineTo(-9, -17);
+    ctx.lineTo(-1, -12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(5, -10);
+    ctx.lineTo(9, -17);
+    ctx.lineTo(1, -12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // Eyes
+    ctx.fillStyle = '#1B4532';
+    ctx.beginPath();
+    ctx.arc(-4, -2, 2, 0, Math.PI * 2);
+    ctx.arc(4, -2, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Rosy cheeks
+    ctx.fillStyle = 'rgba(255, 75, 114, 0.6)';
+    ctx.beginPath();
+    ctx.arc(-6, 2, 2.5, 0, Math.PI * 2);
+    ctx.arc(6, 2, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     // Palette background card
     this.drawRoundedRect(ctx, x, y, w, h, 22, COLORS.clottedCreamCard, COLORS.spruceVelvet, 3.5);
 
@@ -775,98 +845,17 @@ export class GameplayScene implements Scene {
     const hintedColor = coloringEngine.getHintedColor();
     const isHinted = hintedColor !== null && hintedColor.toLowerCase() === color.toLowerCase();
 
-    ctx.save();
-
-    // Radiant glowing effect when active (zero continuous movement, clean luminous highlight)
-    if (isHinted) {
-      // Golden luminous aura for hinted color
-      ctx.save();
-      ctx.shadowColor = 'rgba(242, 201, 76, 0.95)';
-      ctx.shadowBlur = 18;
-      this.drawRoundedRect(
-        ctx,
-        sx - 4,
-        sy - 4,
-        sw + 8,
-        sh + 8,
-        18,
-        'rgba(242, 201, 76, 0.45)',
-        '#F2C94C',
-        3.5
-      );
-      ctx.restore();
-    } else if (hasSelection) {
-      // Dazzling brilliant white glitter glowing effect around active swatches
-      ctx.save();
-      // Outer bright shimmer aura
-      ctx.shadowColor = '#FFFFFF';
-      ctx.shadowBlur = 22;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      this.drawRoundedRect(
-        ctx,
-        sx - 4,
-        sy - 4,
-        sw + 8,
-        sh + 8,
-        18,
-        'rgba(255, 255, 255, 0.75)',
-        '#FFFFFF',
-        3
-      );
-      ctx.restore();
-
-      // Sharp specular white rim for intense glitter sparkle
-      ctx.save();
-      ctx.shadowColor = '#FFFFFF';
-      ctx.shadowBlur = 8;
-      this.drawRoundedRect(
-        ctx,
-        sx - 2,
-        sy - 2,
-        sw + 4,
-        sh + 4,
-        16,
-        undefined,
-        '#FFFFFF',
-        2
-      );
-      ctx.restore();
-    }
-
-    // 3D bottom bevel/shadow
-    this.drawRoundedRect(ctx, sx, sy + 4, sw, sh, 14, COLORS.clottedCreamDark);
-
-    // Rounded rectangle swatch face with dazzling pure white border
-    this.drawRoundedRect(
-      ctx,
-      sx,
-      sy,
-      sw,
-      sh,
-      14,
+    // 3D cylindrical paint tube swatch with top/bottom rim highlights and pigment shading
+    draw3DPaintTube(ctx, {
+      x: sx,
+      y: sy,
+      w: sw,
+      h: sh,
       color,
-      isHinted ? '#F2C94C' : hasSelection ? '#FFFFFF' : '#DFD2BD',
-      isHinted ? 4.5 : hasSelection ? 4 : 2
-    );
-
-    // High-specularity crystalline glitter shine
-    ctx.fillStyle = hasSelection ? 'rgba(255, 255, 255, 0.55)' : 'rgba(255, 255, 255, 0.35)';
-    ctx.beginPath();
-    if (typeof ctx.ellipse === 'function') {
-      ctx.ellipse(sx + sw / 2, sy + Math.min(14, sh * 0.25), sw * 0.38, Math.min(8, sh * 0.15), 0, 0, Math.PI * 2);
-    } else {
-      ctx.arc(sx + sw / 2, sy + Math.min(14, sh * 0.25), 8, 0, Math.PI * 2);
-    }
-    ctx.fill();
-
-    // Glitter sparkle diamond glints on active swatch corners
-    if (hasSelection) {
-      this.drawGlitterSparkle(ctx, sx + sw - 8, sy + 8, 6);
-      this.drawGlitterSparkle(ctx, sx + 9, sy + sh - 9, 4.5);
-    }
-
-    ctx.restore();
+      isSelected: hasSelection,
+      isHinted,
+      isHighlighted: hasSelection,
+    });
   }
 
   private drawGlitterSparkle(

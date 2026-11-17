@@ -20,6 +20,7 @@ import {
   isPointInButton,
   type ButtonOptions,
 } from '../ui/components';
+import { backgroundRenderer } from '../ui/backgroundRenderer';
 import { eventBus } from '../shared/eventBus';
 import { audioManager } from '../audio/audioManager';
 import { saveManager } from '../game/saveManager';
@@ -121,6 +122,7 @@ export class TitleScene implements Scene {
     // dt in milliseconds
     const sec = dt / 1000;
     this.animTime += sec;
+    backgroundRenderer.update(sec);
 
     // Update bubbles drifting upwards
     for (const b of this.bubbles) {
@@ -147,16 +149,13 @@ export class TitleScene implements Scene {
   ): void {
     const isPortrait = height > width;
 
-    // 1. Warm Clotted Cream Background (80% dominant surface)
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#FAF5EB');
-    bgGrad.addColorStop(0.5, '#EEE2CB');
-    bgGrad.addColorStop(1, '#E4D6BC');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
-
-    // 2. Playful Rolling Hills at bottom
-    this.renderHills(ctx, width, height);
+    // 1. Warm British picture-book watercolor background with paper texture, washes, hills and corner flora
+    backgroundRenderer.render(ctx, width, height, {
+      showHills: true,
+      showFlora: true,
+      showCritters: false,
+      showWashes: true,
+    });
 
     // 3. Floating Animated Bubbles
     for (const b of this.bubbles) {
@@ -381,6 +380,62 @@ export class TitleScene implements Scene {
         if (item.char === ' ') return;
         renderLetter(item, startFull + i * spacingFull, -15, i);
       });
+
+      // Cute leaf accent sprig above the 'o' (matching reference)
+      const leafX = startFull + 1 * spacingFull;
+      const leafY = -62 + Math.sin(this.animTime * 3.5 + 0.45) * 12;
+      ctx.save();
+      ctx.translate(leafX, leafY);
+      ctx.rotate(-0.25);
+      // Little stem
+      ctx.strokeStyle = '#1B4532';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(0, 10);
+      ctx.quadraticCurveTo(-4, 0, -8, -14);
+      ctx.stroke();
+      // Main green leaf
+      ctx.fillStyle = '#52B788';
+      ctx.beginPath();
+      if (typeof ctx.ellipse === 'function') {
+        ctx.ellipse(-10, -16, 12, 6, -0.4, 0, Math.PI * 2);
+      } else {
+        ctx.arc(-10, -16, 6, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.stroke();
+      // Side green leaf
+      ctx.fillStyle = '#74C69D';
+      ctx.beginPath();
+      if (typeof ctx.ellipse === 'function') {
+        ctx.ellipse(2, -6, 9, 5, 0.4, 0, Math.PI * 2);
+      } else {
+        ctx.arc(2, -6, 5, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // Surrounding 4-point decorative sparkles and confetti strokes
+      drawSparkle(ctx, -235, -60, 18, '#FFD000', this.animTime);
+      drawSparkle(ctx, 230, -65, 16, '#00C4FF', -this.animTime * 1.2);
+      drawSparkle(ctx, -210, 40, 14, '#FF4B72', this.animTime * 0.8);
+      drawSparkle(ctx, 215, 38, 15, '#FFD000', -this.animTime);
+
+      // Confetti strokes
+      const drawConfettiStroke = (cx: number, cy: number, rot: number, len: number, col: string) => {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rot);
+        ctx.fillStyle = col;
+        drawRoundedRect(ctx, -len / 2, -3, len, 6, 3, col);
+        ctx.restore();
+      };
+      drawConfettiStroke(-255, -20, 0.4, 16, '#FF4B72');
+      drawConfettiStroke(-235, 10, -0.3, 14, '#00C4FF');
+      drawConfettiStroke(245, -25, -0.5, 16, '#FF8A00');
+      drawConfettiStroke(255, 5, 0.35, 15, '#00E676');
     }
 
     // Subtitle Pill
@@ -442,6 +497,10 @@ export class TitleScene implements Scene {
       radius: 22,
       isPressed: this.pressedButtonId === 'play',
     });
+
+    // Little sparkle accents on Let's Play button
+    drawSparkle(ctx, this.playBtnRect.x + 16, this.playBtnRect.y + 14, 11, '#FFFFFF');
+    drawSparkle(ctx, this.playBtnRect.x + this.playBtnRect.w - 18, this.playBtnRect.y + this.playBtnRect.h - 18, 12, '#FFD000');
 
     // 2. Level Select Button
     const lvlBtnH = 68;

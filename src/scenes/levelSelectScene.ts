@@ -16,9 +16,12 @@ import {
   drawStar,
   drawIcon,
   drawBubble,
+  drawFloralBadge,
+  draw3DPadlock,
   isPointInButton,
   type ButtonOptions,
 } from '../ui/components';
+import { backgroundRenderer } from '../ui/backgroundRenderer';
 import { eventBus } from '../shared/eventBus';
 import { audioManager } from '../audio/audioManager';
 import { saveManager } from '../game/saveManager';
@@ -125,6 +128,7 @@ export class LevelSelectScene implements Scene {
   public update(dt: number): void {
     const sec = dt / 1000;
     this.animTime += sec;
+    backgroundRenderer.update(sec);
 
     // Smooth spring interpolation for page slide
     if (!this.isDragging) {
@@ -149,13 +153,13 @@ export class LevelSelectScene implements Scene {
   ): void {
     const isPortrait = height > width;
 
-    // 1. Warm Clotted Cream Background (80% dominant surface)
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-    bgGrad.addColorStop(0, '#FAF5EB');
-    bgGrad.addColorStop(0.5, '#EEE2CB');
-    bgGrad.addColorStop(1, '#E4D6BC');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
+    // 1. Warm British picture-book watercolor background with paper texture, washes, hills and corner flora
+    backgroundRenderer.render(ctx, width, height, {
+      showHills: true,
+      showFlora: true,
+      showCritters: false,
+      showWashes: true,
+    });
 
     // Decorative floating soft bubbles in background
     this.renderBgDecorations(ctx, width, height);
@@ -226,7 +230,7 @@ export class LevelSelectScene implements Scene {
     ctx.fillText(titleText, centerX, centerY);
     ctx.restore();
 
-    // 3. Total Stars Counter (top-right)
+    // 3. Total Stars Counter (top-right) with decorative flower petals
     const progress = saveManager.getProgress();
     let totalStars = 0;
     for (const res of Object.values(progress.results)) {
@@ -234,31 +238,18 @@ export class LevelSelectScene implements Scene {
     }
     const maxStars = TOTAL_LEVELS * 3;
 
-    const badgeW = 140;
+    const badgeW = 145;
     const badgeH = 48;
     const badgeX = width - margin - badgeW;
     const badgeY = headerY + 2;
 
-    drawRoundedRect(
-      ctx,
-      badgeX,
-      badgeY,
-      badgeW,
-      badgeH,
-      DIMENSIONS.borderRadiusPill,
-      COLORS.creamWhite,
-      COLORS.outlineDark,
-      3
-    );
-
-    ctx.save();
-    ctx.font = getFont(18, 'extraBold');
-    ctx.fillStyle = COLORS.darkPlum;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('⭐', badgeX + 12, badgeY + badgeH / 2 + 1);
-    ctx.fillText(`${totalStars} / ${maxStars}`, badgeX + 42, badgeY + badgeH / 2 + 1);
-    ctx.restore();
+    drawFloralBadge(ctx, {
+      x: badgeX,
+      y: badgeY,
+      w: badgeW,
+      h: badgeH,
+      text: `${totalStars} / ${maxStars}`,
+    });
   }
 
   private renderPageTabs(
@@ -510,7 +501,7 @@ export class LevelSelectScene implements Scene {
 
       ctx.restore();
     } else {
-      // ── Locked Card (Solid Clotted Cream Muted, enlarged Lock icon & number) ──
+      // ── Locked Card matching reference (Warm stone-beige #DFD7C8, 3D golden padlock) ──
       // 3D bottom shadow
       drawRoundedRect(
         ctx,
@@ -519,12 +510,12 @@ export class LevelSelectScene implements Scene {
         w,
         faceH,
         radius,
-        COLORS.disabledShadow,
-        COLORS.disabledText,
+        '#B5A995',
+        '#9C8E79',
         2.5
       );
 
-      // Face: flat solid muted cream
+      // Face: flat solid muted stone-beige
       drawRoundedRect(
         ctx,
         x,
@@ -532,22 +523,22 @@ export class LevelSelectScene implements Scene {
         w,
         faceH,
         radius,
-        COLORS.disabledBg,
-        COLORS.disabledText,
+        '#DFD7C8',
+        '#9C8E79',
         2.5
       );
 
-      // Enlarged top-left level number (~35% larger: font 24 bold)
+      // Top-left level number
       ctx.save();
       ctx.font = getFont(isPortrait ? 24 : 22, 'extraBold');
-      ctx.fillStyle = COLORS.disabledText;
+      ctx.fillStyle = '#8C8271';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText(String(levelId), x + 12, y + 10);
-
-      // Enlarged center Lock icon (~40% larger: size 42)
-      drawIcon(ctx, 'lock', x + w / 2, y + faceH / 2 + 8, 42, COLORS.disabledText);
       ctx.restore();
+
+      // Detailed 3D Golden Padlock with metallic silver shackle
+      draw3DPadlock(ctx, x + w / 2, y + faceH / 2 + 5, Math.min(w * 0.38, faceH * 0.44, 46));
     }
 
     ctx.restore();
@@ -580,7 +571,9 @@ export class LevelSelectScene implements Scene {
       icon: 'arrow-left',
       color: COLORS.creamWhite,
       shadowColor: COLORS.creamWhiteShadow,
-      textColor: hasPrev ? COLORS.darkPlum : COLORS.disabledText,
+      textColor: hasPrev ? COLORS.spruceVelvet : COLORS.disabledText,
+      strokeColor: COLORS.spruceVelvet,
+      strokeWidth: 3,
       radius: DIMENSIONS.borderRadiusPill,
       shadowDepth: 4,
       isDisabled: !hasPrev,
@@ -604,7 +597,9 @@ export class LevelSelectScene implements Scene {
       icon: 'arrow-right',
       color: COLORS.creamWhite,
       shadowColor: COLORS.creamWhiteShadow,
-      textColor: hasNext ? COLORS.darkPlum : COLORS.disabledText,
+      textColor: hasNext ? COLORS.spruceVelvet : COLORS.disabledText,
+      strokeColor: COLORS.spruceVelvet,
+      strokeWidth: 3,
       radius: DIMENSIONS.borderRadiusPill,
       shadowDepth: 4,
       isDisabled: !hasNext,
@@ -621,11 +616,11 @@ export class LevelSelectScene implements Scene {
       const isCur = i === this.currentPage;
       ctx.beginPath();
       ctx.arc(dotX, footerY, isCur ? 7 : 5, 0, Math.PI * 2);
-      ctx.fillStyle = isCur ? COLORS.candyPink : 'rgba(30, 26, 52, 0.25)';
+      ctx.fillStyle = isCur ? '#E05353' : '#C5BAA5';
       ctx.fill();
 
       if (isCur) {
-        ctx.strokeStyle = COLORS.outlineDark;
+        ctx.strokeStyle = COLORS.spruceVelvet;
         ctx.lineWidth = 2;
         ctx.stroke();
       }

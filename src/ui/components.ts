@@ -626,28 +626,7 @@ export function drawIcon(
     }
 
     case 'lock': {
-      // Padlock: shackle + body
-      const bodyW = size * 0.72;
-      const bodyH = size * 0.55;
-      const bodyX = cx - bodyW / 2;
-      const bodyY = cy - bodyH / 2 + size * 0.15;
-
-      // Shackle
-      ctx.lineWidth = Math.max(3, size * 0.14);
-      ctx.beginPath();
-      const shackleR = bodyW * 0.32;
-      ctx.arc(cx, bodyY - 2, shackleR, Math.PI, 0, false);
-      ctx.stroke();
-
-      // Body
-      drawRoundedRect(ctx, bodyX, bodyY, bodyW, bodyH, 6, color);
-
-      // Keyhole
-      ctx.fillStyle = COLORS.creamWhite;
-      ctx.beginPath();
-      ctx.arc(cx, bodyY + bodyH * 0.38, size * 0.08, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillRect(cx - size * 0.04, bodyY + bodyH * 0.38, size * 0.08, size * 0.18);
+      draw3DPadlock(ctx, cx, cy, size);
       break;
     }
 
@@ -1351,5 +1330,222 @@ export function drawVolumeButton(
   }
 
   ctx.restore();
+  ctx.restore();
+}
+
+/**
+ * Draws a 3D golden padlock matching the Level Select reference:
+ * metallic silver/grey curved shackle, warm honey-gold body with 3D bevel, and keyhole.
+ */
+export function draw3DPadlock(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  ctx.save();
+  const bodyW = size * 0.72;
+  const bodyH = size * 0.58;
+  const bodyX = cx - bodyW / 2;
+  const bodyY = cy - bodyH / 2 + size * 0.14;
+  const shadowDepth = Math.max(3, Math.round(size * 0.08));
+
+  // 1. Shackle (Metallic Silver/Grey)
+  const shackleR = bodyW * 0.32;
+  const shackleThick = Math.max(4, size * 0.13);
+  ctx.save();
+  ctx.lineWidth = shackleThick;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#94A3B8';
+  ctx.beginPath();
+  ctx.arc(cx, bodyY - 1, shackleR, Math.PI, 0, false);
+  ctx.stroke();
+
+  // Shackle highlight
+  ctx.lineWidth = Math.max(1.5, shackleThick * 0.35);
+  ctx.strokeStyle = '#F1F5F9';
+  ctx.beginPath();
+  ctx.arc(cx, bodyY - 1, shackleR, Math.PI + 0.3, -0.3, false);
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. Body 3D Bottom Lip (Amber Shadow)
+  drawRoundedRect(ctx, bodyX, bodyY + shadowDepth, bodyW, bodyH - shadowDepth, 10, '#C27803', '#92400E', 2.5);
+
+  // 3. Body Face (Warm Honey-Gold Gradient)
+  const grad = ctx.createLinearGradient(bodyX, bodyY, bodyX, bodyY + bodyH - shadowDepth);
+  grad.addColorStop(0, '#FFE866');
+  grad.addColorStop(0.3, '#FFD000');
+  grad.addColorStop(0.8, '#F59E0B');
+  grad.addColorStop(1, '#D97706');
+  drawRoundedRect(ctx, bodyX, bodyY, bodyW, bodyH - shadowDepth, 10, grad as unknown as string, '#92400E', 2.5);
+
+  // 4. Body Gloss Highlight
+  ctx.save();
+  const glossW = bodyW * 0.75;
+  const glossH = (bodyH - shadowDepth) * 0.35;
+  drawRoundedRect(ctx, cx - glossW / 2, bodyY + 2, glossW, glossH, 6, 'rgba(255, 255, 255, 0.45)');
+  ctx.restore();
+
+  // 5. Dark Keyhole
+  const keyholeY = bodyY + (bodyH - shadowDepth) * 0.48;
+  ctx.save();
+  ctx.fillStyle = '#78350F';
+  ctx.beginPath();
+  ctx.arc(cx, keyholeY, size * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx - size * 0.05, keyholeY);
+  ctx.lineTo(cx + size * 0.05, keyholeY);
+  ctx.lineTo(cx + size * 0.03, keyholeY + size * 0.14);
+  ctx.lineTo(cx - size * 0.03, keyholeY + size * 0.14);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/**
+ * Draws the Star Trophy Badge with colorful flower petal accents decorating the border
+ * as seen in the Level Select reference design.
+ */
+export function drawFloralBadge(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    text: string;
+    isPressed?: boolean;
+  }
+): void {
+  const { x, y, w, h, text } = opts;
+  ctx.save();
+
+  // Colorful floral petals along the top and right edge of the badge
+  const petals = [
+    { dx: w * 0.75, dy: -5, r: 7, color: '#E63946' },
+    { dx: w * 0.88, dy: -7, r: 9, color: '#FFD166' },
+    { dx: w + 4, dy: 3, r: 8, color: '#F77F00' },
+    { dx: w + 7, dy: 16, r: 7, color: '#E63946' },
+    { dx: w + 4, dy: 28, r: 6, color: '#74C69D' },
+    { dx: w * 0.65, dy: -4, r: 5, color: '#74C69D' },
+  ];
+
+  for (const p of petals) {
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(x + p.dx, y + p.dy, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#1B4532';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // 3D bottom bevel
+  drawRoundedRect(ctx, x, y + 4, w, h, h / 2, COLORS.clottedCreamDark, COLORS.spruceVelvet, 3);
+  // Pill face
+  drawRoundedRect(ctx, x, y, w, h, h / 2, COLORS.creamWhite, COLORS.spruceVelvet, 3);
+
+  // Star and text
+  ctx.save();
+  ctx.font = getFont(18, 'extraBold');
+  ctx.fillStyle = COLORS.spruceVelvet;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('⭐', x + 12, y + h / 2 + 1);
+  ctx.fillText(text, x + 42, y + h / 2 + 1);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+/**
+ * Draws a 3D cylindrical paint tube / swatch with top/bottom rim highlights,
+ * rich pigment shading, and specular shine matching the reference aesthetic.
+ */
+export function draw3DPaintTube(
+  ctx: CanvasRenderingContext2D,
+  opts: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    color: string;
+    isSelected?: boolean;
+    isHinted?: boolean;
+    isHighlighted?: boolean;
+  }
+): void {
+  const { x, y, w, h, color, isSelected = false, isHinted = false, isHighlighted = false } = opts;
+  ctx.save();
+
+  const radius = Math.min(16, Math.round(Math.min(w, h) * 0.28));
+  const shadowDepth = Math.max(3, Math.min(6, Math.round(h * 0.1)));
+  const shiftY = isSelected ? 2 : 0;
+  const faceH = h - shadowDepth;
+
+  // 1. Radiant luminous glow when active / selected / hinted
+  if (isHinted) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(242, 201, 76, 0.95)';
+    ctx.shadowBlur = 18;
+    drawRoundedRect(ctx, x - 4, y - 4, w + 8, h + 8, radius + 4, 'rgba(242, 201, 76, 0.45)', '#F2C94C', 3.5);
+    ctx.restore();
+  } else if (isSelected || isHighlighted) {
+    ctx.save();
+    ctx.shadowColor = '#FFFFFF';
+    ctx.shadowBlur = 20;
+    drawRoundedRect(ctx, x - 4, y - 4, w + 8, h + 8, radius + 4, 'rgba(255, 255, 255, 0.75)', '#FFFFFF', 3);
+    ctx.restore();
+  }
+
+  // 2. 3D Bottom bevel / shadow
+  drawRoundedRect(ctx, x, y + shadowDepth, w, faceH, radius, COLORS.spruceVelvetShadow, '#1B4532', 2.5);
+
+  // 3. Paint Tube Face with cylindrical 3D gradient across width
+  drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, color, isSelected ? '#FFFFFF' : '#1B4532', isSelected ? 3.5 : 2.5);
+
+  // Cylindrical lighting overlay
+  ctx.save();
+  const cylGrad = ctx.createLinearGradient(x, y, x + w, y);
+  cylGrad.addColorStop(0, 'rgba(0, 0, 0, 0.22)');
+  cylGrad.addColorStop(0.18, 'rgba(255, 255, 255, 0.45)');
+  cylGrad.addColorStop(0.45, 'rgba(255, 255, 255, 0.15)');
+  cylGrad.addColorStop(0.85, 'rgba(0, 0, 0, 0.18)');
+  cylGrad.addColorStop(1, 'rgba(0, 0, 0, 0.35)');
+
+  // Clip to tube shape and fill cylindrical sheen
+  drawRoundedRect(ctx, x, y + shiftY, w, faceH, radius, cylGrad as unknown as string);
+  ctx.restore();
+
+  // 4. Top specular highlight strip
+  ctx.save();
+  const glossW = Math.max(12, w - radius * 1.5);
+  const glossH = Math.max(5, Math.round(faceH * 0.32));
+  const glossX = x + (w - glossW) / 2;
+  const glossY = y + shiftY + 3;
+  drawRoundedRect(ctx, glossX, glossY, glossW, glossH, 4, 'rgba(255, 255, 255, 0.35)');
+  ctx.restore();
+
+  // 5. Active selection or hint icon in center
+  if (isSelected) {
+    const cx = x + w / 2;
+    const cy = y + shiftY + faceH / 2;
+    ctx.save();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - 9, cy - 1);
+    ctx.lineTo(cx - 2, cy + 7);
+    ctx.lineTo(cx + 10, cy - 7);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   ctx.restore();
 }
