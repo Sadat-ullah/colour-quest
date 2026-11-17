@@ -3,7 +3,7 @@
  *  Agent A2: Level Designer & Data Architect
  * ───────────────────────────────────────────────────────────── */
 import type { LevelData, LevelCategory } from '../shared/contracts';
-import rawLevels from '../../public/data/levels.json';
+import rawLevels from '../data/levels.json';
 
 /**
  * All 100 levels typed according to the frozen contracts.
