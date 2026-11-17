@@ -31,6 +31,7 @@ import { ResultsModal } from '../scenes/resultsModal';
 import { eventBus } from '../shared/eventBus';
 import { saveManager } from '../game/saveManager';
 import { sceneManager } from '../core/sceneManager';
+import { coloringEngine } from '../game/coloringEngine';
 
 // Mock Canvas 2D Context for headless testing
 function createMockContext(): CanvasRenderingContext2D {
@@ -582,11 +583,22 @@ describe('Gameplay Scene Layout & Swatches (/src/scenes/gameplayScene.ts)', () =
     // In landscape: labelH = 52, margin = 8, so swatches start at paletteArea.y + 60
     expect(swatches[0].y).toBeGreaterThanOrEqual(paletteArea.y + 60);
 
-    // Prompt header text should be drawn at paletteArea.y + 24 (generous top border clearance)
+    // Prompt header text in Colour-First flow displays PICK A COLOUR when idle
     expect(ctx.fillText).toHaveBeenCalledWith(
-      expect.stringContaining('TAP A SHAPE FIRST'),
+      expect.stringContaining('PICK A COLOUR'),
       expect.any(Number),
       paletteArea.y + 24
     );
+
+    // When a crayon is equipped, prompt changes to TAP A SHAPE
+    coloringEngine.selectColor('#FF5722');
+    vi.clearAllMocks();
+    scene.render(ctx, 1280, 720);
+    expect(ctx.fillText).toHaveBeenCalledWith(
+      expect.stringContaining('TAP A SHAPE'),
+      expect.any(Number),
+      paletteArea.y + 24
+    );
+    coloringEngine.clearSelection();
   });
 });

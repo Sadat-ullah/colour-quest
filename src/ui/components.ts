@@ -1552,7 +1552,7 @@ export function draw3DPaintTube(
 
 /**
  * Derives dynamic crayon tints from any hex color code:
- * highlight sheen, shadow shading, pastel wrapper paper, dark stripe/emblem accents.
+ * highlight sheen, shadow shading, pastel wrapper paper, dark stripe accents.
  */
 export function deriveCrayonTints(hex: string): {
   base: string;
@@ -1582,8 +1582,8 @@ export function deriveCrayonTints(hex: string): {
       highlight: '#FFFFFF',
       shadow: '#D5CBBB',
       wrapper: '#EFE7DA',
-      stripe: '#8C7E68',
-      outline: '#1B4532',
+      stripe: '#7B4A23',
+      outline: 'rgba(27, 69, 50, 0.45)',
     };
   }
 
@@ -1594,30 +1594,33 @@ export function deriveCrayonTints(hex: string): {
       highlight: '#585F6D',
       shadow: '#141619',
       wrapper: '#D6D9E0',
-      stripe: '#1A1C20',
-      outline: '#0E1012',
+      stripe: '#5C381E',
+      outline: 'rgba(14, 16, 18, 0.6)',
     };
   }
 
-  // Highlight: mixed with 45% white
+  // Highlight: mixed with 42% white for smooth clay sheen
   const highlight = rgbToHex(
-    r + (255 - r) * 0.45,
-    g + (255 - g) * 0.45,
-    b + (255 - b) * 0.45
+    r + (255 - r) * 0.42,
+    g + (255 - g) * 0.42,
+    b + (255 - b) * 0.42
   );
 
-  // Shadow: darkened by 32%
-  const shadow = rgbToHex(r * 0.68, g * 0.68, b * 0.68);
+  // Shadow: darkened by 28% for soft clay ambient shadow
+  const shadow = rgbToHex(r * 0.72, g * 0.72, b * 0.72);
 
-  // Wrapper: soft pastel paper tint (mixed with 76% white)
+  // Wrapper: soft pastel paper tint (mixed with 74% white)
   const wrapper = rgbToHex(
-    r + (255 - r) * 0.76,
-    g + (255 - g) * 0.76,
-    b + (255 - b) * 0.76
+    r + (255 - r) * 0.74,
+    g + (255 - g) * 0.74,
+    b + (255 - b) * 0.74
   );
 
-  // Stripe & emblem: rich dark pigment accent
-  const stripe = rgbToHex(r * 0.45, g * 0.45, b * 0.45);
+  // Stripe: rich warm dark-brown/sepia tone matching reference image
+  const stripe = '#7B4A23';
+
+  // Outline: crisp Spruce Velvet
+  const outline = '#1B4532';
 
   return {
     base: hex,
@@ -1625,18 +1628,19 @@ export function deriveCrayonTints(hex: string): {
     shadow,
     wrapper,
     stripe,
-    outline: '#1B4532',
+    outline,
   };
 }
 
 /**
- * Draws a chunky, tactile 3D illustrated wax crayon matching the reference design:
- * - Tapered conical wax tip with rounded apex and glossy white highlight streak
- * - Cylindrical wax body with matching lighter pastel paper band
- * - Two dark wavy stripes and cute central swirl emblem
- * - 3D contact shadow directly beneath crayon base
- * - Spring bounce translateY(-6px) when tapped/selected
- * - Golden hint aura pulse when hinted
+ * Draws a smooth, tactile 3D clay/matte wax crayon matching the reference design:
+ * - Rounded conical wax tip with smooth rounded dome apex and soft clay lighting
+ * - Stepped cylindrical wax collar
+ * - Raised cylindrical matte paper sleeve in pastel tint with 2 top sepia bands and 2 bottom sepia bands
+ * - Rounded wax base plug protruding at bottom
+ * - Soft 3D oval contact shadow
+ * - Active / Equipped state: lifts upward (translateY(-10px)), scales 1.06x, luminous selection aura
+ * - Hint state: golden pulse halo
  */
 export function draw3DWaxCrayon(
   ctx: CanvasRenderingContext2D,
@@ -1656,20 +1660,22 @@ export function draw3DWaxCrayon(
 
   ctx.save();
 
-  // 1. Interactive Bounce (translateY(-6px) when selected or tapped)
+  // 1. Interactive Lift & Elevation (translateY(-10px) and 1.06x scale when selected/equipped)
   const isElevated = isSelected || isHighlighted;
-  const bounceY = isElevated ? -6 : 0;
-  const drawY = y + bounceY;
+  const bounceY = isElevated ? -10 : 0;
+  const scaleFactor = isElevated ? 1.06 : 1.0;
 
-  // 2. 3D Contact Shadow on palette surface (stays anchored to slot bottom)
-  const shadowY = y + h - 4;
   const cx = x + w / 2;
-  const crayonW = Math.max(26, Math.min(w * 0.72, 60));
-  const shadowW = isElevated ? crayonW * 0.75 : crayonW * 0.9;
-  const shadowH = isElevated ? 5 : 7;
+  const cy = y + h / 2 + bounceY;
+
+  // 2. 3D Contact Shadow on palette surface (anchored to slot bottom)
+  const shadowY = y + h - 4;
+  const crayonW = Math.max(24, Math.min(w * 0.68, 54));
+  const shadowW = isElevated ? crayonW * 0.72 : crayonW * 0.92;
+  const shadowH = isElevated ? 5 : 7.5;
 
   ctx.save();
-  ctx.fillStyle = isElevated ? 'rgba(27, 69, 50, 0.14)' : 'rgba(27, 69, 50, 0.24)';
+  ctx.fillStyle = isElevated ? 'rgba(27, 69, 50, 0.12)' : 'rgba(27, 69, 50, 0.22)';
   ctx.beginPath();
   if (typeof ctx.ellipse === 'function') {
     ctx.ellipse(cx, shadowY, shadowW / 2, shadowH / 2, 0, 0, Math.PI * 2);
@@ -1679,202 +1685,223 @@ export function draw3DWaxCrayon(
   ctx.fill();
   ctx.restore();
 
-  // 3. Hint Aura & Active Selection Glow
-  const crayonH = Math.max(46, Math.min(h - 10, crayonW * 2.85));
-  const crayonBottom = drawY + h - 8;
-  const tipTop = crayonBottom - crayonH;
-  const tipH = Math.round(crayonH * 0.28);
-  const shoulderY = tipTop + tipH;
-  const bodyH = crayonH - tipH;
-  const crayonLeft = cx - crayonW / 2;
-  const crayonRight = cx + crayonW / 2;
-  const baseRadius = 8;
+  // 3. Transformation for Equipped Lift & Scale
+  ctx.save();
+  ctx.translate(cx, cy);
+  if (scaleFactor !== 1.0) {
+    ctx.scale(scaleFactor, scaleFactor);
+  }
 
+  const crayonH = Math.max(52, Math.min(h - 16, crayonW * 2.85));
+  const halfH = crayonH / 2;
+  const halfW = crayonW / 2;
+
+  // Vertical segment sizing
+  const tipH = Math.round(crayonH * 0.22);
+  const collarH = Math.round(crayonH * 0.08);
+  const plugH = Math.round(crayonH * 0.12);
+  const sleeveH = crayonH - tipH - collarH - plugH;
+
+  const tipTop = -halfH;
+  const collarTop = tipTop + tipH;
+  const sleeveTop = collarTop + collarH;
+  const sleeveBottom = sleeveTop + sleeveH;
+  const plugBottom = sleeveBottom + plugH;
+
+  const sleeveW = crayonW;
+  const collarW = Math.round(crayonW * 0.90);
+  const plugW = Math.round(crayonW * 0.88);
+
+  // 4. Hint Aura or Active Selection Halo
   if (isHinted) {
     ctx.save();
     ctx.shadowColor = 'rgba(255, 208, 0, 0.95)';
     ctx.shadowBlur = 18;
-    ctx.fillStyle = 'rgba(255, 208, 0, 0.35)';
-    drawCrayonSilhouettePath(ctx, cx, crayonLeft, crayonRight, tipTop, shoulderY, crayonBottom, baseRadius);
+    ctx.fillStyle = 'rgba(255, 208, 0, 0.38)';
+    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW, collarW / 2, plugW / 2);
     ctx.fill();
     ctx.restore();
   } else if (isSelected) {
     ctx.save();
-    ctx.shadowColor = '#FFFFFF';
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
     ctx.shadowBlur = 16;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    drawCrayonSilhouettePath(ctx, cx, crayonLeft, crayonRight, tipTop, shoulderY, crayonBottom, baseRadius);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.42)';
+    draw3DClayCrayonSilhouette(ctx, tipTop, collarTop, sleeveTop, sleeveBottom, plugBottom, halfW, collarW / 2, plugW / 2);
     ctx.fill();
     ctx.restore();
   }
 
-  // 4. Tapered Wax Tip (Conical with rounded apex)
+  // Helper for cylindrical clay shading
+  const applyCylindricalShade = (left: number, right: number) => {
+    const grad = ctx.createLinearGradient(left, 0, right, 0);
+    grad.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
+    grad.addColorStop(0.20, 'rgba(255, 255, 255, 0.42)');
+    grad.addColorStop(0.50, 'rgba(255, 255, 255, 0.04)');
+    grad.addColorStop(0.82, 'rgba(0, 0, 0, 0.12)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+  };
+
+  // 5. Rounded Wax Base Plug (protruding at bottom)
   ctx.save();
+  const plugHalfW = plugW / 2;
+  const plugR = Math.min(8, plugHalfW);
   ctx.beginPath();
-  ctx.moveTo(crayonLeft + 2, shoulderY);
-  ctx.quadraticCurveTo(crayonLeft + 4, tipTop + 8, cx - 2, tipTop + 3);
-  ctx.arcTo(cx, tipTop, cx + 2, tipTop + 3, 3);
-  ctx.quadraticCurveTo(crayonRight - 4, tipTop + 8, crayonRight - 2, shoulderY);
+  ctx.moveTo(-plugHalfW, sleeveBottom);
+  ctx.lineTo(plugHalfW, sleeveBottom);
+  ctx.lineTo(plugHalfW, plugBottom - plugR);
+  ctx.arcTo(plugHalfW, plugBottom, plugHalfW - plugR, plugBottom, plugR);
+  ctx.lineTo(-plugHalfW + plugR, plugBottom);
+  ctx.arcTo(-plugHalfW, plugBottom, -plugHalfW, plugBottom - plugR, plugR);
   ctx.closePath();
 
-  // Base wax color for tip
+  ctx.fillStyle = tints.base;
+  ctx.fill();
+  applyCylindricalShade(-plugHalfW, plugHalfW);
+
+  // Soft bottom ambient occlusion
+  ctx.strokeStyle = tints.outline;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  // 6. Stepped Cylindrical Wax Collar (between tip and paper wrapper)
+  ctx.save();
+  const collarHalfW = collarW / 2;
+  ctx.beginPath();
+  ctx.rect(-collarHalfW, collarTop, collarW, collarH);
+  ctx.fillStyle = tints.base;
+  ctx.fill();
+  applyCylindricalShade(-collarHalfW, collarHalfW);
+
+  // Subtle line separator
+  ctx.strokeStyle = tints.outline;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
+
+  // 7. Rounded Tapered Wax Tip (Conical with smooth domed apex)
+  ctx.save();
+  const apexW = Math.max(6, Math.round(crayonW * 0.26));
+  const apexHalfW = apexW / 2;
+  const apexR = Math.max(3, apexHalfW);
+
+  ctx.beginPath();
+  ctx.moveTo(-collarHalfW, collarTop);
+  ctx.quadraticCurveTo(-collarHalfW * 0.9, tipTop + apexR * 1.8, -apexHalfW, tipTop + apexR * 0.8);
+  ctx.arcTo(0, tipTop, apexHalfW, tipTop + apexR * 0.8, apexR);
+  ctx.quadraticCurveTo(collarHalfW * 0.9, tipTop + apexR * 1.8, collarHalfW, collarTop);
+  ctx.closePath();
+
   ctx.fillStyle = tints.base;
   ctx.fill();
 
-  // Tip cylindrical shading
+  // Directional clay tip shading
   ctx.save();
   ctx.clip();
-  const tipShadeGrad = ctx.createLinearGradient(crayonLeft, shoulderY, crayonRight, shoulderY);
-  tipShadeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
-  tipShadeGrad.addColorStop(0.35, 'rgba(255, 255, 255, 0.1)');
-  tipShadeGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.05)');
-  tipShadeGrad.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
-  ctx.fillStyle = tipShadeGrad;
+  const tipShade = ctx.createLinearGradient(-collarHalfW, collarTop, collarHalfW, collarTop);
+  tipShade.addColorStop(0, 'rgba(0, 0, 0, 0.16)');
+  tipShade.addColorStop(0.24, 'rgba(255, 255, 255, 0.50)');
+  tipShade.addColorStop(0.55, 'rgba(255, 255, 255, 0.05)');
+  tipShade.addColorStop(0.85, 'rgba(0, 0, 0, 0.14)');
+  tipShade.addColorStop(1, 'rgba(0, 0, 0, 0.26)');
+  ctx.fillStyle = tipShade;
   ctx.fill();
+  ctx.restore();
 
-  // Glossy white specular highlight streak along the left slope
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(cx - 3, tipTop + 5);
-  ctx.lineTo(crayonLeft + 5, shoulderY - 3);
-  ctx.stroke();
-  ctx.restore(); // end tip clip
-
-  // Outline for tip
   ctx.strokeStyle = tints.outline;
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  ctx.lineWidth = 1.8;
   ctx.stroke();
   ctx.restore();
 
-  // 5. Cylindrical Body & Exposed Wax
-  const wrapperPad = Math.round(bodyH * 0.14);
-  const wrapperTop = shoulderY + wrapperPad;
-  const wrapperBottom = crayonBottom - wrapperPad;
-  const wrapperH = wrapperBottom - wrapperTop;
-
-  // Complete body wax fill
+  // 8. Matte Paper Sleeve (Raised Cylindrical Wrapper with Double Bands)
   ctx.save();
+  const sleeveHalfW = sleeveW / 2;
+  const sleeveRadius = 3;
+
+  // Sleeve base body
   ctx.beginPath();
-  ctx.moveTo(crayonLeft, shoulderY);
-  ctx.lineTo(crayonRight, shoulderY);
-  ctx.lineTo(crayonRight, crayonBottom - baseRadius);
-  ctx.arcTo(crayonRight, crayonBottom, crayonRight - baseRadius, crayonBottom, baseRadius);
-  ctx.lineTo(crayonLeft + baseRadius, crayonBottom);
-  ctx.arcTo(crayonLeft, crayonBottom, crayonLeft, crayonBottom - baseRadius, baseRadius);
-  ctx.closePath();
-
-  ctx.fillStyle = tints.base;
-  ctx.fill();
-
-  // Cylindrical body sheen
-  const bodySheen = ctx.createLinearGradient(crayonLeft, 0, crayonRight, 0);
-  bodySheen.addColorStop(0, 'rgba(0, 0, 0, 0.22)');
-  bodySheen.addColorStop(0.2, 'rgba(255, 255, 255, 0.45)');
-  bodySheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
-  bodySheen.addColorStop(0.85, 'rgba(0, 0, 0, 0.15)');
-  bodySheen.addColorStop(1, 'rgba(0, 0, 0, 0.32)');
-  ctx.fillStyle = bodySheen;
-  ctx.fill();
-
-  ctx.strokeStyle = tints.outline;
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-  ctx.restore();
-
-  // 6. Paper Wrapper (Middle Band)
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(crayonLeft, wrapperTop, crayonW, wrapperH);
+  ctx.rect(-sleeveHalfW, sleeveTop, sleeveW, sleeveH);
   ctx.fillStyle = tints.wrapper;
   ctx.fill();
 
-  // Cylindrical lighting sheen over wrapper paper
-  const wrapperSheen = ctx.createLinearGradient(crayonLeft, 0, crayonRight, 0);
-  wrapperSheen.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
-  wrapperSheen.addColorStop(0.22, 'rgba(255, 255, 255, 0.55)');
-  wrapperSheen.addColorStop(0.5, 'rgba(255, 255, 255, 0.12)');
-  wrapperSheen.addColorStop(0.85, 'rgba(0, 0, 0, 0.10)');
-  wrapperSheen.addColorStop(1, 'rgba(0, 0, 0, 0.22)');
-  ctx.fillStyle = wrapperSheen;
-  ctx.fill();
+  // Cylindrical paper shading across wrapper
+  applyCylindricalShade(-sleeveHalfW, sleeveHalfW);
 
-  // Wrapper top and bottom borders
+  // Top & Bottom paper sleeve edges with subtle 3D paper lip shadow
   ctx.strokeStyle = tints.outline;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(crayonLeft, wrapperTop);
-  ctx.lineTo(crayonRight, wrapperTop);
-  ctx.moveTo(crayonLeft, wrapperBottom);
-  ctx.lineTo(crayonRight, wrapperBottom);
+  ctx.moveTo(-sleeveHalfW, sleeveTop);
+  ctx.lineTo(sleeveHalfW, sleeveTop);
+  ctx.moveTo(-sleeveHalfW, sleeveBottom);
+  ctx.lineTo(sleeveHalfW, sleeveBottom);
   ctx.stroke();
 
-  // Two decorative wavy stripes (near top and bottom of wrapper)
-  const drawWavyStripe = (sy: number) => {
+  // Cast subtle ambient occlusion shadow under top paper lip onto collar
+  ctx.save();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+  ctx.fillRect(-collarHalfW, collarTop + collarH - 2, collarW, 2);
+  // and under bottom paper lip onto base plug
+  ctx.fillRect(-plugHalfW, sleeveBottom, plugW, 2.5);
+  ctx.restore();
+
+  // 9. Two Clean Dark-Brown/Sepia Parallel Bands Near Top & Two Near Bottom
+  const bandH = Math.max(3.5, Math.round(sleeveH * 0.052));
+  const bandSep = Math.max(3.5, Math.round(sleeveH * 0.045));
+
+  const topBand1Y = sleeveTop + Math.round(sleeveH * 0.11);
+  const topBand2Y = topBand1Y + bandH + bandSep;
+
+  const botBand2Y = sleeveBottom - Math.round(sleeveH * 0.11) - bandH;
+  const botBand1Y = botBand2Y - bandH - bandSep;
+
+  const drawSepiaBand = (by: number) => {
     ctx.save();
-    ctx.strokeStyle = tints.stripe;
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
     ctx.beginPath();
-    const waves = 4;
-    const waveW = crayonW / waves;
-    ctx.moveTo(crayonLeft + 2, sy);
-    for (let i = 0; i < waves; i++) {
-      const wx1 = crayonLeft + i * waveW + waveW * 0.25;
-      const wx2 = crayonLeft + i * waveW + waveW * 0.75;
-      const wx3 = crayonLeft + (i + 1) * waveW;
-      ctx.quadraticCurveTo(wx1, sy - 2.5, wx2, sy + 2.5);
-      ctx.quadraticCurveTo(wx2 + waveW * 0.12, sy, wx3, sy);
-    }
-    ctx.stroke();
+    ctx.rect(-sleeveHalfW, by, sleeveW, bandH);
+    ctx.fillStyle = tints.stripe;
+    ctx.fill();
+
+    // Wrap cylindrical shading over band
+    const bandShade = ctx.createLinearGradient(-sleeveHalfW, 0, sleeveHalfW, 0);
+    bandShade.addColorStop(0, 'rgba(0, 0, 0, 0.22)');
+    bandShade.addColorStop(0.20, 'rgba(255, 255, 255, 0.35)');
+    bandShade.addColorStop(0.50, 'rgba(255, 255, 255, 0.0)');
+    bandShade.addColorStop(0.85, 'rgba(0, 0, 0, 0.18)');
+    bandShade.addColorStop(1, 'rgba(0, 0, 0, 0.36)');
+    ctx.fillStyle = bandShade;
+    ctx.fill();
     ctx.restore();
   };
 
-  drawWavyStripe(wrapperTop + 7);
-  drawWavyStripe(wrapperBottom - 7);
+  drawSepiaBand(topBand1Y);
+  drawSepiaBand(topBand2Y);
+  drawSepiaBand(botBand1Y);
+  drawSepiaBand(botBand2Y);
 
-  // Cute Central Spiral / Swirl Emblem
-  const emblemY = (wrapperTop + wrapperBottom) / 2;
-  const emblemR = Math.min(10, Math.round(crayonW * 0.20));
-
-  ctx.save();
-  ctx.fillStyle = '#FAF5EC';
-  ctx.strokeStyle = tints.stripe;
+  // Subtle side outline on wrapper
+  ctx.strokeStyle = tints.outline;
   ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.arc(cx, emblemY, emblemR, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(-sleeveHalfW, sleeveTop);
+  ctx.lineTo(-sleeveHalfW, sleeveBottom);
+  ctx.moveTo(sleeveHalfW, sleeveTop);
+  ctx.lineTo(sleeveHalfW, sleeveBottom);
   ctx.stroke();
-
-  // Spiral swirl inside emblem
-  ctx.strokeStyle = tints.stripe;
-  ctx.lineWidth = 1.6;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  for (let a = 0; a < Math.PI * 3.2; a += 0.25) {
-    const sr = (a / (Math.PI * 3.2)) * (emblemR - 2.5);
-    const sx = cx + Math.cos(a) * sr;
-    const sy = emblemY + Math.sin(a) * sr;
-    if (a === 0) ctx.moveTo(sx, sy);
-    else ctx.lineTo(sx, sy);
-  }
-  ctx.stroke();
-  ctx.restore();
 
   ctx.restore(); // end wrapper save
 
-  // 7. Selection Indicator on top of crayon when selected
+  // 10. Equipped Indicator Badge (Glowing Checkmark / Ring at Tip)
   if (isSelected) {
     ctx.save();
-    const checkY = tipTop - 7;
-    ctx.fillStyle = '#FFFFFF';
+    const badgeY = tipTop - 8;
+    ctx.fillStyle = '#FAF5EC';
     ctx.strokeStyle = '#1B4532';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.arc(cx, checkY, 8.5, 0, Math.PI * 2);
+    ctx.arc(0, badgeY, 8.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
@@ -1883,34 +1910,55 @@ export function draw3DWaxCrayon(
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.beginPath();
-    ctx.moveTo(cx - 3.5, checkY);
-    ctx.lineTo(cx - 0.8, checkY + 3);
-    ctx.lineTo(cx + 4, checkY - 3);
+    ctx.moveTo(-3.5, badgeY);
+    ctx.lineTo(-0.8, badgeY + 3);
+    ctx.lineTo(4, badgeY - 3);
     ctx.stroke();
     ctx.restore();
   }
 
-  ctx.restore();
+  ctx.restore(); // end translation/scaling
+  ctx.restore(); // end main save
 }
 
-function drawCrayonSilhouettePath(
+function draw3DClayCrayonSilhouette(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  crayonLeft: number,
-  crayonRight: number,
   tipTop: number,
-  shoulderY: number,
-  crayonBottom: number,
-  baseRadius: number
+  collarTop: number,
+  sleeveTop: number,
+  sleeveBottom: number,
+  plugBottom: number,
+  halfW: number,
+  collarHalfW: number,
+  plugHalfW: number
 ): void {
+  const apexW = Math.max(6, Math.round(halfW * 0.52));
+  const apexHalfW = apexW / 2;
+  const apexR = Math.max(3, apexHalfW);
+  const plugR = Math.min(8, plugHalfW);
+
   ctx.beginPath();
-  ctx.moveTo(crayonLeft + 2, shoulderY);
-  ctx.quadraticCurveTo(crayonLeft + 4, tipTop + 8, cx - 2, tipTop + 3);
-  ctx.arcTo(cx, tipTop, cx + 2, tipTop + 3, 3);
-  ctx.quadraticCurveTo(crayonRight - 4, tipTop + 8, crayonRight - 2, shoulderY);
-  ctx.lineTo(crayonRight, crayonBottom - baseRadius);
-  ctx.arcTo(crayonRight, crayonBottom, crayonRight - baseRadius, crayonBottom, baseRadius);
-  ctx.lineTo(crayonLeft + baseRadius, crayonBottom);
-  ctx.arcTo(crayonLeft, crayonBottom, crayonLeft, crayonBottom - baseRadius, baseRadius);
+  // Conical tip
+  ctx.moveTo(-collarHalfW, collarTop);
+  ctx.quadraticCurveTo(-collarHalfW * 0.9, tipTop + apexR * 1.8, -apexHalfW, tipTop + apexR * 0.8);
+  ctx.arcTo(0, tipTop, apexHalfW, tipTop + apexR * 0.8, apexR);
+  ctx.quadraticCurveTo(collarHalfW * 0.9, tipTop + apexR * 1.8, collarHalfW, collarTop);
+  // Collar
+  ctx.lineTo(collarHalfW, sleeveTop);
+  // Sleeve
+  ctx.lineTo(halfW, sleeveTop);
+  ctx.lineTo(halfW, sleeveBottom);
+  // Plug
+  ctx.lineTo(plugHalfW, sleeveBottom);
+  ctx.lineTo(plugHalfW, plugBottom - plugR);
+  ctx.arcTo(plugHalfW, plugBottom, plugHalfW - plugR, plugBottom, plugR);
+  ctx.lineTo(-plugHalfW + plugR, plugBottom);
+  ctx.arcTo(-plugHalfW, plugBottom, -plugHalfW, plugBottom - plugR, plugR);
+  ctx.lineTo(-plugHalfW, sleeveBottom);
+  // Sleeve left
+  ctx.lineTo(-halfW, sleeveBottom);
+  ctx.lineTo(-halfW, sleeveTop);
+  // Collar left
+  ctx.lineTo(-collarHalfW, sleeveTop);
   ctx.closePath();
 }

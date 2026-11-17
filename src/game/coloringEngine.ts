@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────────────────────────
  *  coloringEngine.ts – Interactive Region Coloring & Scoring Logic
- *  Manages region selection, color assignment, validation & star scoring
+ *  Colour-First flow: Pick Crayon First → Tap Shape(s) to Paint
+ *  Manages persistent crayon selection, region painting, validation & star scoring
  * ───────────────────────────────────────────────────────────── */
 import type { LevelData, ScoringResult } from '../shared/contracts';
 import { STAR_THRESHOLDS } from '../shared/constants';
@@ -14,6 +15,7 @@ export class ColoringEngine {
   private fillHistory: Array<{ regionId: string; prevColor: string | null }> = [];
   private hintUsed: boolean = false;
   private hintedColor: string | null = null;
+  private hintedRegionId: string | null = null;
 
   public loadLevel(level: LevelData): void {
     this.level = level;
@@ -23,6 +25,7 @@ export class ColoringEngine {
     this.fillHistory = [];
     this.hintUsed = false;
     this.hintedColor = null;
+    this.hintedRegionId = null;
     eventBus.emit('level:start', { levelId: level.id });
   }
 
@@ -38,33 +41,49 @@ export class ColoringEngine {
     return this.hintedColor;
   }
 
+  public getHintedRegionId(): string | null {
+    return this.hintedRegionId;
+  }
+
   public clearHintedColor(): void {
     this.hintedColor = null;
+    this.hintedRegionId = null;
   }
 
   /**
-   * Request a single-use hint for the currently selected container.
+   * Request a single-use hint in the Colour-First flow:
+   * Finds the first unpainted shape (or incorrectly colored shape),
+   * reveals its target crayon color, and highlights both the crayon and target shape.
    */
   public requestHint(): {
     success: boolean;
-    reason?: 'no_selection' | 'already_used' | 'invalid_region';
+    reason?: 'already_used' | 'no_level' | 'no_selection' | 'invalid_region';
     targetColor?: string;
     regionId?: string;
   } {
     if (this.hintUsed) {
       return { success: false, reason: 'already_used' };
     }
-    if (!this.selectedRegionId || !this.level) {
-      return { success: false, reason: 'no_selection' };
+    if (!this.level || this.level.regions.length === 0) {
+      return { success: false, reason: 'no_level' };
     }
-    const region = this.level.regions.find((r) => r.id === this.selectedRegionId);
-    if (!region) {
+
+    // Identify first unpainted region or first incorrectly filled region
+    const targetRegion =
+      this.level.regions.find((r) => !this.filledColors.has(r.id)) ||
+      this.level.regions.find(
+        (r) => this.filledColors.get(r.id)?.toLowerCase() !== r.targetColor.toLowerCase()
+      ) ||
+      this.level.regions[0];
+
+    if (!targetRegion) {
       return { success: false, reason: 'invalid_region' };
     }
 
     this.hintUsed = true;
-    this.hintedColor = region.targetColor;
-    return { success: true, targetColor: region.targetColor, regionId: region.id };
+    this.hintedColor = targetRegion.targetColor;
+    this.hintedRegionId = targetRegion.id;
+    return { success: true, targetColor: targetRegion.targetColor, regionId: targetRegion.id };
   }
 
   public getSelectedRegionId(): string | null {
@@ -84,63 +103,88 @@ export class ColoringEngine {
   }
 
   /**
-   * Step A: Tap Container
-   * Selects a region in the template.
-   * NEVER fills a colour on container tap!
-   * Highlights the container outline and activates the colour palette.
+   * Step 1: Pick / Equip a Crayon Colour (Colour-First Flow)
+   * Tapping a crayon equips it so multiple shapes can be painted consecutively.
    */
-  public selectRegion(regionId: string): { filled: boolean; regionId: string } {
-    if (!this.level) return { filled: false, regionId };
-
-    this.selectedRegionId = regionId;
-    this.selectedColor = null; // Always clear sticky color so container tap NEVER auto-fills
-    eventBus.emit('region:selected', { regionId });
-
-    return { filled: false, regionId };
+  public selectColor(color: string): { equipped: boolean; color: string } {
+    this.selectedColor = color;
+    eventBus.emit('color:selected', { color });
+    return { equipped: true, color };
   }
 
   /**
-   * Step B: Tap Colour
-   * While a container (region) is selected, fills ONLY that selectedRegionId with this color.
-   * Step C: Immediate Reset
-   * Immediately resets selectedRegionId = null and selectedColor = null, clearing palette highlight.
+   * Clears the currently equipped crayon color.
    */
-  public selectColor(color: string): { filled: boolean; regionId?: string; color?: string; correct?: boolean } {
-    if (!this.level) return { filled: false };
-
-    // If no region is selected, color tap does NOT stick or auto-fill later
-    if (!this.selectedRegionId) {
-      this.selectedColor = null;
-      return { filled: false };
-    }
-
-    const regionId = this.selectedRegionId;
-    const fillResult = this.fillRegion(regionId, color);
-
-    // Step C: Immediate Reset
-    this.selectedRegionId = null;
+  public clearSelectedColor(): void {
     this.selectedColor = null;
-    this.hintedColor = null;
     eventBus.emit('color:selected', { color: '' });
-
-    return { filled: true, regionId, color, correct: fillResult.correct };
   }
 
   /**
-   * Fills a specific region with a colour.
+   * Step 2: Tap Shape / Region on Canvas
+   * If a crayon is equipped, immediately paints the shape and leaves the crayon equipped.
+   * If no crayon is equipped, registers the tap and returns filled: false.
    */
-  public fillRegion(regionId: string, color: string): { success: boolean; correct: boolean } {
-    if (!this.level) return { success: false, correct: false };
+  public selectRegion(regionId: string): {
+    filled: boolean;
+    regionId: string;
+    color?: string;
+    correct?: boolean;
+    reason?: 'no_color' | 'invalid_region';
+  } {
+    if (!this.level) return { filled: false, regionId, reason: 'invalid_region' };
 
     const targetRegion = this.level.regions.find((r) => r.id === regionId);
-    if (!targetRegion) return { success: false, correct: false };
+    if (!targetRegion) return { filled: false, regionId, reason: 'invalid_region' };
+
+    this.selectedRegionId = regionId;
+
+    // If a crayon is equipped, immediately paint the shape!
+    if (this.selectedColor) {
+      const fillRes = this.fillRegion(regionId, this.selectedColor);
+      return {
+        filled: fillRes.success,
+        regionId,
+        color: this.selectedColor,
+        correct: fillRes.correct,
+      };
+    }
+
+    // No crayon equipped
+    eventBus.emit('region:selected', { regionId });
+    return { filled: false, regionId, reason: 'no_color' };
+  }
+
+  /**
+   * Fills a specific region with a colour (or the currently equipped colour).
+   */
+  public fillRegion(
+    regionId: string,
+    color?: string
+  ): { success: boolean; correct: boolean; reason?: 'no_color' | 'invalid_region' } {
+    if (!this.level) return { success: false, correct: false, reason: 'invalid_region' };
+
+    const colorToUse = color || this.selectedColor;
+    if (!colorToUse) {
+      return { success: false, correct: false, reason: 'no_color' };
+    }
+
+    const targetRegion = this.level.regions.find((r) => r.id === regionId);
+    if (!targetRegion) return { success: false, correct: false, reason: 'invalid_region' };
 
     const prev = this.filledColors.get(regionId) ?? null;
-    this.filledColors.set(regionId, color);
+    this.filledColors.set(regionId, colorToUse);
     this.fillHistory.push({ regionId, prevColor: prev });
 
-    const correct = targetRegion.targetColor.toLowerCase() === color.toLowerCase();
-    eventBus.emit('region:filled', { regionId, color, correct });
+    const correct = targetRegion.targetColor.toLowerCase() === colorToUse.toLowerCase();
+
+    // If the hinted shape is now filled, clear the active hint auras
+    if (regionId === this.hintedRegionId) {
+      this.hintedColor = null;
+      this.hintedRegionId = null;
+    }
+
+    eventBus.emit('region:filled', { regionId, color: colorToUse, correct });
 
     return { success: true, correct };
   }
@@ -190,6 +234,10 @@ export class ColoringEngine {
     };
   }
 
+  /**
+   * Undo reverts the last painted shape.
+   * Keeps the currently equipped crayon color active.
+   */
   public undo(): boolean {
     if (this.fillHistory.length === 0) return false;
     const last = this.fillHistory.pop()!;
@@ -201,18 +249,22 @@ export class ColoringEngine {
     return true;
   }
 
+  /**
+   * Resets all painted shapes in the current level.
+   * Preserves single-use hint status within the same level attempt.
+   */
   public resetCurrentLevel(): void {
     this.filledColors.clear();
     this.fillHistory = [];
     this.selectedRegionId = null;
-    this.selectedColor = null;
-    // Preserves single-use hint status within the same level; Clear only clears painted shapes
     this.hintedColor = null;
+    this.hintedRegionId = null;
   }
 
   public clearSelection(): void {
     this.selectedRegionId = null;
     this.selectedColor = null;
+    eventBus.emit('color:selected', { color: '' });
   }
 }
 

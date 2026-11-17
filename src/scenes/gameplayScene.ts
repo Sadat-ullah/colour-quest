@@ -551,15 +551,19 @@ export class GameplayScene implements Scene {
     const dynamicStrokeWidth = 4.5 + pulseFactor * 2.0; // oscillates 4.5px to 6.5px
 
     // Render all blank template layers, dynamically scaled/centered to 80%-85%
+    const hintedRegionId = coloringEngine.getHintedRegionId();
+
     for (const region of level.regions) {
       const isSelected = selectedRegionId === region.id;
+      const isHinted = hintedRegionId === region.id;
       const filledColor = filledColors.get(region.id) || '#FFFFFF';
 
-      let pulseScale = isSelected ? 1 + pulseFactor * 0.03 : 1.0;
+      let pulseScale = isSelected || isHinted ? 1 + pulseFactor * 0.035 : 1.0;
       let glowBlur = dynamicGlowBlur;
-      let strokeWidth = isSelected ? dynamicStrokeWidth : 3;
-      let isGlow = isSelected;
-      let isHighlighted = isSelected;
+      let strokeWidth = isSelected || isHinted ? dynamicStrokeWidth : 3;
+      let isGlow = isSelected || isHinted;
+      let isHighlighted = isSelected || isHinted;
+      const highlightColor = isHinted ? '#F2C94C' : COLORS.spruceVelvet;
 
       // Fill Impact Animation (scale-pop 1.0 -> 1.10 -> 1.0 and glow flash over 250ms)
       const fillAnim = this.activeFillAnims.get(region.id);
@@ -577,10 +581,10 @@ export class GameplayScene implements Scene {
         offsetY,
         scale,
         fillColor: filledColor,
-        strokeColor: isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
+        strokeColor: isHinted ? '#F2C94C' : isSelected ? COLORS.spruceVelvet : COLORS.spruceVelvetMuted,
         strokeWidth,
         isHighlighted,
-        highlightColor: COLORS.spruceVelvet,
+        highlightColor,
         glow: isGlow,
         glowBlur,
         pulseScale,
@@ -724,7 +728,8 @@ export class GameplayScene implements Scene {
     // Palette background card
     this.drawRoundedRect(ctx, x, y, w, h, 22, COLORS.clottedCreamCard, COLORS.spruceVelvet, 3.5);
 
-    const hasSelection = coloringEngine.getSelectedRegionId() !== null;
+    const equippedColor = coloringEngine.getSelectedColor();
+    const hasSelection = equippedColor !== null;
 
     // Prompt Header
     ctx.save();
@@ -735,8 +740,8 @@ export class GameplayScene implements Scene {
     const labelTopPad = isPortrait ? 20 : 24;
     const labelH = isPortrait ? 40 : 52;
     const promptText = hasSelection
-      ? (w < 320 ? '👇 TAP A COLOUR!' : '👇 TAP A COLOUR TO PAINT!')
-      : 'TAP A SHAPE FIRST';
+      ? (w < 320 ? '👇 TAP A SHAPE!' : '🎨 TAP A SHAPE TO PAINT!')
+      : (w < 320 ? '👇 PICK A COLOUR' : '👇 PICK A CRAYON');
 
     let fontSize = isPortrait ? 15 : 15;
     ctx.font = getFont(fontSize, 'extraBold');
@@ -783,7 +788,7 @@ export class GameplayScene implements Scene {
             h: swatchH,
           });
 
-          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH);
         }
       } else {
         // 2 rows grid (e.g. 2 rows of 3-4 for 6 to 8-colour levels)
@@ -806,7 +811,7 @@ export class GameplayScene implements Scene {
             h: swatchH,
           });
 
-          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
+          this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH);
         }
       }
     } else {
@@ -831,7 +836,7 @@ export class GameplayScene implements Scene {
           h: swatchH,
         });
 
-        this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH, hasSelection);
+        this.drawFullSpaceSwatch(ctx, colors[i], sx, sy, swatchW, swatchH);
       }
     }
   }
@@ -842,22 +847,23 @@ export class GameplayScene implements Scene {
     sx: number,
     sy: number,
     sw: number,
-    sh: number,
-    hasSelection: boolean
+    sh: number
   ): void {
     const hintedColor = coloringEngine.getHintedColor();
     const isHinted = hintedColor !== null && hintedColor.toLowerCase() === color.toLowerCase();
+    const equippedColor = coloringEngine.getSelectedColor();
+    const isSelected = equippedColor !== null && equippedColor.toLowerCase() === color.toLowerCase();
 
-    // Chunky, tactile 3D wax crayon with tapered tip, wrapper band, wavy stripes and emblem
+    // Tactile 3D clay-style wax crayon matching reference image
     draw3DWaxCrayon(ctx, {
       x: sx,
       y: sy,
       w: sw,
       h: sh,
       color,
-      isSelected: hasSelection,
+      isSelected,
       isHinted,
-      isHighlighted: hasSelection,
+      isHighlighted: isSelected,
     });
   }
 
@@ -953,21 +959,13 @@ export class GameplayScene implements Scene {
       if (coloringEngine.isHintUsed()) {
         this.showToast('💡 Hint already used for this level!', 2200);
         this.onPlaySound?.('tap');
-        return; // Ignore pointer tap when disabled
-      }
-
-      // Step 1: Container Selection Required
-      const selectedId = coloringEngine.getSelectedRegionId();
-      if (!selectedId) {
-        this.showToast('👉 Tap a shape first to use a hint!', 2500);
-        this.onPlaySound?.('tap');
         return;
       }
 
-      // Step 2 & 3: Highlight Target Colour & Disable Hint
+      // Step 2 & 3: Highlight Target Colour & Target Shape
       const res = coloringEngine.requestHint();
       if (res.success && res.targetColor) {
-        this.showToast('✨ Look at the glowing colour in the palette!', 2500);
+        this.showToast('✨ Pick the glowing crayon to paint the matching shape!', 2600);
         this.onPlaySound?.('correct');
       } else if (res.reason === 'already_used') {
         this.showToast('💡 Hint already used for this level!', 2200);
@@ -975,7 +973,7 @@ export class GameplayScene implements Scene {
       return;
     }
 
-    // 3. Check Palette Swatches (Step B: Fill selected container)
+    // 3. Check Palette Swatches (Step 1: Pick / Equip Crayon)
     for (const swatch of this.swatchRects) {
       if (
         x >= swatch.x &&
@@ -984,34 +982,13 @@ export class GameplayScene implements Scene {
         y <= swatch.y + swatch.h
       ) {
         this.onPlaySound?.('select');
-        const res = coloringEngine.selectColor(swatch.color);
-        if (res.filled && res.regionId) {
-          this.onPlaySound?.('fill');
-          this.onSpawnSparkles?.(x, y, swatch.color);
-
-          // R2: Trigger transient scale-pop (1.0 -> 1.10 -> 1.0) and glow flash on that container region over ~250ms
-          this.activeFillAnims.set(res.regionId, { timer: 0, duration: 250, color: swatch.color });
-
-          // Also spawn sparkles at region's center
-          const currentLevel = coloringEngine.getLevel();
-          const filledRegion = currentLevel?.regions.find((r) => r.id === res.regionId);
-          if (filledRegion) {
-            const bbox = ShapeRenderer.calculateBoundingBox([filledRegion]);
-            const rcx = bbox.minX + bbox.width / 2;
-            const rcy = bbox.minY + bbox.height / 2;
-            const { offsetX, offsetY, scale } = this.templateTransform;
-            const centerScreenX = offsetX + rcx * scale;
-            const centerScreenY = offsetY + rcy * scale;
-            this.onSpawnSparkles?.(centerScreenX, centerScreenY, swatch.color);
-          }
-
-          this.checkCompletion();
-        }
+        coloringEngine.selectColor(swatch.color);
+        this.onSpawnSparkles?.(x, y, swatch.color);
         return;
       }
     }
 
-    // 4. Check Main Middle Container Regions (Step A: Select container)
+    // 4. Check Main Middle Container Regions (Step 2: Tap shape to paint with equipped crayon)
     const level = coloringEngine.getLevel();
     if (!level) return;
 
@@ -1024,9 +1001,29 @@ export class GameplayScene implements Scene {
     for (let i = level.regions.length - 1; i >= 0; i--) {
       const region = level.regions[i];
       if (ShapeRenderer.hitTest(offCtx, region, x, y, offsetX, offsetY, scale)) {
-        // Step A: Select container (NEVER fills on container tap!)
-        coloringEngine.selectRegion(region.id);
-        this.onPlaySound?.('tap');
+        const equippedColor = coloringEngine.getSelectedColor();
+        if (!equippedColor) {
+          // No crayon equipped yet! Friendly nudge
+          this.showToast('👉 Pick a crayon first!', 2200);
+          this.onPlaySound?.('tap');
+          return;
+        }
+
+        // Crayon equipped -> paint shape immediately!
+        const res = coloringEngine.selectRegion(region.id);
+        if (res.filled && res.color) {
+          this.onPlaySound?.('fill');
+          this.activeFillAnims.set(region.id, { timer: 0, duration: 250, color: res.color });
+
+          const bbox = ShapeRenderer.calculateBoundingBox([region]);
+          const rcx = bbox.minX + bbox.width / 2;
+          const rcy = bbox.minY + bbox.height / 2;
+          const centerScreenX = offsetX + rcx * scale;
+          const centerScreenY = offsetY + rcy * scale;
+          this.onSpawnSparkles?.(centerScreenX, centerScreenY, res.color);
+
+          this.checkCompletion();
+        }
         return;
       }
     }

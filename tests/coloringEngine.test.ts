@@ -60,68 +60,68 @@ describe('ColoringEngine Tests', () => {
     });
   });
 
-  describe('Region & Color Selection', () => {
+  describe('Region & Color Selection (Colour-First Flow)', () => {
     beforeEach(() => {
       engine.loadLevel(mockLevel);
     });
 
-    it('selects region without filling if no color is pre-selected', () => {
+    it('selects region without filling if no crayon color is equipped', () => {
       const emitSpy = vi.spyOn(eventBus, 'emit');
       const result = engine.selectRegion('r_circle_1');
 
       expect(result.filled).toBe(false);
+      expect(result.reason).toBe('no_color');
       expect(engine.getSelectedRegionId()).toBe('r_circle_1');
+      expect(engine.getFilledColor('r_circle_1')).toBeNull();
       expect(emitSpy).toHaveBeenCalledWith('region:selected', { regionId: 'r_circle_1' });
       emitSpy.mockRestore();
     });
 
-    it('selects color without filling if no region is pre-selected and does not stick', () => {
+    it('equips crayon color upon selectColor() and emits color:selected', () => {
+      const emitSpy = vi.spyOn(eventBus, 'emit');
       const result = engine.selectColor('#FF5722');
-      expect(result.filled).toBe(false);
-      expect(engine.getSelectedColor()).toBeNull();
+
+      expect(result.equipped).toBe(true);
+      expect(result.color).toBe('#FF5722');
+      expect(engine.getSelectedColor()).toBe('#FF5722');
+      expect(emitSpy).toHaveBeenCalledWith('color:selected', { color: '#FF5722' });
+      emitSpy.mockRestore();
     });
 
-    it('immediately fills region when selecting color after container is selected and resets', () => {
-      engine.selectRegion('r_circle_1');
-      const fillResult = engine.selectColor('#FF5722');
+    it('immediately paints region when tapping shape while crayon is equipped', () => {
+      engine.selectColor('#FF5722');
+      const fillResult = engine.selectRegion('r_circle_1');
 
       expect(fillResult.filled).toBe(true);
       expect(fillResult.regionId).toBe('r_circle_1');
+      expect(fillResult.color).toBe('#FF5722');
       expect(fillResult.correct).toBe(true);
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
-
-      // Crucial: Step C immediate reset
-      expect(engine.getSelectedRegionId()).toBeNull();
-      expect(engine.getSelectedColor()).toBeNull();
     });
 
-    it('tapping 2nd container never auto-fills previous color', () => {
-      // 1st container filled
-      engine.selectRegion('r_circle_1');
+    it('crayon remains equipped after painting a shape so multiple shapes can be painted consecutively', () => {
       engine.selectColor('#FF5722');
+      expect(engine.getSelectedColor()).toBe('#FF5722');
+
+      // 1st shape painted
+      const fill1 = engine.selectRegion('r_circle_1');
+      expect(fill1.filled).toBe(true);
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
-      expect(engine.getSelectedColor()).toBeNull();
+      // Crucial: Crayon remains armed and equipped
+      expect(engine.getSelectedColor()).toBe('#FF5722');
 
-      // Tap 2nd container
-      const result = engine.selectRegion('r_circle_2');
-      expect(result.filled).toBe(false);
-      expect(engine.getFilledColor('r_circle_2')).toBeNull();
-      expect(engine.getSelectedRegionId()).toBe('r_circle_2');
-      expect(engine.getSelectedColor()).toBeNull();
-
-      // Now fill 2nd container with its own color
-      const fill2 = engine.selectColor('#4CAF50');
+      // 2nd shape painted immediately with the same armed crayon
+      const fill2 = engine.selectRegion('r_circle_2');
       expect(fill2.filled).toBe(true);
-      expect(fill2.regionId).toBe('r_circle_2');
-      expect(engine.getFilledColor('r_circle_2')).toBe('#4CAF50');
-      expect(engine.getSelectedRegionId()).toBeNull();
+      expect(engine.getFilledColor('r_circle_2')).toBe('#FF5722');
+      expect(engine.getSelectedColor()).toBe('#FF5722');
     });
 
     it('clears selection via clearSelection()', () => {
-      engine.selectRegion('r_circle_1');
       engine.selectColor('#2196F3');
-      engine.clearSelection();
+      expect(engine.getSelectedColor()).toBe('#2196F3');
 
+      engine.clearSelection();
       expect(engine.getSelectedRegionId()).toBeNull();
       expect(engine.getSelectedColor()).toBeNull();
     });
@@ -252,6 +252,17 @@ describe('ColoringEngine Tests', () => {
       expect(engine.undo()).toBe(false);
     });
 
+    it('undo preserves the currently equipped crayon color', () => {
+      engine.selectColor('#FF5722');
+      engine.selectRegion('r_circle_1');
+      expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
+
+      engine.undo();
+      expect(engine.getFilledColor('r_circle_1')).toBeNull();
+      // Crucial: equipped crayon remains active after undo
+      expect(engine.getSelectedColor()).toBe('#FF5722');
+    });
+
     it('resetCurrentLevel clears filled colors and history', () => {
       engine.fillRegion('r_circle_1', '#FF5722');
       engine.fillRegion('r_circle_2', '#4CAF50');
@@ -268,18 +279,8 @@ describe('ColoringEngine Tests', () => {
       engine.loadLevel(mockLevel);
     });
 
-    it('requires a container to be selected before granting a hint', () => {
-      expect(engine.getSelectedRegionId()).toBeNull();
-      const res = engine.requestHint();
-
-      expect(res.success).toBe(false);
-      expect(res.reason).toBe('no_selection');
+    it('grants a hint in Colour-First flow by identifying the first unpainted shape and revealing its target crayon', () => {
       expect(engine.isHintUsed()).toBe(false);
-      expect(engine.getHintedColor()).toBeNull();
-    });
-
-    it('grants a hint for selected container and reveals matching target color', () => {
-      engine.selectRegion('r_circle_1');
       const res = engine.requestHint();
 
       expect(res.success).toBe(true);
@@ -287,38 +288,52 @@ describe('ColoringEngine Tests', () => {
       expect(res.regionId).toBe('r_circle_1');
       expect(engine.isHintUsed()).toBe(true);
       expect(engine.getHintedColor()).toBe('#FF5722');
+      expect(engine.getHintedRegionId()).toBe('r_circle_1');
 
-      // Crucial: hint does NOT automatically fill the container!
+      // Crucial: hint highlights the crayon/shape but does NOT auto-fill it!
       expect(engine.getFilledColor('r_circle_1')).toBeNull();
     });
 
+    it('identifies first incorrectly painted shape if earlier shape is already filled', () => {
+      // Circle 1 correctly filled, Circle 2 filled with wrong color
+      engine.fillRegion('r_circle_1', '#FF5722');
+      engine.fillRegion('r_circle_2', '#FF5722'); // incorrect! Target is #4CAF50
+
+      const res = engine.requestHint();
+      expect(res.success).toBe(true);
+      expect(res.regionId).toBe('r_circle_2');
+      expect(res.targetColor).toBe('#4CAF50');
+      expect(engine.getHintedColor()).toBe('#4CAF50');
+      expect(engine.getHintedRegionId()).toBe('r_circle_2');
+    });
+
     it('enforces strictly one hint per level attempt', () => {
-      engine.selectRegion('r_circle_1');
       const firstHint = engine.requestHint();
       expect(firstHint.success).toBe(true);
       expect(engine.isHintUsed()).toBe(true);
 
-      // Try requesting a second hint on another container
-      engine.selectRegion('r_circle_2');
+      // Try requesting a second hint
       const secondHint = engine.requestHint();
       expect(secondHint.success).toBe(false);
       expect(secondHint.reason).toBe('already_used');
     });
 
-    it('clears hinted color after user selects a color to fill container', () => {
-      engine.selectRegion('r_circle_1');
+    it('clears active hinted color and region after user paints the hinted shape', () => {
       engine.requestHint();
       expect(engine.getHintedColor()).toBe('#FF5722');
+      expect(engine.getHintedRegionId()).toBe('r_circle_1');
 
       engine.selectColor('#FF5722');
+      engine.selectRegion('r_circle_1');
+
       expect(engine.getFilledColor('r_circle_1')).toBe('#FF5722');
       expect(engine.getHintedColor()).toBeNull();
+      expect(engine.getHintedRegionId()).toBeNull();
       // But hint remains marked as used
       expect(engine.isHintUsed()).toBe(true);
     });
 
     it('preserves hintUsed when level is cleared, only resets on level reload', () => {
-      engine.selectRegion('r_circle_1');
       engine.requestHint();
       expect(engine.isHintUsed()).toBe(true);
 
@@ -326,11 +341,13 @@ describe('ColoringEngine Tests', () => {
       engine.resetCurrentLevel();
       expect(engine.isHintUsed()).toBe(true);
       expect(engine.getHintedColor()).toBeNull();
+      expect(engine.getHintedRegionId()).toBeNull();
 
       // Only loading / starting a new level resets hint
       engine.loadLevel(mockLevel);
       expect(engine.isHintUsed()).toBe(false);
       expect(engine.getHintedColor()).toBeNull();
+      expect(engine.getHintedRegionId()).toBeNull();
     });
   });
 });
