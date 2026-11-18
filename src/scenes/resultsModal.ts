@@ -786,9 +786,11 @@ export class ResultsModal implements Scene {
     const nextLevel = Math.min(TOTAL_LEVELS, this.levelId + 1);
     this.hide();
     audioManager.stopCelebration();
-    // Haptic feedback instead of sound (avoids rough audio glitch)
+    // Pure tactile haptic feedback — zero audio playback per user specification
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(12);
+      try {
+        navigator.vibrate(15);
+      } catch {}
     }
     eventBus.emit('audio:unlock', {});
     saveManager.setCurrentLevel(nextLevel);
@@ -800,10 +802,12 @@ export class ResultsModal implements Scene {
     this.hide();
     audioManager.stopCelebration();
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(12);
+      try {
+        navigator.vibrate(15);
+      } catch {}
     }
     eventBus.emit('audio:unlock', {});
-    eventBus.emit('level:start', { levelId: this.levelId });
+    eventBus.emit('level:start', { levelId: this.levelId, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: this.levelId });
   }
 
@@ -811,7 +815,9 @@ export class ResultsModal implements Scene {
     this.hide();
     audioManager.stopCelebration();
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(12);
+      try {
+        navigator.vibrate(15);
+      } catch {}
     }
     eventBus.emit('audio:unlock', {});
     sceneManager.switchTo('levelSelect');

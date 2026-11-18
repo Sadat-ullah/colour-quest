@@ -806,10 +806,13 @@ export class LevelSelectScene implements Scene {
       return;
     }
 
-    // Start Level
+    // Start Level - tactile feedback, no audio glitch
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        navigator.vibrate(15);
+      } catch {}
+    }
     eventBus.emit('audio:unlock', {});
-    audioManager.playTap();
-    audioManager.startBGM();
     saveManager.setCurrentLevel(card.levelId);
     eventBus.emit('level:start', { levelId: card.levelId, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: card.levelId });

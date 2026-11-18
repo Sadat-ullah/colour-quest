@@ -116,8 +116,7 @@ export class SoundEffects {
   }
 
   /**
-   * 1. playTap: Super bouncy cartoon balloon/bubble pop squeak
-   *    Fast 5ms attack → smooth exponential decay. No hard cutoff.
+   * 1. playTap: Gentle warm wooden bubble tap
    */
   public playTap(volMultiplier: number = 1.0): void {
     const ready = this.prepareContext();
@@ -129,19 +128,17 @@ export class SoundEffects {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.04);
-    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(280, now + 0.05);
 
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.linearRampToValueAtTime(0.7 * vol, now + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-    // No hard setValueAtTime(0) — let the exponential ramp finish cleanly
+    gain.gain.linearRampToValueAtTime(0.3 * vol, now + 0.003);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
 
     osc.connect(gain);
     gain.connect(master);
     osc.start(now);
-    osc.stop(now + 0.1);
+    osc.stop(now + 0.07);
 
     osc.onended = () => {
       osc.disconnect();
@@ -390,21 +387,18 @@ export class SoundEffects {
 
   /**
    * playLetsPlay / playNextLevel / playLevelTransition:
-   * Just play the clean tap — no stopCelebration() overlap.
-   * Celebration is stopped separately by the caller (resultsModal)
-   * before invoking playTap, so there is no glitch from overlapping
-   * the celebration fade-out with the new tap.
+   * Completely silent per user requirement — tactile vibration only on buttons.
    */
-  public playLetsPlay(volMultiplier: number = 1.0): void {
-    this.playTap(volMultiplier);
+  public playLetsPlay(_volMultiplier: number = 1.0): void {
+    // 100% silent - no audio playback
   }
 
-  public playNextLevel(volMultiplier: number = 1.0): void {
-    this.playTap(volMultiplier);
+  public playNextLevel(_volMultiplier: number = 1.0): void {
+    // 100% silent - no audio playback
   }
 
-  public playLevelTransition(volMultiplier: number = 1.0): void {
-    this.playTap(volMultiplier);
+  public playLevelTransition(_volMultiplier: number = 1.0): void {
+    // 100% silent - no audio playback
   }
 
   /**

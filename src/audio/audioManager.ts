@@ -80,9 +80,6 @@ export class AudioManager {
     // If background music was started prior to user gesture, resume/start it now
     if (this.musicWanted && !this.musicMuted) {
       soundEffects.startBGM();
-      if (!musicSynth.isPlaying()) {
-        musicSynth.start();
-      }
     }
   }
 

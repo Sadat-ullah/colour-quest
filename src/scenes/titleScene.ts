@@ -582,11 +582,12 @@ export class TitleScene implements Scene {
   private onPlayClicked(): void {
     // Unlock WebAudio context on user gesture
     eventBus.emit('audio:unlock', {});
-    // Haptic feedback instead of sound (avoids rough audio glitch)
+    // Pure tactile haptic feedback — zero audio playback per user specification
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(12);
+      try {
+        navigator.vibrate(15);
+      } catch {}
     }
-    audioManager.startBGM();
 
     const progress = saveManager.getProgress();
     const targetLevel = progress.currentLevel || progress.highestUnlocked || 1;
