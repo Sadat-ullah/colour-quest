@@ -70,6 +70,7 @@ function bootstrap(): void {
     if (!silentAudio && !resultsModal.isOpen()) {
       audioManager.playSound('tap');
     }
+    audioManager.startBGM();
     sceneManager.switchTo('gameplay', { levelId });
   });
 
@@ -82,6 +83,7 @@ function bootstrap(): void {
 
   // 7. Handle Unified Touch / Pointer Tap Events
   inputManager.onTap((e) => {
+    eventBus.emit('audio:unlock', {});
     sceneManager.handleTap(e.x, e.y);
   });
 

@@ -13,6 +13,9 @@ import {
   playClear,
   playLevelTransition,
   playLetsPlay,
+  startBGM,
+  stopBGM,
+  toggleBGM,
 } from './soundEffects';
 import { musicSynth, MusicSynth } from './musicSynth';
 import { getAudioContext, isAudioUnlocked, unlockAudio, initMobileUnlock, _resetUnlockForTesting } from './mobileUnlock';
@@ -210,6 +213,16 @@ describe('Audio Subsystem (Agent A5)', () => {
       expect(() => audioManager.playLetsPlay()).not.toThrow();
       expect(() => audioManager.playSound('lets_play')).not.toThrow();
       expect(() => audioManager.playSound('play')).not.toThrow();
+    });
+
+    it('manages procedural background music (BGM) loop without error', () => {
+      expect(() => startBGM()).not.toThrow();
+      expect(() => toggleBGM()).not.toThrow();
+      expect(() => toggleBGM()).not.toThrow();
+      expect(() => stopBGM()).not.toThrow();
+      expect(() => audioManager.startBGM()).not.toThrow();
+      expect(() => audioManager.stopBGM()).not.toThrow();
+      expect(() => audioManager.toggleBGM()).not.toThrow();
     });
 
     it('manages volume and mute state correctly', () => {

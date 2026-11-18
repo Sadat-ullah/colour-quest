@@ -809,6 +809,7 @@ export class LevelSelectScene implements Scene {
     // Start Level
     eventBus.emit('audio:unlock', {});
     audioManager.playTap();
+    audioManager.startBGM();
     saveManager.setCurrentLevel(card.levelId);
     eventBus.emit('level:start', { levelId: card.levelId, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: card.levelId });
@@ -816,6 +817,7 @@ export class LevelSelectScene implements Scene {
 
   private onBackClicked(): void {
     eventBus.emit('audio:unlock', {});
+    audioManager.playTap();
     sceneManager.switchTo('title');
   }
 }

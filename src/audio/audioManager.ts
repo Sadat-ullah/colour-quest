@@ -23,6 +23,9 @@ import {
   playLevelTransition,
   playLetsPlay,
   stopCelebration,
+  startBGM,
+  stopBGM,
+  toggleBGM,
 } from './soundEffects';
 import { unlockAudio, isAudioUnlocked, initMobileUnlock, getAudioContext } from './mobileUnlock';
 
@@ -75,8 +78,11 @@ export class AudioManager {
 
   private handleAudioUnlocked(): void {
     // If background music was started prior to user gesture, resume/start it now
-    if (this.musicWanted && !this.musicMuted && !musicSynth.isPlaying()) {
-      musicSynth.start();
+    if (this.musicWanted && !this.musicMuted) {
+      soundEffects.startBGM();
+      if (!musicSynth.isPlaying()) {
+        musicSynth.start();
+      }
     }
   }
 
@@ -129,8 +135,13 @@ export class AudioManager {
   public setMusicMuted(muted: boolean): void {
     this.musicMuted = muted;
     musicSynth.setMuted(muted);
-    if (!muted && this.musicWanted && !musicSynth.isPlaying() && isAudioUnlocked()) {
-      musicSynth.start();
+    if (muted) {
+      soundEffects.stopBGM();
+    } else if (this.musicWanted) {
+      soundEffects.startBGM();
+      if (!musicSynth.isPlaying() && isAudioUnlocked()) {
+        musicSynth.start();
+      }
     }
   }
 
@@ -163,6 +174,9 @@ export class AudioManager {
 
   public startMusic(): void {
     this.musicWanted = true;
+    if (!this.musicMuted) {
+      soundEffects.startBGM();
+    }
     if (isAudioUnlocked() || (getAudioContext() && getAudioContext()!.state === 'running')) {
       musicSynth.start();
     }
@@ -170,15 +184,20 @@ export class AudioManager {
 
   public stopMusic(): void {
     this.musicWanted = false;
+    soundEffects.stopBGM();
     musicSynth.stop();
   }
 
   public pauseMusic(): void {
+    soundEffects.stopBGM();
     musicSynth.pause();
   }
 
   public resumeMusic(): void {
     this.musicWanted = true;
+    if (!this.musicMuted) {
+      soundEffects.startBGM();
+    }
     if (isAudioUnlocked() || (getAudioContext() && getAudioContext()!.state === 'running')) {
       musicSynth.resume();
     }
@@ -186,6 +205,21 @@ export class AudioManager {
 
   public isMusicPlaying(): boolean {
     return musicSynth.isPlaying();
+  }
+
+  public startBGM(): void {
+    this.musicWanted = true;
+    if (!this.musicMuted) {
+      soundEffects.startBGM();
+    }
+  }
+
+  public stopBGM(): void {
+    soundEffects.stopBGM();
+  }
+
+  public toggleBGM(): boolean {
+    return soundEffects.toggleBGM();
   }
 
   // ── Sound Effects Controls ──
@@ -308,6 +342,14 @@ export class AudioManager {
       case 'rewind':
         this.playClear(typeof args[0] === 'number' ? args[0] : undefined);
         break;
+      case 'bgm':
+      case 'music':
+      case 'start_bgm':
+        this.startBGM();
+        break;
+      case 'stop_bgm':
+        this.stopBGM();
+        break;
       default:
         console.warn(`[AudioManager] Unknown sound effect: "${sound}"`);
     }
@@ -344,6 +386,9 @@ export {
   playLevelTransition,
   playLetsPlay,
   stopCelebration,
+  startBGM,
+  stopBGM,
+  toggleBGM,
   unlockAudio,
   isAudioUnlocked,
   initMobileUnlock,

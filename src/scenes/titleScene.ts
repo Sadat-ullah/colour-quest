@@ -583,6 +583,7 @@ export class TitleScene implements Scene {
     // Unlock WebAudio context on user gesture
     eventBus.emit('audio:unlock', {});
     audioManager.playTap();
+    audioManager.startBGM();
 
     const progress = saveManager.getProgress();
     const targetLevel = progress.currentLevel || progress.highestUnlocked || 1;
@@ -593,6 +594,7 @@ export class TitleScene implements Scene {
 
   private onLevelSelectClicked(): void {
     eventBus.emit('audio:unlock', {});
+    audioManager.playTap();
     sceneManager.switchTo('levelSelect');
   }
 
@@ -606,6 +608,12 @@ export class TitleScene implements Scene {
       musicMuted: newMuted,
       sfxMuted: newMuted,
     });
+    audioManager.setMusicMuted(newMuted);
+    audioManager.setSfxMuted(newMuted);
+    if (!newMuted) {
+      audioManager.playTap();
+      audioManager.startBGM();
+    }
   }
 }
 
