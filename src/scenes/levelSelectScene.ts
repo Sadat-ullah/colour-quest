@@ -808,7 +808,7 @@ export class LevelSelectScene implements Scene {
 
     // Start Level
     eventBus.emit('audio:unlock', {});
-    audioManager.playSound('level_transition');
+    audioManager.playTap();
     saveManager.setCurrentLevel(card.levelId);
     eventBus.emit('level:start', { levelId: card.levelId, silentAudio: true });
     sceneManager.switchTo('gameplay', { levelId: card.levelId });

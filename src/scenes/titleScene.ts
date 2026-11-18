@@ -582,7 +582,7 @@ export class TitleScene implements Scene {
   private onPlayClicked(): void {
     // Unlock WebAudio context on user gesture
     eventBus.emit('audio:unlock', {});
-    audioManager.playSound('lets_play');
+    audioManager.playTap();
 
     const progress = saveManager.getProgress();
     const targetLevel = progress.currentLevel || progress.highestUnlocked || 1;

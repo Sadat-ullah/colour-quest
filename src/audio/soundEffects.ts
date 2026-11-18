@@ -798,133 +798,27 @@ export class SoundEffects {
   }
 
   /**
-   * playMarimbaNote: warm wooden marimba/harp note with triangle + sine harmonics
-   */
-  private playMarimbaNote(
-    ctx: AudioContext,
-    dest: AudioNode,
-    freq: number,
-    startTime: number,
-    dur: number,
-    peak: number
-  ): void {
-    const safeStart = Math.max(startTime, ctx.currentTime);
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(3200, safeStart);
-    filter.Q.setValueAtTime(0.7, safeStart);
-    filter.connect(dest);
-
-    // 1. Warm Fundamental (Sine + subtle Triangle body)
-    const sineOsc = ctx.createOscillator();
-    const triOsc = ctx.createOscillator();
-    const mainGain = ctx.createGain();
-
-    sineOsc.type = 'sine';
-    sineOsc.frequency.setValueAtTime(freq, safeStart);
-
-    triOsc.type = 'triangle';
-    triOsc.frequency.setValueAtTime(freq, safeStart);
-
-    mainGain.gain.setValueAtTime(0.0001, safeStart);
-    mainGain.gain.linearRampToValueAtTime(peak, safeStart + 0.003); // ultra-fast 3ms wooden strike attack
-    mainGain.gain.exponentialRampToValueAtTime(0.0001, safeStart + dur); // smooth warm resonant tail
-
-    sineOsc.connect(mainGain);
-    triOsc.connect(mainGain);
-    mainGain.connect(filter);
-
-    sineOsc.start(safeStart);
-    triOsc.start(safeStart);
-    sineOsc.stop(safeStart + dur + 0.04);
-    triOsc.stop(safeStart + dur + 0.04);
-
-    // 2. Wooden bar strike transient (sine 3x overtone, very short decay)
-    const strikeOsc = ctx.createOscillator();
-    const strikeGain = ctx.createGain();
-    strikeOsc.type = 'sine';
-    strikeOsc.frequency.setValueAtTime(freq * 3.0, safeStart);
-
-    strikeGain.gain.setValueAtTime(0.0001, safeStart);
-    strikeGain.gain.linearRampToValueAtTime(peak * 0.22, safeStart + 0.002);
-    strikeGain.gain.exponentialRampToValueAtTime(0.0001, safeStart + 0.06);
-
-    strikeOsc.connect(strikeGain);
-    strikeGain.connect(filter);
-    strikeOsc.start(safeStart);
-    strikeOsc.stop(safeStart + 0.07);
-
-    sineOsc.onended = () => {
-      sineOsc.disconnect();
-      triOsc.disconnect();
-      mainGain.disconnect();
-      strikeOsc.disconnect();
-      strikeGain.disconnect();
-      filter.disconnect();
-    };
-  }
-
-  /**
-   * playLetsPlay: warm, playful marimba/harp-like ascending flourish
-   * C5 (523.25) -> E5 (659.25) -> G5 (783.99) -> B5 (987.77) -> C6 (1046.50)
-   * cascaded sparkle chord with soft triangle + sine harmonics and gentle reverb-like tail
+   * playLetsPlay: crisp, simple tap effect per user design preference
    */
   public playLetsPlay(volMultiplier: number = 1.0): void {
     this.stopCelebration();
-    const ready = this.prepareContext();
-    if (!ready) return;
-    const { ctx, master } = ready;
-    const now = ctx.currentTime;
-    const vol = Math.max(0, Math.min(1, volMultiplier));
-
-    const flourishNotes = [
-      { freq: 523.25, offset: 0.000, dur: 0.32, peak: 0.32 * vol }, // C5
-      { freq: 659.25, offset: 0.055, dur: 0.34, peak: 0.34 * vol }, // E5
-      { freq: 783.99, offset: 0.110, dur: 0.36, peak: 0.36 * vol }, // G5
-      { freq: 987.77, offset: 0.165, dur: 0.38, peak: 0.38 * vol }, // B5
-      { freq: 1046.50, offset: 0.220, dur: 0.58, peak: 0.42 * vol }, // C6
-    ];
-
-    flourishNotes.forEach(({ freq, offset, dur, peak }) => {
-      this.playMarimbaNote(ctx, master, freq, now + offset, dur, peak);
-    });
+    this.playTap(volMultiplier);
   }
 
   /**
-   * playNextLevel: uplifting celebratory fanfare
-   * G4 (392.00) -> C5 (523.25) -> E5 (659.25) -> G5 (783.99) triumphant bounce
-   * + shimmering octave sparkle C6 (1046.50)
+   * playNextLevel: crisp, simple tap effect per user design preference
    */
   public playNextLevel(volMultiplier: number = 1.0): void {
     this.stopCelebration();
-    const ready = this.prepareContext();
-    if (!ready) return;
-    const { ctx, master } = ready;
-    const now = ctx.currentTime;
-    const vol = Math.max(0, Math.min(1, volMultiplier));
-
-    const fanfareNotes = [
-      { freq: 392.00, offset: 0.000, dur: 0.28, peak: 0.30 * vol }, // G4
-      { freq: 523.25, offset: 0.075, dur: 0.30, peak: 0.32 * vol }, // C5
-      { freq: 659.25, offset: 0.150, dur: 0.32, peak: 0.34 * vol }, // E5
-      { freq: 783.99, offset: 0.225, dur: 0.38, peak: 0.36 * vol }, // G5
-      { freq: 1046.50, offset: 0.300, dur: 0.65, peak: 0.42 * vol }, // C6 sparkle
-    ];
-
-    fanfareNotes.forEach(({ freq, offset, dur, peak }) => {
-      this.playMarimbaNote(ctx, master, freq, now + offset, dur, peak);
-    });
-
-    // Shimmering octave sparkle overtone on final C6
-    this.playBellNote(ctx, master, 2093.00, now + 0.305, 0.45, 0.16 * vol); // C7 sparkle
+    this.playTap(volMultiplier);
   }
 
   /**
-   * playLevelTransition: alias for warm bell level transition sound
+   * playLevelTransition: crisp, simple tap effect
    */
   public playLevelTransition(volMultiplier: number = 1.0): void {
-    this.playNextLevel(volMultiplier);
+    this.stopCelebration();
+    this.playTap(volMultiplier);
   }
 }
 

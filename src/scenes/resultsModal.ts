@@ -785,7 +785,8 @@ export class ResultsModal implements Scene {
   private onNextClicked(): void {
     const nextLevel = Math.min(TOTAL_LEVELS, this.levelId + 1);
     this.hide();
-    audioManager.playSound('level_transition');
+    audioManager.stopCelebration();
+    audioManager.playTap();
     eventBus.emit('audio:unlock', {});
     saveManager.setCurrentLevel(nextLevel);
     eventBus.emit('level:start', { levelId: nextLevel, silentAudio: true });
