@@ -582,7 +582,10 @@ export class TitleScene implements Scene {
   private onPlayClicked(): void {
     // Unlock WebAudio context on user gesture
     eventBus.emit('audio:unlock', {});
-    audioManager.playTap();
+    // Haptic feedback instead of sound (avoids rough audio glitch)
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(12);
+    }
     audioManager.startBGM();
 
     const progress = saveManager.getProgress();
