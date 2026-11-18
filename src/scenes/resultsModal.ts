@@ -786,7 +786,9 @@ export class ResultsModal implements Scene {
     const nextLevel = Math.min(TOTAL_LEVELS, this.levelId + 1);
     this.hide();
     audioManager.stopCelebration();
-    audioManager.playTap();
+    // Small delay so the celebration fade-out (20ms) finishes
+    // before the clean tap fires — prevents audible overlap glitch
+    setTimeout(() => audioManager.playTap(), 25);
     eventBus.emit('audio:unlock', {});
     saveManager.setCurrentLevel(nextLevel);
     eventBus.emit('level:start', { levelId: nextLevel, silentAudio: true });
@@ -796,7 +798,7 @@ export class ResultsModal implements Scene {
   private onReplayClicked(): void {
     this.hide();
     audioManager.stopCelebration();
-    audioManager.playTap();
+    setTimeout(() => audioManager.playTap(), 25);
     eventBus.emit('audio:unlock', {});
     eventBus.emit('level:start', { levelId: this.levelId });
     sceneManager.switchTo('gameplay', { levelId: this.levelId });
@@ -805,7 +807,7 @@ export class ResultsModal implements Scene {
   private onLevelSelectClicked(): void {
     this.hide();
     audioManager.stopCelebration();
-    audioManager.playTap();
+    setTimeout(() => audioManager.playTap(), 25);
     eventBus.emit('audio:unlock', {});
     sceneManager.switchTo('levelSelect');
   }

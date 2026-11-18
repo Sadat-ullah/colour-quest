@@ -24,7 +24,6 @@ export class SoundEffects {
   private volume: number = SFX_DEFAULT_VOL;
   private muted: boolean = false;
   private masterGain: GainNode | null = null;
-  private compressor: DynamicsCompressorNode | null = null;
   private currentContext: AudioContext | null = null;
   private activeCelebrationNodes: Array<{ osc?: OscillatorNode; gain: GainNode }> = [];
 
@@ -33,25 +32,17 @@ export class SoundEffects {
   private bgmStep: number = 0;
   private bgmVolume: number = 0.3;
 
+  /**
+   * Get or create the master gain node — no compressor.
+   * The old DynamicsCompressor (ratio 8, release 0.25s) was eating transients
+   * and adding ~250ms of perceived latency to every new sound.
+   */
   private getMasterNode(ctx: AudioContext): GainNode {
     if (!this.masterGain || this.currentContext !== ctx) {
       this.currentContext = ctx;
       this.masterGain = ctx.createGain();
-      this.masterGain.gain.setValueAtTime(this.muted ? 0 : this.volume, ctx.currentTime);
-
-      if (typeof ctx.createDynamicsCompressor === 'function') {
-        this.compressor = ctx.createDynamicsCompressor();
-        this.compressor.threshold.setValueAtTime(-12, ctx.currentTime);
-        this.compressor.knee.setValueAtTime(10, ctx.currentTime);
-        this.compressor.ratio.setValueAtTime(8, ctx.currentTime);
-        this.compressor.attack.setValueAtTime(0.003, ctx.currentTime);
-        this.compressor.release.setValueAtTime(0.25, ctx.currentTime);
-
-        this.masterGain.connect(this.compressor);
-        this.compressor.connect(ctx.destination);
-      } else {
-        this.masterGain.connect(ctx.destination);
-      }
+      this.masterGain.gain.value = this.muted ? 0 : this.volume;
+      this.masterGain.connect(ctx.destination);
     }
     return this.masterGain;
   }
@@ -67,9 +58,9 @@ export class SoundEffects {
       try {
         item.gain.gain.cancelScheduledValues(now);
         item.gain.gain.setValueAtTime(Math.max(0.0001, item.gain.gain.value), now);
-        item.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+        item.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
         if (item.osc) {
-          item.osc.stop(now + 0.055);
+          item.osc.stop(now + 0.025);
         }
       } catch {}
     }
@@ -78,9 +69,8 @@ export class SoundEffects {
 
   public setVolume(vol: number): void {
     this.volume = Math.max(0, Math.min(1, vol));
-    if (this.masterGain && this.currentContext) {
-      const now = this.currentContext.currentTime;
-      this.masterGain.gain.setTargetAtTime(this.muted ? 0 : this.volume, now, 0.015);
+    if (this.masterGain) {
+      this.masterGain.gain.value = this.muted ? 0 : this.volume;
     }
   }
 
@@ -90,9 +80,8 @@ export class SoundEffects {
 
   public setMuted(muted: boolean): void {
     this.muted = muted;
-    if (this.masterGain && this.currentContext) {
-      const now = this.currentContext.currentTime;
-      this.masterGain.gain.setTargetAtTime(this.muted ? 0 : this.volume, now, 0.015);
+    if (this.masterGain) {
+      this.masterGain.gain.value = this.muted ? 0 : this.volume;
     }
     if (muted) {
       this.stopBGM();
@@ -108,6 +97,11 @@ export class SoundEffects {
     return this.muted;
   }
 
+  /**
+   * Prepare context for immediate playback.
+   * Resume is fire-and-forget — the keep-alive silent source in mobileUnlock
+   * ensures the context stays running after the first user gesture.
+   */
   private prepareContext(): { ctx: AudioContext; master: GainNode } | null {
     if (this.muted || this.volume <= 0.001) return null;
     const ctx = getAudioContext();
@@ -123,6 +117,7 @@ export class SoundEffects {
 
   /**
    * 1. playTap: Super bouncy cartoon balloon/bubble pop squeak
+   *    Fast 5ms attack → smooth exponential decay. No hard cutoff.
    */
   public playTap(volMultiplier: number = 1.0): void {
     const ready = this.prepareContext();
@@ -141,7 +136,7 @@ export class SoundEffects {
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.linearRampToValueAtTime(0.7 * vol, now + 0.005);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
-    gain.gain.setValueAtTime(0, now + 0.095);
+    // No hard setValueAtTime(0) — let the exponential ramp finish cleanly
 
     osc.connect(gain);
     gain.connect(master);
@@ -393,18 +388,22 @@ export class SoundEffects {
     };
   }
 
+  /**
+   * playLetsPlay / playNextLevel / playLevelTransition:
+   * Just play the clean tap — no stopCelebration() overlap.
+   * Celebration is stopped separately by the caller (resultsModal)
+   * before invoking playTap, so there is no glitch from overlapping
+   * the celebration fade-out with the new tap.
+   */
   public playLetsPlay(volMultiplier: number = 1.0): void {
-    this.stopCelebration();
     this.playTap(volMultiplier);
   }
 
   public playNextLevel(volMultiplier: number = 1.0): void {
-    this.stopCelebration();
     this.playTap(volMultiplier);
   }
 
   public playLevelTransition(volMultiplier: number = 1.0): void {
-    this.stopCelebration();
     this.playTap(volMultiplier);
   }
 
