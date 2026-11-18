@@ -3,6 +3,7 @@
  *  Prevents native mobile gestures, maps coordinates to design space, detects taps
  * ───────────────────────────────────────────────────────────── */
 import type { ScaleManager } from './scaleManager';
+import { getAudioContext } from '../audio/mobileUnlock';
 
 export interface TapEvent {
   x: number;          // design canvas x (0..1280)
@@ -76,6 +77,12 @@ export class InputManager {
   }
 
   private onPointerDown(e: PointerEvent): void {
+    // Immediately awaken AudioContext synchronously during pointerdown user gesture
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
     // Only accept primary pointer or first touch to avoid chaotic multi-touch glitches
     if (this.activePointerId !== null && this.activePointerId !== e.pointerId) {
       return;

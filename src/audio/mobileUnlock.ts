@@ -1,10 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
- *  mobileUnlock.ts – Mobile browser Web Audio & Howler unlocking
- *  Zero sound delay on iOS Safari & Android Chrome.
+ *  mobileUnlock.ts – Mobile browser Web Audio unlocking
+ *  Zero sound delay on iOS Safari, iPadOS & Android Chrome.
  * ───────────────────────────────────────────────────────────── */
 
 import { eventBus } from '../shared/eventBus';
-import { Howler } from 'howler';
 
 let sharedAudioContext: AudioContext | null = null;
 let unlocked = false;
@@ -17,7 +16,7 @@ const UNLOCK_EVENTS = ['pointerdown', 'touchstart', 'touchend', 'mousedown', 'ke
 
 /**
  * Get or create the shared Web Audio AudioContext singleton.
- * Configured with latencyHint: 'interactive' for zero audio latency.
+ * Configured with latencyHint: 'interactive' for instant audio response.
  */
 export function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') {
@@ -37,7 +36,6 @@ export function getAudioContext(): AudioContext | null {
     try {
       sharedAudioContext = new AudioContextClass({ latencyHint: 'interactive' });
     } catch {
-      // Fallback without options if browser rejects latencyHint
       sharedAudioContext = new AudioContextClass();
     }
   }
@@ -53,14 +51,23 @@ export function isAudioUnlocked(): boolean {
 }
 
 /**
- * Performs immediate unlock on Web Audio AudioContext and Howler:
+ * Performs immediate unlock on Web Audio AudioContext:
  * 1. Resumes context if suspended.
- * 2. Plays a tiny 1-sample silent buffer to prime iOS Safari hardware output.
- * 3. Resumes Howler.ctx if initialized.
- * 4. Emits 'audio:unlock' on eventBus.
+ * 2. Starts a gentle 2-second silent keep-alive buffer (using native sampleRate)
+ *    to prevent mobile Safari from throttling or putting CoreAudio to sleep,
+ *    without CPU starvation or buffer backlog.
+ * 3. Emits 'audio:unlock' on eventBus.
  */
 export async function unlockAudio(): Promise<boolean> {
-  if (unlocked) return true;
+  if (unlocked) {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      try {
+        await ctx.resume();
+      } catch {}
+    }
+    return true;
+  }
 
   if (unlockPromise) return unlockPromise;
 
@@ -76,47 +83,24 @@ export async function unlockAudio(): Promise<boolean> {
         }
       }
 
-      // Play 1-sample silent sound to prime the audio hardware pipeline (crucial for iOS Safari)
+      // Safe keep-alive buffer: 2 seconds of pure silence at native hardware sampleRate.
+      // This prevents Safari from putting CoreAudio to sleep without choking the audio thread.
       try {
-        const buffer = ctx.createBuffer(1, 1, 22050);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start(0);
-      } catch {
-        // Ignore if buffer source fails
-      }
-
-      // Start continuous silent keep-alive generator to prevent Safari from putting
-      // CoreAudio HAL / RemoteIO audio unit to sleep (eliminates Safari 80-150ms cold-start delay)
-      try {
-        const keepAliveBuffer = ctx.createBuffer(1, 1, 22050);
+        const keepAliveBuffer = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
         const keepAliveSource = ctx.createBufferSource();
         keepAliveSource.buffer = keepAliveBuffer;
         keepAliveSource.loop = true;
         const keepAliveGain = ctx.createGain();
-        keepAliveGain.gain.setValueAtTime(0.00001, 0); // practically zero/inaudible
+        keepAliveGain.gain.setValueAtTime(0.00001, ctx.currentTime);
         keepAliveSource.connect(keepAliveGain);
         keepAliveGain.connect(ctx.destination);
         keepAliveSource.start(0);
       } catch {
-        // Ignore if keep-alive buffer fails in mock environment
+        // Ignore in mock/test environment
       }
-    }
-
-    // Unlock Howler context if present
-    try {
-      if (typeof Howler !== 'undefined' && Howler.ctx) {
-        if (Howler.ctx.state === 'suspended') {
-          await Howler.ctx.resume();
-        }
-      }
-    } catch (e) {
-      console.warn('[MobileUnlock] Failed to resume Howler.ctx:', e);
     }
 
     unlocked = true;
-    removeInteractionListeners();
 
     // Emit event on eventBus
     eventBus.emit('audio:unlock', {});
@@ -127,27 +111,29 @@ export async function unlockAudio(): Promise<boolean> {
   return unlockPromise;
 }
 
-function handleFirstInteraction(): void {
+function handleInteraction(): void {
   const ctx = getAudioContext();
   if (ctx && ctx.state === 'suspended') {
     ctx.resume().catch(() => {});
   }
-  void unlockAudio();
+  if (!unlocked) {
+    void unlockAudio();
+  }
 }
 
 /**
- * Attach listeners to window and document to capture the very first user touch or click.
+ * Attach listeners to window and document to capture user touch or click.
  */
 export function initMobileUnlock(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
 
-  if (!listenersAttached && !unlocked) {
+  if (!listenersAttached) {
     listenersAttached = true;
     const opts: AddEventListenerOptions = { capture: true, passive: true };
 
     for (const evt of UNLOCK_EVENTS) {
-      window.addEventListener(evt, handleFirstInteraction, opts);
-      document.addEventListener(evt, handleFirstInteraction, opts);
+      window.addEventListener(evt, handleInteraction, opts);
+      document.addEventListener(evt, handleInteraction, opts);
     }
   }
 
@@ -155,17 +141,6 @@ export function initMobileUnlock(): void {
     visibilityListenersAttached = true;
     setupVisibilityHandling();
   }
-}
-
-function removeInteractionListeners(): void {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return;
-
-  const opts: AddEventListenerOptions = { capture: true };
-  for (const evt of UNLOCK_EVENTS) {
-    window.removeEventListener(evt, handleFirstInteraction, opts);
-    document.removeEventListener(evt, handleFirstInteraction, opts);
-  }
-  listenersAttached = false;
 }
 
 /**
@@ -181,17 +156,9 @@ function setupVisibilityHandling(): void {
       if (ctx && ctx.state === 'running') {
         ctx.suspend().catch(() => {});
       }
-      if (typeof Howler !== 'undefined' && Howler.ctx && Howler.ctx.state === 'running') {
-        Howler.ctx.suspend().catch(() => {});
-      }
     } else if (document.visibilityState === 'visible') {
-      if (unlocked) {
-        if (ctx && ctx.state === 'suspended') {
-          ctx.resume().catch(() => {});
-        }
-        if (typeof Howler !== 'undefined' && Howler.ctx && Howler.ctx.state === 'suspended') {
-          Howler.ctx.resume().catch(() => {});
-        }
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
       }
     }
   };
@@ -204,11 +171,9 @@ function setupVisibilityHandling(): void {
     }
   });
   window.addEventListener('pageshow', () => {
-    if (unlocked) {
-      const ctx = getAudioContext();
-      if (ctx && ctx.state === 'suspended') {
-        ctx.resume().catch(() => {});
-      }
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
     }
   });
 }
